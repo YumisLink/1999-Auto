@@ -95,12 +95,6 @@ def startTurn(t:Turn):
 def checkTurn(t:Turn):
     while(True):
         api.get_screen_shot()
-        # img  = cv.imread("screenshot.png")
-        # x = 190
-        # y = 778
-        # img = img[x:118,y:85]
-        # checker = cv.imread("cards/disappear.png")
-        # if calculate(checker,img) > 0.6:
         ans = search_cards()
         if (ans[6] != '无卡牌' and ans[3] != '无卡牌'):
             print("start")
@@ -108,5 +102,3 @@ def checkTurn(t:Turn):
             startTurn(t)
         print("休息中",t.debuff,t.buff)
         sleep(0.2)
-t = Turn()
-checkTurn(t)
