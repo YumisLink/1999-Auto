@@ -21,7 +21,7 @@ def next_card(t:Turn,i:int):
 def Limit(t:Turn):
     for j in range(0,7):
         i = 6-j
-        if t.card[i] in limit:
+        if t.card[i][0] in limit:
             print(t.card[i] )
             touch(clickcard[i][1],clickcard[i][0])
             next_card(t,i)
@@ -33,8 +33,8 @@ def Limit(t:Turn):
 def useBuff(t:Turn):
     for j in range(0,7):
         i = 6-j
-        if t.card[i] in buff:
-            print(t.card[i] )
+        if t.card[i][0] in buff:
+            print(t.card[i])
             touch(clickcard[i][1],clickcard[i][0])
             next_card(t,i)
             print(t.card)
@@ -45,8 +45,8 @@ def useBuff(t:Turn):
 def useDebuff(t:Turn):
     for j in range(0,7):
         i = 6-j
-        if t.card[i] in debuff:
-            print(t.card[i] )
+        if t.card[i][0] in debuff:
+            print(t.card[i])
             touch(clickcard[i][1],clickcard[i][0])
             next_card(t,i)
             print(t.card)
@@ -57,7 +57,7 @@ def useDebuff(t:Turn):
 def Attack(t:Turn):
     for j in range(0,7):
         i = 6-j
-        if t.card[i] in attack:
+        if t.card[i][0] in attack:
             print(t.card[i] )
             touch(clickcard[i][1],clickcard[i][0])
             next_card(t,i)
@@ -95,7 +95,7 @@ def startTurn(t:Turn):
 def checkTurn(t:Turn):
     while(True):
         api.get_screen_shot()
-        ans = search_cards()
+        ans = search_cards(['Anan','Bkornblume','Eternity'])
         if (ans[6] != '无卡牌' and ans[3] != '无卡牌'):
             print("start")
             sleep(1.5)

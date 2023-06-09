@@ -25,20 +25,40 @@ def find(id:str):
 
     return avg
 
-def search_cards():
+def search_cards(character:list):
     img  = cv.imread("screenshot.png")
     x = 687
     y = 520
     ls = []
+    star = []
     for i in range(0,7):
-        ls.append(img[x:x+180,y+i*154:y+140+i*154])
-        # cv.imwrite(f'{i}.png',img2)
-    character = ['Anan','Bkornblume','Eternity']
+        finally_y = y+i*154
+
+        star_x = x-15
+        s = 0
+        ls.append(img[x:x+180,finally_y:finally_y+140])
+        cut = img[star_x:star_x+1+3,finally_y+39:finally_y+40+5]
+        # print(f'{i} 1:{cut[0][0][2]}')
+        if cut[0][0][2] > 200:
+            s = 1
+        # cv.imwrite(f'{i}star1.png',cut)
+        cut = img[star_x:star_x+1+3,finally_y+80:finally_y+80+5]
+        # print(f'{i} 2:{cut[0][0][2]}')
+        if cut[0][0][2] > 200:
+            s = 2
+        # cv.imwrite(f'{i}star2.png',cut)
+        cut = img[star_x:star_x+1+3,finally_y+100:finally_y+100+5]
+        # print(f'{i} 3:{cut[0][0][2]}')
+        if cut[0][0][2] > 200:
+            s = 3
+        # cv.imwrite(f'{i}star3.png',cut)
+        star.append(s)
+
     characters = []
-    for i in range(0,3):
-        characters.append(f'{character[i]}1')
-        characters.append(f'{character[i]}2')
-        characters.append(f'{character[i]}3')
+    for chars in character:
+        characters.append(f'{chars}1')
+        characters.append(f'{chars}2')
+        characters.append(f'{chars}3')
     characters.append('None')
     ccard =[]
     for i in range(0,9):
@@ -51,10 +71,10 @@ def search_cards():
         target = 9
         for j in range(0,9):
             best = similar(ccard[j],ls[i])
-            if best>0.58 :
+            if best>0.59 :
                 target = j
                 break
-        cards.append(card_reflect[f'{characters[target]}'])
+        cards.append((card_reflect[f'{characters[target]}'],star[i]))
     print(cards)
     return cards
 
@@ -96,9 +116,10 @@ def similar(image1,image2,size=(160,210)):
 
 
 api.get_screen_shot()
-img  = cv.imread("screenshot.png")
-x = 190
-y = 778
-img = img[x:118,y:85]
-checker = cv.imread("cards/disappear.png")
-print(calculate(checker,img))
+print(search_cards(['Anan','Bkornblume','Eternity']))
+# img  = cv.imread("screenshot.png")
+# x = 190
+# y = 778
+# img = img[x:118,y:85]
+# checker = cv.imread("cards/disappear.png")
+# print(calculate(checker,img))
