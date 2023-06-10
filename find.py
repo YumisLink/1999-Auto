@@ -1,53 +1,62 @@
 import os
 import cv2 as cv
-import api 
+import api
 import math
 from cards.aname import card_reflect
 
-def find(id:str):
-    api.get_screen_shot()
-    img  = cv.imread("screenshot.png")
+
+def read_screenshot():
+    img = cv.imread("screenshot.png")
+    return img
+
+
+def find(id: str, take=True):
+    if take:
+        api.get_screen_shot()
+    img = cv.imread("screenshot.png")
     img_terminal = cv.imread(f'{id}.png')
 
-    print(img_terminal.shape)
-    height, width,dep = img_terminal.shape
+    # print(img_terminal.shape)
+    height, width, dep = img_terminal.shape
 
-    result = cv.matchTemplate(img,img_terminal,cv.TM_SQDIFF_NORMED)
-
+    result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    lower_right = (upper_left[0]+width,upper_left[1]+height)
+    img = cv.imread("screenshot.png")
+    img2 = img[upper_left[1]:upper_left[1]+height,
+               upper_left[0]:upper_left[0] + width]
+    lower_right = (upper_left[0]+width, upper_left[1]+height)
 
-    print(cv.minMaxLoc(result))
-
-
-    avg = (int((upper_left[0]+lower_right[0])/2),int((upper_left[1]+lower_right[1])/2))
-
+    avg = (int((upper_left[0]+lower_right[0])/2),
+           int((upper_left[1]+lower_right[1])/2),
+           similar(img_terminal, img2))
+    # cv.imwrite(f'{id}2.png', img2)
     return avg
 
-def search_cards(character:list):
-    img  = cv.imread("screenshot.png")
+
+def search_cards(character: list):
+    img = cv.imread("screenshot.png")
     x = 687
     y = 520
     ls = []
     star = []
-    for i in range(0,7):
+    for i in range(0, 7):
         finally_y = y+i*154
 
         star_x = x-15
         s = 0
-        ls.append(img[x:x+180,finally_y:finally_y+140])
-        cut = img[star_x:star_x+1+3,finally_y+39:finally_y+40+5]
+        ls.append(img[x:x+180, finally_y:finally_y+140])
+        cut = img[star_x:star_x+1+3, finally_y+39:finally_y+40+5]
         # print(f'{i} 1:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 1
         # cv.imwrite(f'{i}star1.png',cut)
-        cut = img[star_x:star_x+1+3,finally_y+80:finally_y+80+5]
+        cut = img[star_x:star_x+1+3, finally_y+80:finally_y+80+5]
         # print(f'{i} 2:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 2
         # cv.imwrite(f'{i}star2.png',cut)
-        cut = img[star_x:star_x+1+3,finally_y+100:finally_y+100+5]
+        cut = img[star_x:star_x+1+3, finally_y+100:finally_y+100+5]
         # print(f'{i} 3:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 3
@@ -60,28 +69,23 @@ def search_cards(character:list):
         characters.append(f'{chars}2')
         characters.append(f'{chars}3')
     characters.append('None')
-    ccard =[]
-    for i in range(0,9):
+    ccard = []
+    for i in range(0, 9):
         ccard.append(cv.imread(f'cards/{characters[i]}.png'))
 
     cards = []
     # print(card_reflect['Anan1'])
-    for i in range(0,7):
+    for i in range(0, 7):
         best = 0
         target = 9
-        for j in range(0,9):
-            best = similar(ccard[j],ls[i])
-            if best>0.59 :
+        for j in range(0, 9):
+            best = similar(ccard[j], ls[i])
+            if best > 0.59:
                 target = j
                 break
-        cards.append((card_reflect[f'{characters[target]}'],star[i]))
+        cards.append((card_reflect[f'{characters[target]}'], star[i]))
     print(cards)
     return cards
-
-
-
-
-
 
 
 def calculate(image1, image2):
@@ -100,7 +104,8 @@ def calculate(image1, image2):
     degree = degree / len(hist1)
     return degree
 
-def similar(image1,image2,size=(160,210)):
+
+def similar(image1, image2, size=(160, 210)):
     image1 = cv.resize(image1, size)
     image2 = cv.resize(image2, size)
     sub_image1 = cv.split(image1)
@@ -112,11 +117,8 @@ def similar(image1,image2,size=(160,210)):
     return sub_data
 
 
-
-
-
-api.get_screen_shot()
-print(search_cards(['Anan','Bkornblume','Eternity']))
+# api.get_screen_shot()
+# print(search_cards(['Anan', 'Bkornblume', 'Eternity']))
 # img  = cv.imread("screenshot.png")
 # x = 190
 # y = 778

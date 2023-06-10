@@ -1,5 +1,5 @@
 from time import sleep
-from abd_command import touch
+from adb_command import touch
 from find import search_cards, calculate
 from cards.aname import buff, debuff, attack, limit
 from config.mappoint import clickcard
