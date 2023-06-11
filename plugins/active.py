@@ -31,12 +31,12 @@ def Auto_Active(level: str, type: str, times: str):
         raise RuntimeError('无法返回主菜单')
     adb.touch(f.find('imgs/enter_the_show'))
     print("正在进入主会场")
-    time.sleep(0.4)
+    time.sleep(1)
 
 
     adb.touch(f.find(IMAGE_RESOURCE))
     print("点击资源")
-    time.sleep(0.4)
+    time.sleep(1)
 
     level_click = f.find(level)
     print(level_click)
@@ -45,11 +45,11 @@ def Auto_Active(level: str, type: str, times: str):
         level_click = f.find(level)
     adb.touch(level_click)
     print(f"正在进入{level}")
-    time.sleep(0.5)
+    time.sleep(0.8)
 
     adb.touch(f.find(type))
     print(f"正在进入{type}")
-    time.sleep(0.5)
+    time.sleep(0.8)
 
 
 

@@ -33,11 +33,12 @@ def init():
 
 
 init()
-wilderness.wild_start()
-active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_6, active.REPLAY_2)
-active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_1)
-active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)
-mission.mission_start()
+# wilderness.wild_start()
+# active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_6, active.REPLAY_2)
+active.Auto_Active(active.IMAGE_HARVEST, active.LEVEL_6, active.REPLAY_3)
+active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_3)
+# mission.mission_start()
+
 
 
 # while(True):
