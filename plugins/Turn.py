@@ -3,7 +3,7 @@ from lib.adb_command import touch
 from lib.find import search_cards, calculate
 from cards.aname import buff, debuff, attack, limit
 from config.mappoint import clickcard
-import lib.api
+import lib.api as api
 import cv2 as cv
 
 
