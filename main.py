@@ -35,7 +35,7 @@ def init():
 init()
 # wilderness.wild_start()
 # active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_6, active.REPLAY_2)
-active.Auto_Active(active.IMAGE_HARVEST, active.LEVEL_6, active.REPLAY_3)
+active.Auto_Active(active.IMAGE_HARVEST, active.LEVEL_4, active.REPLAY_4)
 active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_3)
 # mission.mission_start()
 

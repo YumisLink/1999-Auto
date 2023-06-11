@@ -11,7 +11,7 @@ def ready():
         if (a[2] > 0.75):
             return True
         adb.touch((60, 60))
-        time.sleep(0.6)
+        time.sleep(1)
         if cnt >= 15:
             return False
 
