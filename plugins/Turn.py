@@ -1,9 +1,9 @@
 from time import sleep
-from adb_command import touch
-from find import search_cards, calculate
+from lib.adb_command import touch
+from lib.find import search_cards, calculate
 from cards.aname import buff, debuff, attack, limit
 from config.mappoint import clickcard
-import api
+import lib.api
 import cv2 as cv
 
 

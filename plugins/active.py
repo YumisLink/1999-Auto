@@ -1,12 +1,15 @@
-import mission_ready
-import find as f
+import plugins.mission_ready as mission_ready
+import lib.find as f
 import time
-import adb_command as adb
+import lib.adb_command as adb
 from config.config import data
+from cnocr import CnOcr
 
 IMAGE_RESOURCE = "imgs/active_resource"
-IMAGE_THE_POUSSIERE = 'imgs/THE_POUSSIERE'
-IMAGE_MINTAGE_AESTHEICS = 'imgs/MINTAGE_AESTHEICS'
+IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
+IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'
+IMAGE_HARVEST = 'imgs/level_harvest'
+IMAGE_ANALYSIS = 'imgs/level_analysis'
 
 REPLAY_1 = (0.63, 0.85)
 REPLAY_2 = (0.63, 0.76)
@@ -21,8 +24,6 @@ IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_REPLAY = 'imgs/enter_replay_mode2'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
-# IMAGE_HARVEST_PRIME =
-# IMAGE_ANALYSIS =
 
 
 def Auto_Active(level: str, type: str, times: str):
@@ -31,18 +32,32 @@ def Auto_Active(level: str, type: str, times: str):
     adb.touch(f.find('imgs/enter_the_show'))
     print("正在进入主会场")
     time.sleep(0.4)
+
+
     adb.touch(f.find(IMAGE_RESOURCE))
-    print("正在资源")
+    print("点击资源")
     time.sleep(0.4)
-    adb.touch(f.find(level))
+
+    level_click = f.find(level)
+    print(level_click)
+    if (level_click[2] < 0.6):
+        adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
+        level_click = f.find(level)
+    adb.touch(level_click)
     print(f"正在进入{level}")
     time.sleep(0.5)
+
     adb.touch(f.find(type))
     print(f"正在进入{type}")
     time.sleep(0.5)
+
+
+
     adb.touch(f.find(IMAGE_START))
     print(f"正在进入开始界面菜单")
-    time.sleep(2.5)
+    time.sleep(3.5)
+
+
     replay = f.find(IMAGE_REPLAY)
     print(replay)
     if replay[2] > 0.72:
@@ -56,13 +71,18 @@ def Auto_Active(level: str, type: str, times: str):
     adb.touch(f.find(IMAGE_START_REPLAY))
     print(f"开始复现")
     time.sleep(20)
+
+    ocr = CnOcr()
+
+
     while(True):
+        adb.touch((50,data['x']/2))
         time.sleep(3)
-        ans = f.find('imgs/VICTOR')
-        if ans[2] > 0.67:
-            adb.touch(ans)
-            break
-    time.sleep(3)
+        ans = ocr.ocr(f.find_image(IMAGE_START_REPLAY))
+        if (len(ans)>0):
+            if '复现' in ans[0]['text']:
+                break
+    # time.sleep(3)
 
 
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)

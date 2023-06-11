@@ -1,7 +1,5 @@
-import os
 import cv2 as cv
-import api
-import math
+import lib.api as api
 from cards.aname import card_reflect
 
 
@@ -9,6 +7,22 @@ def read_screenshot():
     img = cv.imread("screenshot.png")
     return img
 
+def find_image(id: str, take=True):
+    if take:
+        api.get_screen_shot()
+    img = cv.imread("screenshot.png")
+    img_terminal = cv.imread(f'{id}.png')
+
+    # print(img_terminal.shape)
+    height, width, dep = img_terminal.shape
+
+    result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
+
+    upper_left = cv.minMaxLoc(result)[2]
+    img = cv.imread("screenshot.png")
+    img2 = img[upper_left[1]:upper_left[1]+height,
+               upper_left[0]:upper_left[0] + width]
+    return img2
 
 def find(id: str, take=True):
     if take:

@@ -1,16 +1,19 @@
-import adb_command as adb
-import api
 from time import sleep
-from find import find, similar, search_cards, read_screenshot
+import lib.api as api
+import lib.find as f
 from config.config import data
 import cv2 as cv
 import os
-import active as play
+import plugins.active as active
+import plugins.wilderness as wilderness
+import plugins.mission as mission
+
+from cnocr import CnOcr
 
 
 def init():
     api.get_screen_shot()
-    img = read_screenshot()
+    img = cv.imread("screenshot.png")
     height, width, dep = img.shape
     data['x'] = height
     data['y'] = width
@@ -28,9 +31,13 @@ def init():
 # print(result)
 # print(1)
 
+
 init()
-play.Auto_Active(play.IMAGE_MINTAGE_AESTHEICS, play.LEVEL_6, play.REPLAY_2)
-play.Auto_Active(play.IMAGE_THE_POUSSIERE, play.LEVEL_6, play.REPLAY_1)
+wilderness.wild_start()
+active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_6, active.REPLAY_2)
+active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_1)
+active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)
+mission.mission_start()
 
 
 # while(True):
