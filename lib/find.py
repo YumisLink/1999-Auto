@@ -84,21 +84,23 @@ def search_cards(character: list):
         characters.append(f'{chars}3')
     characters.append('None')
     ccard = []
-    for i in range(0, 9):
-        ccard.append(cv.imread(f'cards/{characters[i]}.png'))
+    for i in characters:
+        ccard.append(cv.imread(f'cards/{i}.png'))
 
     cards = []
-    # print(card_reflect['Anan1'])
     for i in range(0, 7):
         best = 0
-        target = 9
-        for j in range(0, 9):
+        target = len(ccard)-1
+        sim_val = 0
+        for j in range(0,len(ccard)-1):
             best = similar(ccard[j], ls[i])
-            if best > 0.59:
+            # print(f'{i} and {characters[j]} sim = {best}')
+            if best > sim_val and best > 0.55:
                 target = j
-                break
+                sim_val = best
+                # break
         cards.append((card_reflect[f'{characters[target]}'], star[i]))
-    print(cards)
+    # print(cards)
     return cards
 
 

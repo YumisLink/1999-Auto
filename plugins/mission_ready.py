@@ -8,7 +8,8 @@ def ready():
     while(True):
         cnt += 1
         a = f.find('imgs/main_menu_checker')
-        if (a[2] > 0.75):
+        print(a)
+        if (a[2] > 0.7):
             return True
         adb.touch((60, 60))
         time.sleep(1)
@@ -17,7 +18,7 @@ def ready():
 
 def is_main_menu():
     a = f.find('imgs/main_menu_checker')
-    if (a[2] > 0.75):
+    if (a[2] > 0.7):
         return True
     return False
 

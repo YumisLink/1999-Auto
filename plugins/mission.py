@@ -34,14 +34,13 @@ def mission_start():
         print("完成所有任务")
         time.sleep(8)
         adb.touch(claim)
-    print(claim)
-    claim = f.find(IMAGE_CLAIM,False)
-    if (claim[2] > 0.7):
-        adb.touch(claim)
-        print("完成单个任务")
-        time.sleep(8)
-        adb.touch(claim)
-    print(claim)
+    else:
+        claim = f.find(IMAGE_CLAIM,False)
+        if (claim[2] > 0.7):
+            adb.touch(claim)
+            print("完成单个任务")
+            time.sleep(8)
+            adb.touch(claim)
 
     
     adb.touch(f.find(IMAGE_WEEK))
@@ -53,13 +52,13 @@ def mission_start():
         print("完成所有任务")
         time.sleep(2)
         adb.touch(claim)
-    claim = f.find(IMAGE_CLAIM,False)
-    print(claim)
-    if (claim[2] > 0.7):
-        adb.touch(claim)
-        print("完成单个任务")
-        time.sleep(1)
-        adb.touch(claim)
+    else:
+        claim = f.find(IMAGE_CLAIM,False)
+        if (claim[2] > 0.7):
+            adb.touch(claim)
+            print("完成单个任务")
+            time.sleep(1)
+            adb.touch(claim)
 
 
     # adb.touch(f.find(IMAGE_DAY,False))
