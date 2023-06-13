@@ -1,14 +1,15 @@
 import os
+import json
 
+with open('config.json', 'r') as f:
+    config = json.load(f)
+adb_head = config['adb_head']
+appid = 'com.shenlan.m.reverse1999' 
 
 def get_screen_shot():
-    Path = os.getcwd().replace("\\", '/')
-    # print(f"{Path}/screenshot.png")
-    os.system("adb shell screencap /sdcard/screenshot.png")
-    # print(f"{Path}/screenshot.png")
-    os.system(f"adb pull /sdcard/screenshot.png {Path}\screenshot.png")
-    # print(f"{Path}/screenshot.png")
-    ans = os.system("adb shell rm /sdcard/screenshot.png")
+    os.system(f'{adb_head} exec-out screencap -p > cache/screenshot.png')
+    return 'cache/screenshot.png'
 
-
-get_screen_shot()
+def write_config():
+    with open('config.json', 'w') as f:
+        json.dump(config, f, indent=4)
