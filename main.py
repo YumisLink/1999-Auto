@@ -17,13 +17,19 @@ import time
 
 from cnocr import CnOcr
 
+device = adb.is_device_connected()
+if not device:
+    print("Error: 未连接设备，请回看上面的错误信息")
+    exit(1)
+adb.is_game_on()
+api.get_screen_shot()
 
-def init():
-    api.get_screen_shot()
-    img = cv.imread("screenshot.png")
-    height, width, dep = img.shape
-    data['x'] = height
-    data['y'] = width
+#def init():
+#    api.get_screen_shot()
+#    img = cv.imread("cache/screenshot.png")
+#    height, width, dep = img.shape
+#    data['x'] = height
+#    data['y'] = width
 
 # 这里是mumu12的连接，如果你用的不是mumu12请去看看你的模拟器使用的是哪个adb调试端口。
 # t = Turn()
@@ -31,7 +37,8 @@ def init():
 # checkTurn(t)
 
 
-# img = cv.imread('screenshot.png')
+
+# img = cv.imread('cache/screenshot.png')
 # img_terminal = cv.imread('head.png')
 # result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 # print(result)
@@ -49,11 +56,11 @@ def init():
 # mission.mission_start()
 
 
-t = Turn.Turn()
-t.team = ['Eternity','Anan','Sotheby','Bkornblume']
+#t = Turn.Turn()
+#t.team = ['Eternity','Anan','Sotheby','Bkornblume']
 
 # print(f.search_cards(t.team))
-auto.checkTurn(t)
+#auto.checkTurn(t)
 
 
 # t.card = f.search_cards(t.team)

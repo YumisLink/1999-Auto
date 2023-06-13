@@ -4,13 +4,19 @@ from cards.aname import card_reflect
 
 
 def read_screenshot():
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/cache/screenshot.png")
     return img
 
 def find_image(id: str, take=True):
+    """
+    从id中匹配图片并返回其在截图中的样子
+    :param id:图片的id.
+    :param take:图片要不要现截.
+    :Return: img2:找到的图片
+    """
     if take:
         api.get_screen_shot()
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/screenshot.png")
     img_terminal = cv.imread(f'{id}.png')
 
     # print(img_terminal.shape)
@@ -19,15 +25,21 @@ def find_image(id: str, take=True):
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/screenshot.png")
     img2 = img[upper_left[1]:upper_left[1]+height,
                upper_left[0]:upper_left[0] + width]
     return img2
 
 def find(id: str, take=True):
+    """
+    从id中匹配图片并返回其在截图中的样子
+    :param id:图片的id.
+    :param take:图片要不要现截.
+    :Return: avg:找到的图片的中心点坐标，以及相似度
+    """
     if take:
         api.get_screen_shot()
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/screenshot.png")
     img_terminal = cv.imread(f'{id}.png')
 
     # print(img_terminal.shape)
@@ -36,7 +48,7 @@ def find(id: str, take=True):
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/screenshot.png")
     img2 = img[upper_left[1]:upper_left[1]+height,
                upper_left[0]:upper_left[0] + width]
     lower_right = (upper_left[0]+width, upper_left[1]+height)
@@ -49,7 +61,7 @@ def find(id: str, take=True):
 
 
 def search_cards(character: list):
-    img = cv.imread("screenshot.png")
+    img = cv.imread("cache/screenshot.png")
     x = 687
     y = 520
     ls = []
@@ -105,6 +117,12 @@ def search_cards(character: list):
 
 
 def calculate(image1, image2):
+    """
+    用灰度直方图计算图片相似度
+    :param image1:用来比较的图1.
+    :param image2:用来比较的图2.
+    :Return: degree:重合度
+    """
     # 灰度直方图算法
     # 计算单通道的直方图的相似值
     hist1 = cv.calcHist([image1], [0], None, [256], [0.0, 255.0])
@@ -122,6 +140,13 @@ def calculate(image1, image2):
 
 
 def similar(image1, image2, size=(160, 210)):
+    """
+    用三通道灰度直方相似度平均值计算图片相似度
+    :param image1:用来比较的图1.
+    :param image2:用来比较的图2.
+    :param size:重缩放的大小.
+    :Return: degree:重合度
+    """    
     image1 = cv.resize(image1, size)
     image2 = cv.resize(image2, size)
     sub_image1 = cv.split(image1)
@@ -135,7 +160,7 @@ def similar(image1, image2, size=(160, 210)):
 
 # api.get_screen_shot()
 # print(search_cards(['Anan', 'Bkornblume', 'Eternity']))
-# img  = cv.imread("screenshot.png")
+# img  = cv.imread("cache/screenshot.png")
 # x = 190
 # y = 778
 # img = img[x:118,y:85]
