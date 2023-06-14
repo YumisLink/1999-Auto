@@ -25,7 +25,6 @@ def find_image(id: str, take=True):
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    img = cv.imread("cache/screenshot.png")
     img2 = img[upper_left[1]:upper_left[1]+height,
                upper_left[0]:upper_left[0] + width]
     return img2
