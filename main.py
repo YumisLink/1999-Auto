@@ -11,6 +11,7 @@ import lib.api as api
 # import plugins.active as active
 # import plugins.wilderness as wilderness
 # import plugins.mission as mission
+#import plugins.path as path
 
 # from config.mappoint import clickcard
 # import time
@@ -27,14 +28,10 @@ def init():
     #检测游戏是否运行，如果没有运行就启动游戏
     adb.is_game_on()
     api.get_screen_shot()
-    # img = cv.imread("cache/screenshot.png")
-    # height, width, dep = img.shape
-    # data['x'] = height
-    # data['y'] = width
 
 
 init()
-
+#path.to_menu()
 # 这里是mumu12的连接，如果你用的不是mumu12请去看看你的模拟器使用的是哪个adb调试端口。
 # t = Turn()
 # t.team = ['Anan', 'Bkornblume', 'Eternity']

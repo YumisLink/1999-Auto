@@ -45,7 +45,7 @@ def is_game_on():
 def get_bluestacks_adb_port():
     # 读取bluestacks.conf文件
     bluestacks_adb_port_keys = user_config.get('bluestacks_adb_port_keys', [])
-    bluestacks_conf_path = user_config.get('bluestacks_conf_path', 'C:/ProgramData/BlueStacks_nxt_cn/bluestacks.conf')
+    bluestacks_conf_path = user_config.get('bluestacks_conf_path', 'C:/ProgramData/BlueStacks_nxt_cn/bluestacks.conf').strip()
     if not os.path.exists(bluestacks_conf_path):
         print(f'Error: 文件"{bluestacks_conf_path}"不存在')
     else:
@@ -144,9 +144,10 @@ def connect_bluestack():
         return device
             
 def is_device_connected():
+    adb_head = ''
     device=None
     # 检查adb路径是否存在
-    if 'adb_path' in user_config and os.path.exists(user_config['adb_path']):
+    if 'adb_path' in user_config and os.path.exists(user_config['adb_path'].strip()):
         adb_path = user_config['adb_path']
     else:
         project_path = os.path.abspath(os.path.dirname(__file__))

@@ -3,7 +3,6 @@ import time
 import cv2 as cv
 import lib.adb_command as adb
 import plugins.mission_ready as ready
-import cnocr
 
 
 IMAGE_MISSION = 'imgs/menu_mission'

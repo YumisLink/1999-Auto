@@ -74,7 +74,7 @@ def cut_find(template, x, y, w, h,take=True):
     screen = cv.imread("cache/screenshot.png")
     template_img = cv.imread(template)
     screen_cut = screen[y:y+h, x:x+w]
-    result = cv.matchTemplate(screen_cut , template_img, cv.TM_CCOEFF_NORMED)
+    result = cv.matchTemplate(screen_cut , template_img, cv.TM_SQDIFF_NORMED)
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
@@ -90,6 +90,25 @@ def cut_find(template, x, y, w, h,take=True):
         return None
 
 def cut_find_html(template, x2, y2, x1, y1,take=True):
+    """
+    识别截图中指定区域的目标坐标
+    :param template: 模板图片
+    :param x1: 指定区域的某个横坐标
+    :param y1: 指定区域的某个的纵坐标
+    :param x2: 指定区域的某个横坐标
+    :param y2: 指定区域的某个的纵坐标
+    :take: 是否截图
+    :return x,y:返回的坐标
+    """
+    #用于处理从 https://www.image-map.net 框出来的坐标
+    if x2<x1:
+        a=x2
+        x2=x1
+        x1=a
+    if y2<y1:
+        a=y2
+        y2=y1
+        y1=a
     w=x2-x1
     h=y2-y1
     cut_find(template, x1, y1, w, h,take)

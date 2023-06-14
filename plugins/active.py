@@ -3,7 +3,6 @@ import lib.find as f
 import time
 import lib.adb_command as adb
 from config.config import data
-from cnocr import CnOcr
 
 IMAGE_RESOURCE = "imgs/active_resource"
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'

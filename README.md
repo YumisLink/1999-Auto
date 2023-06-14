@@ -9,16 +9,7 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 ## 免责声明
 不会对您的任何损失负责，包括但不限于账号异常、收益限制、账号回收等
 
-## 2023-06-12  ver0.06
-   - 本次更新了决策一，决策一可以选择目前对于选择卡牌来说最优的做法（无法识别敌人。）
 
-## 2023-06-10  ver0.04
-   - 本次更新之后需要拥有cnocr才能运行
-   - 增加了圣遗物经验本和基建材料本的识别，并且如果找不到会进行拖动寻找。
-   - 增加了基建收材料(但是如果你还没有1%的时候就去收会出事情，不过还是会正常返回就是了)
-   - 增加了自动完成任务
-   - 修复了有关issue #2的内容     
-   在main.py中 调用active.Auto_Active(active.关卡名, active.第几关（这里还没有写滑动寻找关卡）, active.（复现次数）)
 
 # 使用说明
 得到本项目之后你需要保证你的电脑拥有以下的程序:
@@ -30,7 +21,7 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 
 在安装结束之后，请配置`config.json`  
 如果不是蓝叠模拟器hyper-v版，请直接将adb连接地址填入adb_adress中。  
-如果是蓝叠模拟器hyper-v版的话，请仿照[MAA的指南](https://maa.plus/docs/1.2-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.html#%E8%93%9D%E5%8F%A0%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%AF%8F%E6%AC%A1%E5%90%AF%E5%8A%A8%E7%AB%AF%E5%8F%A3%E5%8F%B7%E9%83%BD%E4%B8%8D%E4%B8%80%E6%A0%B7-hyper-v)，将转义后的***bluestacks.conf***路径填入  `bluestacks_conf_path`，将***"bst.instance.模拟器编号.status.adb_port"*** 填入`bluestacks_adb_port_keys`  
+如果是蓝叠模拟器hyper-v版的话，请仿照[MAA的指南](https://maa.plus/docs/1.2-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.html#%E8%93%9D%E5%8F%A0%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%AF%8F%E6%AC%A1%E5%90%AF%E5%8A%A8%E7%AB%AF%E5%8F%A3%E5%8F%B7%E9%83%BD%E4%B8%8D%E4%B8%80%E6%A0%B7-hyper-v)，将转义后的 `bluestacks.conf` 路径填入  `bluestacks_conf_path`，将 `"bst.instance.模拟器编号.status.adb_port"` 填入`bluestacks_adb_port_keys`  
 然后运行main.py即可(main.py现已自带adb初始化)  
 在main.py中 调用active.Auto_Active(active.关卡名, active.第几关（这里还没有写滑动寻找关卡）, active.（复现次数）)
 
@@ -54,6 +45,23 @@ decision_1:
 五星：柏林以东（Bkornblume）、十四行诗（Sonetto）、夏利（Charlie）、气球派对（BalloonParty）、玛蒂尔达（Matilda）
 
 
+# 更新日志
 
+## 2023-06-14  ver0.07
+   - 更新了adb初始化，添加了对蓝叠模拟器的支持，使用了PaddleOCR-json替代cnocr
+   - 添加了path相关api——支持从模拟器启动开始运行自动进入游戏主界面（前提是180s内能进去）
+   - 修复了adb部分的一些bug 
+   - 在api里新增了裁屏匹配函数
+
+## 2023-06-12  ver0.06
+   - 本次更新了决策一，决策一可以选择目前对于选择卡牌来说最优的做法（无法识别敌人。）
+
+## 2023-06-10  ver0.04
+   - 本次更新之后需要拥有cnocr才能运行
+   - 增加了圣遗物经验本和基建材料本的识别，并且如果找不到会进行拖动寻找。
+   - 增加了基建收材料(但是如果你还没有1%的时候就去收会出事情，不过还是会正常返回就是了)
+   - 增加了自动完成任务
+   - 修复了有关issue #2的内容     
+   在main.py中 调用active.Auto_Active(active.关卡名, active.第几关（这里还没有写滑动寻找关卡）, active.（复现次数）)
 ## 2023-06-10  ver0.02
    本次更新了自动复现的功能。（视频的话等之后一件完成一起发放。目前支持钱本和经验本。）
