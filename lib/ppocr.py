@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import cv2 as cv
 from lib.OCR.api import GetOcrApi
 #config_path是相对于PaddleOCR-json.exe的路径
 argument_cn = {'config_path': "models/config_chinese.txt"}
@@ -7,7 +8,10 @@ argument_en = {'config_path': "models/config_en.txt"}
 current_path = os.path.abspath(os.path.dirname(__file__))
 project_path = os.path.dirname(current_path)
 exe_path=current_path+"\OCR\PaddleOCR-json.exe"
-print(exe_path)
+#print(exe_path)
+#文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
+
+#ocr = GetOcrApi(exe_path, argument_cn)
 
 def ocr_cn(target):
     target_path =os.path.join(project_path, target.replace('/', '\\'))
@@ -37,13 +41,13 @@ def ocr_xy(target,text='',cn=True):
     return res
 
 def ocr_bytes_cn(imagebytes):
-    ocr = GetOcrApi(exe_path, argument_cn)
-    res = ocr.run_bytes(imagebytes)
+    cv.imwrite('cache/ocr_bytes_cn.png', imagebytes)
+    res=ocr_cn('cache/ocr_bytes_cn.png')
     return res
 
 def ocr_bytes_en(imagebytes):
-    ocr2 = GetOcrApi(exe_path, argument_en)
-    res = ocr2.run_bytes(imagebytes)
+    cv.imwrite('cache/ocr_bytes_en.png', imagebytes)
+    res=ocr_cn('cache/ocr_bytes_en.png')
     return res
 
 def ocr_bytes_xy(imagebytes,text='',cn=True):

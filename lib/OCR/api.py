@@ -1,6 +1,7 @@
 # 调用 PaddleOCR-json.exe 的 Python Api
 # 项目主页：
 # https://github.com/hiroi-sora/PaddleOCR-json
+# 来自：https://github.com/hiroi-sora/PaddleOCR-json/blob/main/api/python/PPOCR_api.py
 
 import os
 import socket # 套接字

@@ -3,7 +3,7 @@ import time
 import cv2 as cv
 import lib.adb_command as adb
 import plugins.mission_ready as ready
-
+import lib.ppocr as pp
 
 IMAGE_MISSION = 'imgs/menu_mission'
 IMAGE_CLAIM_ALL = 'imgs/mission_claim_all'
@@ -22,8 +22,7 @@ def mission_start():
 
     time.sleep(1.5)
     day = f.find_image(IMAGE_DAY_FIND)
-    ocr = cnocr.CnOcr()
-    if '每日' not in ocr.ocr(day)[0]['text']:
+    if '每日' not in pp.ocr_bytes_xy(day,'每日'):
         adb.touch(f.find(IMAGE_DAY))
         print("点击每日任务")
         time.sleep(0.5)
