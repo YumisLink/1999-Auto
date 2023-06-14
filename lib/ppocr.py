@@ -15,6 +15,13 @@ def ocr_cn(target):
     res = ocr.run(target_path)
     return res
 
+def ocr_en(target):
+    target_path =os.path.join(project_path, target.replace('/', '\\'))
+    ocr2 = GetOcrApi(exe_path, argument_en)
+    res = ocr2.run(target_path)
+
+    return res
+
 def ocr_xy(target,text='',cn=True):
     """
     识别target图片中包含text的区域，返回中心坐标
@@ -29,12 +36,28 @@ def ocr_xy(target,text='',cn=True):
         res=match_text_area(ocr_en(target), text)
     return res
 
+def ocr_bytes_cn(imagebytes):
+    ocr = GetOcrApi(exe_path, argument_cn)
+    res = ocr.run_bytes(imagebytes)
+    return res
 
-def ocr_en(target):
-    target_path =os.path.join(project_path, target.replace('/', '\\'))
+def ocr_bytes_en(imagebytes):
     ocr2 = GetOcrApi(exe_path, argument_en)
-    res = ocr2.run(target_path)
+    res = ocr2.run_bytes(imagebytes)
+    return res
 
+def ocr_bytes_xy(imagebytes,text='',cn=True):
+    """
+    识别target图片中包含text的区域，返回中心坐标
+    :param res:返回的字典.
+    :param text:预期文本.
+    :param cn:是否使用中文ocr.
+    :Return: 中心坐标和匹配度.
+    """
+    if cn:
+        res=match_text_area(ocr_bytes_cn(imagebytes), text)
+    else:
+        res=match_text_area(ocr_bytes_en(imagebytes), text)
     return res
 
 def match_text_area(res, text):
