@@ -12,6 +12,7 @@ IMAGE_BASE_CHECKER = 'imgs/base_checker'
 
 
 def wild_start():
+    """领不休荒原产物"""
     if not ready.ready():   
         raise RuntimeError('无法返回主页面')
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))

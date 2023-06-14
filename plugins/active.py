@@ -27,6 +27,12 @@ IMAGE_START_REPLAY = 'imgs/start_replay'
 
 
 def Auto_Active(level: str, type: str, times: str):
+    """
+    从id中匹配图片并返回其在截图中的样子
+    :param level:第几关.
+    :param type:关卡类型.
+    :param times:复现次数.
+    """    
     if not mission_ready.ready():
         raise RuntimeError('无法返回主菜单')
     adb.touch(f.find('imgs/enter_the_show'))
