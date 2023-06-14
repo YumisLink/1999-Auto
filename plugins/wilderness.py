@@ -8,7 +8,7 @@ IMAGE_BASE_WILDERNESS = 'imgs/wilderness'
 IMAGE_BASE_FRIEND = 'imgs/base_friend'
 IMAGE_BASE_MONEY = 'imgs/base_money'
 
-IMAGEA_BASE_CHECKER = 'imgs/base_checker'
+IMAGE_BASE_CHECKER = 'imgs/base_checker'
 
 
 def wild_start():
@@ -17,7 +17,7 @@ def wild_start():
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     while(True):
         time.sleep(5)
-        if (f.find(IMAGEA_BASE_CHECKER)[2]>0.7):
+        if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
             break
     adb.touch(f.find(IMAGE_BASE_EXP))
     time.sleep(0.1)

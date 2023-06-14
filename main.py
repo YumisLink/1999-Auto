@@ -1,35 +1,39 @@
-from time import sleep
-import lib.api as api
-import lib.find as f
 from config.config import data
-import cv2 as cv
-import os
 import lib.adb_command as adb
-import plugins.Turn as Turn
-import plugins.auto_battle as auto
-import decisions.decision_1 as de1
-import plugins.active as active
-import plugins.wilderness as wilderness
-import plugins.mission as mission
+import lib.api as api
+# import cv2 as cv
+# from time import sleep
+# import lib.find as f
+# import os
+# import plugins.Turn as Turn
+# import plugins.auto_battle as auto
+# import decisions.decision_1 as de1
+# import plugins.active as active
+# import plugins.wilderness as wilderness
+# import plugins.mission as mission
 
-from config.mappoint import clickcard
-import time
+# from config.mappoint import clickcard
+# import time
 
-from cnocr import CnOcr
+# from cnocr import CnOcr
 
-device = adb.is_device_connected()
-if not device:
-    print("Error: 未连接设备，请回看上面的错误信息")
-    exit(1)
-adb.is_game_on()
-api.get_screen_shot()
 
-#def init():
-#    api.get_screen_shot()
-#    img = cv.imread("cache/screenshot.png")
-#    height, width, dep = img.shape
-#    data['x'] = height
-#    data['y'] = width
+
+
+def init():
+    device = adb.is_device_connected()
+    if not device:
+        print("Error: 未连接设备，请回看上面的错误信息")
+        exit(1)
+    adb.is_game_on()
+    api.get_screen_shot()
+    # img = cv.imread("cache/screenshot.png")
+    # height, width, dep = img.shape
+    # data['x'] = height
+    # data['y'] = width
+
+
+init()
 
 # 这里是mumu12的连接，如果你用的不是mumu12请去看看你的模拟器使用的是哪个adb调试端口。
 # t = Turn()
@@ -38,16 +42,9 @@ api.get_screen_shot()
 
 
 
-# img = cv.imread('cache/screenshot.png')
-# img_terminal = cv.imread('head.png')
-# result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
-# print(result)
-# print(1)
 
 
 
-# os.system("adb connect 127.0.0.1:16384")
-# init()
 
 # wilderness.wild_start()
 # active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_5, active.REPLAY_2)
@@ -63,15 +60,3 @@ api.get_screen_shot()
 #auto.checkTurn(t)
 
 
-# t.card = f.search_cards(t.team)
-# t.buff = 1
-# print(t.card)
-# d = de1.normal_cards_upgrade(t)
-# print(d[0])
-# adb.touch(clickcard[d[0][0]])
-# time.sleep(d[0][1])
-# print(d[1])
-# adb.touch(clickcard[d[1][0]])
-# time.sleep(d[1][1])
-# print(d[2])
-# adb.touch(clickcard[d[2][0]])
