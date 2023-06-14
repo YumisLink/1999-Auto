@@ -25,7 +25,7 @@ def ocr_en(target):
 def ocr_xy(target,text='',cn=True):
     """
     识别target图片中包含text的区域，返回中心坐标
-    :param res:返回的字典.
+    :param target:需要识别图片的路径.
     :param text:预期文本.
     :param cn:是否使用中文ocr.
     :Return: 中心坐标和匹配度.
@@ -49,7 +49,7 @@ def ocr_bytes_en(imagebytes):
 def ocr_bytes_xy(imagebytes,text='',cn=True):
     """
     识别target图片中包含text的区域，返回中心坐标
-    :param res:返回的字典.
+    :param imagebytes:需要识别的图片字节流.
     :param text:预期文本.
     :param cn:是否使用中文ocr.
     :Return: 中心坐标和匹配度.
