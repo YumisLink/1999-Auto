@@ -14,6 +14,7 @@ IMAGE_DAY = 'imgs/mission_day_disable'
 IMAGE_WEEK = 'imgs/mission_week'
 
 def mission_start():
+    """领取任务奖励"""
     if not ready.ready():   
         raise RuntimeError('无法返回主页面')
     adb.touch(f.find(IMAGE_MISSION,False))

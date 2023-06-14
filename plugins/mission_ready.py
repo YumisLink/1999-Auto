@@ -17,6 +17,7 @@ def ready():
             return False
 
 def is_main_menu():
+    """检查是否在主页"""
     a = f.find('imgs/main_menu_checker')
     if (a[2] > 0.7):
         return True

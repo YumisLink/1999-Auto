@@ -16,13 +16,13 @@ from config.mappoint import clickcard
 import time
 
 from cnocr import CnOcr
-
+#adb初始化
 device = adb.is_device_connected()
 if not device:
     print("Error: 未连接设备，请回看上面的错误信息")
     exit(1)
+#检测游戏是否运行，如果没有运行就启动游戏
 adb.is_game_on()
-api.get_screen_shot()
 
 #def init():
 #    api.get_screen_shot()
