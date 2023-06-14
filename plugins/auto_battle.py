@@ -13,7 +13,7 @@ from decisions.decision_1 import normal_cards_upgrade
 def startTurn(t: Turn):
     api.get_screen_shot()
     t.card = search_cards(t.team)
-    if (t.card[6][0] == '无卡牌' and t.card[3][0] == '无卡牌'):
+    if (t.card[6][0] == '无卡牌' and t.card[1][0] == '无卡牌'):
         return
     print("回合开始")
     t.debuff -= 1
@@ -37,7 +37,7 @@ def checkTurn(t: Turn):
     while(True):
         api.get_screen_shot()
         ans = search_cards(t.team)
-        if (ans[6][0] != '无卡牌' and ans[3][0] != '无卡牌'):
+        if (ans[6][0] != '无卡牌' and ans[1][0] != '无卡牌'):
             sleep(1.5)
             startTurn(t)
         print("休息中", t.debuff, t.buff)

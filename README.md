@@ -40,8 +40,10 @@ decision_1:
 目前只有这样。
 
 目前对于角色卡牌的识别已经支持以下的角色：
+
 六星：温妮弗雷德（Eternity）、兔毛手袋（MedicinePocket）、新巴别塔（NewBabel）、泥鯭的士（Anan）、新巴别塔（NewBabel）、苏芙比（Sotheby）、槲寄生（Druvis）、远旅（Voyager）、未锈铠（Knight）、红弩箭（Lilya）、星锑（Regulus）、百夫长（Centurion）
-五星：柏林以东（Bkornblume）、十四行诗（Sonetto）、夏利（Charlie）、气球派对（BalloonParty）、玛蒂尔达（Matilda）
+
+五星：柏林以东（Bkornblume）、十四行诗（Sonetto）、夏利（Charlie）、气球派对（BalloonParty）、玛蒂尔达（Matilda）、玛丽莲（Sweetheart）、五色月（Satsuki）、婴儿蓝（BabyBlue）、讣告人（Necrologist）、帕米埃（Dikke）、喀嚓喀嚓（Click）、X（X）、坦南特（Tennant）
 
 
 # 更新日志
