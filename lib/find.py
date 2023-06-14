@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np 
 import lib.api as api
 from cards.aname import card_reflect
 
@@ -23,7 +24,6 @@ def find_image(id: str, take=True):
     height, width, dep = img_terminal.shape
 
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
-
     upper_left = cv.minMaxLoc(result)[2]
     img2 = img[upper_left[1]:upper_left[1]+height,
                upper_left[0]:upper_left[0] + width]
@@ -31,7 +31,7 @@ def find_image(id: str, take=True):
 
 def find(id: str, take=True):
     """
-    从id中匹配图片并返回其在截图中的样子
+    从id中匹配图片并返回其中心点的xy坐标及匹配度
     :param id:图片的id.
     :param take:图片要不要现截.
     :Return: avg:找到的图片的中心点坐标，以及相似度
@@ -47,7 +47,6 @@ def find(id: str, take=True):
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    img = cv.imread("cache/screenshot.png")
     img2 = img[upper_left[1]:upper_left[1]+height,
                upper_left[0]:upper_left[0] + width]
     lower_right = (upper_left[0]+width, upper_left[1]+height)
@@ -55,8 +54,45 @@ def find(id: str, take=True):
     avg = (int((upper_left[0]+lower_right[0])/2),
            int((upper_left[1]+lower_right[1])/2),
            similar(img_terminal, img2))
-    # cv.imwrite(f'{id}2.png', img2)
+    # cv.imwrite(f'cache/{id}2.png', img2)
     return avg
+
+#裁屏匹配
+def cut_find(template, x, y, w, h,take=True):
+    """
+    识别截图中指定区域的目标坐标
+    :param template: 模板图片
+    :param x: 指定区域左上角的横坐标
+    :param y: 指定区域左上角的纵坐标
+    :param w: 指定区域的宽度
+    :param h: 指定区域的高度
+    :take: 是否截图
+    :return x,y:返回的坐标
+    """
+    if take:
+        api.get_screen_shot()
+    screen = cv.imread("cache/screenshot.png")
+    template_img = cv.imread(template)
+    screen_cut = screen[y:y+h, x:x+w]
+    result = cv.matchTemplate(screen_cut , template_img, cv.TM_CCOEFF_NORMED)
+    threshold = 0.6  # 阈值
+    loc = np.where(result >= threshold)
+    if len(loc[0]) > 0:
+        # 在匹配结果上画框
+        for pt in zip(*loc[::-1]):
+            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        cv.imwrite('cache/result2.png', screen_cut)
+        x=loc[1][0]+x 
+        y=loc[0][0]+y
+        return x, y
+    else:
+        print('匹配度过低'+ str(result))
+        return None
+
+def cut_find_html(template, x2, y2, x1, y1,take=True):
+    w=x2-x1
+    h=y2-y1
+    cut_find(template, x1, y1, w, h,take)
 
 
 def search_cards(character: list):
