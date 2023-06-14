@@ -17,7 +17,6 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 
 在运行之前需要使用adb与模拟器链接具体代码在main.py,并且拥有以下的库：
 - opencv-python
-- cnocr
 
 在安装结束之后，请配置`config.json`  
 如果不是蓝叠模拟器hyper-v版，请直接将adb连接地址填入adb_adress中。  
