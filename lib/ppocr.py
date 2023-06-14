@@ -28,7 +28,7 @@ def ocr_xy(target,text='',cn=True):
     :param target:需要识别图片的路径.
     :param text:预期文本.
     :param cn:是否使用中文ocr.
-    :Return: 中心坐标和匹配度.
+    :Return: 中心坐标、识别文本和匹配度.
     """
     if cn:
         res=match_text_area(ocr_cn(target), text)
@@ -52,7 +52,7 @@ def ocr_bytes_xy(imagebytes,text='',cn=True):
     :param imagebytes:需要识别的图片字节流.
     :param text:预期文本.
     :param cn:是否使用中文ocr.
-    :Return: 中心坐标和匹配度.
+    :Return: 中心坐标、识别文本和匹配度.
     """
     if cn:
         res=match_text_area(ocr_bytes_cn(imagebytes), text)
@@ -65,22 +65,24 @@ def match_text_area(res, text):
     在返回中筛选出包含text的区域，如果有多个区域，选择最接近中心的区域 返回其中心坐标和相似度
     :param res:返回的字典.
     :param text:预期文本.
-    :Return: 中心坐标和相似度.
+    :Return: 中心坐标、识别文本和匹配度.
     """
     if res['code'] != 100:
         print(res)
-        return None, None
+        return None, None, None
     match_areas = []
     similarities = []
+    texts = []
     for item in res['data']:
         if text in item['text']:
             match_areas.append(item['box'])
             similarities.append(item['score'])
+            texts.append(item['text'])
     if len(match_areas) == 0:
-        return None, None
+        return None, None, None
     if len(match_areas) == 1:
         center = np.mean(match_areas[0], axis=0)
-        return center.tolist(), similarities[0]
+        return center.tolist(), similarities[0], texts[0]
     # 如果有多个匹配区域，选择最接近中心的区域
     centers = []
     for area in match_areas:
@@ -89,4 +91,4 @@ def match_text_area(res, text):
     centers = np.array(centers)
     distances = np.linalg.norm(centers - np.array(res['image_size']) / 2, axis=1)
     min_idx = np.argmin(distances)
-    return centers[min_idx].tolist(), similarities[min_idx]
+    return centers[min_idx].tolist(), texts[min_idx], similarities[min_idx]
