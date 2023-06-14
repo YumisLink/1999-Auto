@@ -64,6 +64,7 @@ name_to_english= {
     '红弩箭' : 'Lilya',
     '星锑' : 'Regulus',
     '百夫长' : 'Centurion',
+    '柏林以东':'Bkornblume',
     '十四行诗' : 'Sonetto',
     '夏利' : 'Charlie',
     '气球派对' : 'BalloonParty',
