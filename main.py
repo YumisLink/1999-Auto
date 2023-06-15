@@ -36,9 +36,9 @@ init()
 # 自动收菜把下面的注释取消掉就可以运行：
 
 # wilderness.wild_start()
-active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_5, active.REPLAY_2)  # 圣遗物狗粮本 等级5 复现2
-active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_2)# 钱本 等级6 复现2
-active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)# 经验本 等级6 复现2
+# active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_5, active.REPLAY_2)  # 圣遗物狗粮本 等级5 复现2
+# active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_2)# 钱本 等级6 复现2
+# active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)# 经验本 等级6 复现2
 # mission.mission_start()
 
 
