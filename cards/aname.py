@@ -101,7 +101,6 @@ name_to_english= {
     '婴儿蓝': 'Baby Blue',
     '讣告人': 'Necrologist',
     '帕米埃': 'Dikke',
-
 }
 counter = ['弥合协奏',]#反制
 buff=['百合灵水',"劝勉·其九","一束星河","逝者们的低语"]#增益

@@ -16,13 +16,16 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 - Python3
 
 在运行之前需要使用adb与模拟器链接具体代码在main.py,并且拥有以下的库：
-- opencv-python
+- opencv-python(在命令行运行 pip install opencv-python)
 
 在安装结束之后，请配置`config.json`  
-如果不是蓝叠模拟器hyper-v版，请直接将adb连接地址填入adb_adress中。  
+
+如果不是蓝叠模拟器hyper-v版，请直接将adb连接地址填入adb_adress中。 （mumu12：16384） （mumu：7555）其他的在模拟器中查询。或者去搜索。
 如果是蓝叠模拟器hyper-v版的话，请仿照[MAA的指南](https://maa.plus/docs/1.2-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.html#%E8%93%9D%E5%8F%A0%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%AF%8F%E6%AC%A1%E5%90%AF%E5%8A%A8%E7%AB%AF%E5%8F%A3%E5%8F%B7%E9%83%BD%E4%B8%8D%E4%B8%80%E6%A0%B7-hyper-v)，将转义后的 `bluestacks.conf` 路径填入  `bluestacks_conf_path`，将 `"bst.instance.模拟器编号.status.adb_port"` 填入`bluestacks_adb_port_keys`  
 然后运行main.py即可(main.py现已自带adb初始化)  
-在main.py中 调用active.Auto_Active(active.关卡名, active.第几关（这里还没有写滑动寻找关卡）, active.（复现次数）)
+
+
+在main.py中（在下面可以看到一些相关调用的介绍，然后取消注释掉你想要的功能。 不需要用的时候就注释。
 
 
 ## 代码介绍

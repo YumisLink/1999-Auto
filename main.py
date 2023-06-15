@@ -1,14 +1,14 @@
 from config.config import data,check_path
 import lib.adb_command as adb
 import lib.api as api
-# import cv2 as cv
-# from time import sleep
+import plugins.active as active
 import lib.find as f
-# import os
 import plugins.Turn as Turn
 import plugins.auto_battle as auto
+# import cv2 as cv
+# from time import sleep
+# import os
 # import decisions.decision_1 as de1
-# import plugins.active as active
 # import plugins.wilderness as wilderness
 # import plugins.mission as mission
 #import plugins.path as path
@@ -32,27 +32,30 @@ def init():
 
 
 init()
-t = Turn.Turn()
-t.team = ['Eternity','Anan','Sotheby','Bkornblume']
 
-print(f.search_cards(t.team))
-auto.checkTurn(t)
-#path.to_menu()
-# 这里是mumu12的连接，如果你用的不是mumu12请去看看你的模拟器使用的是哪个adb调试端口。
-# t = Turn()
-# t.team = ['Anan', 'Bkornblume', 'Eternity']
-
-
-
-
-
-
+# 自动收菜把下面的注释取消掉就可以运行：
 
 # wilderness.wild_start()
-# active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_5, active.REPLAY_2)
-# active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_2)
-# active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)
+active.Auto_Active(active.IMAGE_ANALYSIS, active.LEVEL_5, active.REPLAY_2)  # 圣遗物狗粮本 等级5 复现2
+active.Auto_Active(active.IMAGE_MINTAGE_AESTHETICS, active.LEVEL_6, active.REPLAY_2)# 钱本 等级6 复现2
+active.Auto_Active(active.IMAGE_THE_POUSSIERE, active.LEVEL_6, active.REPLAY_2)# 经验本 等级6 复现2
 # mission.mission_start()
+
+
+
+# 自动战斗：
+
+
+# t = Turn.Turn()
+# t.team = ['Eternity','Anan','Sotheby','Bkornblume']   #这里是你的角色名，请去 cards/aname.py 对照英文填写，可以多写把你常用的角色加入。
+# auto.checkTurn(t)
+
+
+
+
+
+
+
 
 
 

@@ -6,17 +6,28 @@ from config.config import data
 
 IMAGE_RESOURCE = "imgs/active_resource"
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
+"""经验"""
 IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'
+"""钱"""
 IMAGE_HARVEST = 'imgs/level_harvest'
+"""基建"""
 IMAGE_ANALYSIS = 'imgs/level_analysis'
+"""圣遗物狗粮"""
 
 REPLAY_1 = (0.63, 0.85)
+"""复现1次"""
 REPLAY_2 = (0.63, 0.76)
+"""复现2次"""
 REPLAY_3 = (0.63, 0.68)
+"""复现3次"""
 REPLAY_4 = (0.63, 0.59)
+"""复现4次"""
 LEVEL_4 = 'imgs/4'
+"""第4关"""
 LEVEL_5 = 'imgs/5'
+"""第5关"""
 LEVEL_6 = 'imgs/6'
+"""第6关"""
 
 
 IMAGE_START = "imgs/START_ACTIVE"
