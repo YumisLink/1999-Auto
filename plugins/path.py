@@ -8,7 +8,7 @@ template_imgs = {
     'title': {'img': 'imgs/title.png', 'pos': (462,285,1129,525)},#html坐标格式(以下简称html);标题界面
     #'policy': {'img': 'imgs/agree.png', 'pos': (600, 430, 200, 100)},
     'update': {'img': 'imgs/download.png', 'pos': (821,542,1193,618)},
-    'alert': {'img': 'imgs/alert_close.png', 'pos': (1217,135,1124,72)},#html;公告界面的关闭
+    'alert': {'img': 'imgs/alert_close.png', 'pos': (1215,1,1600,269)},#html;公告界面的关闭
     'got':{'img': 'imgs/got.png', 'pos': (757,38,847,131)},#html;获得物品界面
     'checkin':{'img': 'imgs/checkin.png', 'pos': (995,124,903,45)},#html;每日初次登录的签到界面
     'login': {'img': 'imgs/login.png', 'pos': (590, 510, 200, 50)},#html
@@ -87,13 +87,13 @@ def to_menu():
             #获得界面瞎点一下(不点到物品就行)
             adb.touch([799,247])
             time.sleep(1)
-        elif status == 'signin':
+        elif status == 'checkin':
             #签到界面瞎点一下
-            adb.touch([115,83])
+            adb.touch([103,73])
             time.sleep(1)
         elif status == 'alert':
             #能关的界面点关闭
-            xy=f.cut_find_html('imgs/alert_close.png',1217,135,1124,72)
+            xy=f.cut_find_html('imgs/alert_close',1215,1,1600,269,False)
             adb.touch(xy)
             time.sleep(1)
         elif status == 'update':
@@ -120,8 +120,8 @@ def to_menu():
         elif status == 'confirm':
             print('action:confirm')
             #管他是啥呢，确认就完了！
-            adb.touch(f.cut_find_html('imgs/confirm.png',612,458,1596,724))
-            cv.imwrite('cache/confirm.png', 'cache/screenshot.png')
+            adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724,False))
+            cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
             print('已将确认内容保存至cache/confirm.png')
             time.sleep(1)
         

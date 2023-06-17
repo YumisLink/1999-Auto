@@ -1,7 +1,7 @@
 from config.config import data
 import lib.adb_command as adb
 import lib.api as api
-# import cv2 as cv
+import cv2 as cv
 import time 
 import lib.find as f
 # import os
@@ -9,27 +9,43 @@ import lib.find as f
 # import plugins.auto_battle as auto
 # import decisions.decision_1 as de1
 import plugins.active as active
-# import plugins.wilderness as wilderness
-# import plugins.mission as mission
+import plugins.wilderness as wilderness
+import plugins.mission as mission
+
 import plugins.path as path
-import config.config as config
-import lib.ppocr as pp
-"""
+#import config.config as config
+#import lib.ppocr as pp
+
 print('开始初始化adb')
 device = adb.is_device_connected()
 if not device:
     print("Error: 未连接设备，请回看上面的错误信息")
-    exit(1)
+    exit(1) 
 #检测游戏是否运行，如果没有运行就启动游戏
 adb.is_game_on()
 #进入主菜单
 path.to_menu()
-"""
-print(pp.ocr_cn('cache/screenshot.png'))
-#active.Auto_Active(LEVEL_6,)
-#adb.touch(f.find('imgs/enter_the_show'))
-#print("正在进入主会场")
-#time.sleep(1)
+# print(pp.ocr_cn('cache/screenshot.png'))
+# #active.Auto_Active(LEVEL_6,)
+# adb.touch(f.find('imgs/enter_the_show'))
+# print("正在进入主会场")
+# time.sleep(1)
+
+# mission.mission_start()
+# wilderness.wild_start()
+# img = cv.imread('cache/huoli.png')
+# gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# res, img2 = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+# cv.imwrite('cache/binary.png', img2)
+# print(pp.ocr_xy('cache/binary.png','12'))
+
+
+
+
+
+
+
+
 
 """
 def match_icon(image, icon):

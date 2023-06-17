@@ -61,7 +61,7 @@ def find(id: str, take=True):
 def cut_find(template, x, y, w, h,take=True):
     """
     识别截图中指定区域的目标坐标
-    :param template: 模板图片
+    :param template: 模板图片(省略.png)
     :param x: 指定区域左上角的横坐标
     :param y: 指定区域左上角的纵坐标
     :param w: 指定区域的宽度
@@ -72,19 +72,19 @@ def cut_find(template, x, y, w, h,take=True):
     if take:
         api.get_screen_shot()
     screen = cv.imread("cache/screenshot.png")
-    template_img = cv.imread(template)
+    template_img = cv.imread(f'{template}.png')
     screen_cut = screen[y:y+h, x:x+w]
-    result = cv.matchTemplate(screen_cut , template_img, cv.TM_SQDIFF_NORMED)
+    result = cv.matchTemplate(screen_cut , template_img, cv.TM_CCOEFF_NORMED)
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
         # 在匹配结果上画框
         for pt in zip(*loc[::-1]):
-            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2) 
         cv.imwrite('cache/result2.png', screen_cut)
         x=loc[1][0]+x 
         y=loc[0][0]+y
-        return x, y
+        return x,y
     else:
         print('匹配度过低'+ str(result))
         return None
@@ -92,7 +92,7 @@ def cut_find(template, x, y, w, h,take=True):
 def cut_find_html(template, x2, y2, x1, y1,take=True):
     """
     识别截图中指定区域的目标坐标
-    :param template: 模板图片
+    :param template: 模板图片(省略.png)
     :param x1: 指定区域的某个横坐标
     :param y1: 指定区域的某个的纵坐标
     :param x2: 指定区域的某个横坐标
@@ -111,7 +111,8 @@ def cut_find_html(template, x2, y2, x1, y1,take=True):
         y1=a
     w=x2-x1
     h=y2-y1
-    cut_find(template, x1, y1, w, h,take)
+    out= cut_find(template, x1, y1, w, h,take)
+    return out
 
 
 def search_cards(character: list):
@@ -179,8 +180,8 @@ def calculate(image1, image2):
     """
     # 灰度直方图算法
     # 计算单通道的直方图的相似值
-    hist1 = cv.calcHist([image1], [0], None, [256], [0.0, 255.0])
-    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0])
+    hist1 = cv.calcHist([image1], [0], None, [256], [0.0, 255.0]) # type: ignore 文档写的浮点数 https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
+    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0]) # type: ignore
     # 计算直方图的重合度
     degree = 0
     for i in range(len(hist1)):

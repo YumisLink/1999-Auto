@@ -3,6 +3,7 @@ import lib.find as f
 import time
 import lib.adb_command as adb
 from config.config import data
+import lib.ppocr as pp
 
 IMAGE_RESOURCE = "imgs/active_resource"
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
@@ -88,15 +89,12 @@ def Auto_Active(level: str, type: str, times: str):
     print(f"开始复现")
     time.sleep(20)
 
-    ocr = CnOcr()
-
-
     while(True):
         adb.touch((50,data['x']/2))
         time.sleep(3)
-        ans = ocr.ocr(f.find_image(IMAGE_START_REPLAY))
+        ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
         if (len(ans)>0):
-            if '复现' in ans[0]['text']:
+            if ans[2] is not None and '复现' in ans[2]:
                 break
     # time.sleep(3)
 

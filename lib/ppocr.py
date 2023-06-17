@@ -11,11 +11,13 @@ exe_path=current_path+"\OCR\PaddleOCR-json.exe"
 #print(exe_path)
 #文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
 
-#ocr = GetOcrApi(exe_path, argument_cn)
+#启动时初始化
+ocr = GetOcrApi(exe_path, argument_cn)
+#ocr2 = GetOcrApi(exe_path, argument_en)
 
 def ocr_cn(target):
     target_path =os.path.join(project_path, target.replace('/', '\\'))
-    ocr = GetOcrApi(exe_path, argument_cn)
+    #ocr = GetOcrApi(exe_path, argument_cn)
     res = ocr.run(target_path)
     return res
 
@@ -64,16 +66,18 @@ def ocr_bytes_xy(imagebytes,text='',cn=True):
         res=match_text_area(ocr_bytes_en(imagebytes), text)
     return res
 
+
+
 def match_text_area(res, text):
     """
     在返回中筛选出包含text的区域，如果有多个区域，选择最接近中心的区域 返回其中心坐标和相似度
     :param res:返回的字典.
     :param text:预期文本.
-    :Return: 中心坐标、识别文本和匹配度.
+    :Return: 中心坐标x、y、识别文本和匹配度.
     """
     if res['code'] != 100:
         print(res)
-        return None, None, None
+        return None, None, None, None
     match_areas = []
     similarities = []
     texts = []
@@ -83,7 +87,7 @@ def match_text_area(res, text):
             similarities.append(item['score'])
             texts.append(item['text'])
     if len(match_areas) == 0:
-        return None, None, None
+        return None, None, None, None
     if len(match_areas) == 1:
         center = np.mean(match_areas[0], axis=0)
         return center.tolist(), similarities[0], texts[0]

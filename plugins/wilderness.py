@@ -24,8 +24,11 @@ def wild_start():
     time.sleep(0.1)
     adb.touch(f.find(IMAGE_BASE_MONEY,False))
     time.sleep(0.5)
-    if (f.find(IMAGE_BASE_FRIEND,False)[2]>0.7):
-        adb.touch(f.find(IMAGE_BASE_FRIEND,False))
+    xy=f.cut_find_html(IMAGE_BASE_FRIEND,0,112,140,571,False)
+    if xy is not None:
+        adb.touch(xy)
+    #if (f.find(IMAGE_BASE_FRIEND,False)[2]>0.5):
+    #    adb.touch(f.find(IMAGE_BASE_FRIEND,False))
     time.sleep(4)
     adb.touch((160,60))
     time.sleep(5)
