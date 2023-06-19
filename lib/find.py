@@ -221,3 +221,68 @@ def similar(image1, image2, size=(160, 210)):
 # img = img[x:118,y:85]
 # checker = cv.imread("cards/disappear.png")
 # print(calculate(checker,img))
+
+
+def get_digit_templates() -> list[cv.Mat]:
+    if hasattr(get_digit_templates, 'templates'):
+        return get_digit_templates.templates
+    get_digit_templates.templates = []
+    for i in range(10):
+        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) # TODO: 需要修改为正确的路径
+        digit = digit[4: 33, :, :] # 去掉上下的空白
+        digit = cv.resize(digit, (0, 0), fx=1.7, fy=1.7)
+        
+        alpha = digit[:, :, 3]
+        digit = digit[:, :, :3]
+        digit[alpha < 170] = [0, 0, 0] # 透明度小于170的像素点认为是背景
+        
+        mask = cv.inRange(digit, (0, 0, 0), (125, 125, 125)) # 将背景变成纯黑
+        digit[mask == 255] = (0, 0, 0)
+        get_digit_templates.templates.append(digit)
+    return get_digit_templates.templates
+
+def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
+    """
+    识别关卡数字
+    img: 原始图片
+    @return: [(number, (x, y))]
+    """
+    img = cv.blur(img, (5, 5))
+    img = img[1100: 1170, :, :] # TODO: 可能需要解决分辨率一致性问题
+    
+    background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
+    img[background == 255] = (0, 0, 0)
+    
+    digit_templates = get_digit_templates()
+    locations_num = [] # 识别到的坐标+数字
+    for i in range(10):
+        digit = digit_templates[i]
+        res = cv.matchTemplate(img, digit, cv.TM_CCOEFF_NORMED)
+        thresh = 0.8
+        loc = np.where(res >= thresh)
+        points = list(zip(*loc[::-1]))
+        # cv.kmeans(points, 2, None, 10, 10, cv.KMEANS_RANDOM_CENTERS)
+        clustered_points = []
+        near = lambda x1, x2: abs(x1 - x2) < 10
+        for x, y in points:
+            for cx, cy in clustered_points:
+                if near(x, cx): # 只需判断x坐标
+                    break
+            else:
+                clustered_points.append((x, y))
+        assert len(clustered_points) <= 5 # 一个数字最多出现5次
+        locations_num.extend([((x, y), i) for x, y in clustered_points])
+    locations_num.sort()
+    
+    results: list[tuple[int, tuple[int, int]]] = []
+    near = lambda x1, x2: abs(x1 - x2) < 60
+    for (x, y), num in locations_num:
+        if results == []:
+            results.append((num, (x, y)))
+            continue
+        pre_num, (pre_x, pre_y) = results[-1]
+        if near(x, pre_x): # 和前一个数字组成同一个数
+            results[-1] = (pre_num * 10 + num, (x, y))
+        else:
+            results.append((num, (x, y)))
+    return results
