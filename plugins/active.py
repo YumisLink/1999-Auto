@@ -37,9 +37,9 @@ IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
 
 
-def Auto_Active(level: str, type: str, times: str):
+def Auto_Active(level: str, type: str, times ):
     """
-    从id中匹配图片并返回其在截图中的样子
+    进入特定关卡进行复现.
     :param level:第几关.
     :param type:关卡类型.
     :param times:复现次数.
