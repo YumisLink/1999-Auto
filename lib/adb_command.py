@@ -21,6 +21,15 @@ def swipe(p1, p2):
     print(f'swipe from  {p1[0]} {p1[1]} to {p2[0]} {p2[1]}')
     print(
         os.system(f'{ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} 100'))
+    
+def input(text,clear=False):
+    #print(f'input {text}')
+    if clear:
+        # 模拟按下“移动到行末”键
+        os.system(f'{ADB_HEAD} shell input keyevent KEYCODE_MOVE_END ')
+        # 模拟长按“删除”键250次
+        os.system(f"{ADB_HEAD} input keyevent --longpress $(printf 'KEYCODE_DEL %.0s' {{1..250}})")
+    print(os.system(f'{ADB_HEAD} shell input text {text}'))
 
 def is_game_on():
     '''检测游戏是否在前台'''
