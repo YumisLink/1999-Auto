@@ -7,9 +7,14 @@ IMAGE_BASE_EXP = 'imgs/base_exp'
 IMAGE_BASE_WILDERNESS = 'imgs/wilderness'
 IMAGE_BASE_FRIEND = 'imgs/base_friend'
 IMAGE_BASE_MONEY = 'imgs/base_money'
-
+IMGAE_BUILDING_CHECKER = 'imgs/building_checker'
 IMAGE_BASE_CHECKER = 'imgs/base_checker'
 
+def to_land():
+    out=f.cut_find_html(IMGAE_BUILDING_CHECKER,1124,14,1307,81)
+    if out is not None:
+        adb.touch((60,60))
+        time.sleep(1)    
 
 def wild_start():
     """领不休荒原产物"""
@@ -17,14 +22,16 @@ def wild_start():
         raise RuntimeError('无法返回主页面')
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     while(True):
-        time.sleep(5)
+        time.sleep(2)
         if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
             break
     adb.touch(f.find(IMAGE_BASE_EXP))
     time.sleep(0.1)
-    adb.touch(f.find(IMAGE_BASE_MONEY,False))
+    to_land()#防止进入建筑页面
+    adb.touch(f.find(IMAGE_BASE_MONEY))
     time.sleep(0.5)
-    xy=f.cut_find_html(IMAGE_BASE_FRIEND,0,112,140,571,False)
+    to_land()
+    xy=f.cut_find_html(IMAGE_BASE_FRIEND,0,112,140,571)
     if xy is not None:
         adb.touch(xy)
     #if (f.find(IMAGE_BASE_FRIEND,False)[2]>0.5):
