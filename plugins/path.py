@@ -11,7 +11,7 @@ template_imgs = {
     'alert': {'img': 'imgs/alert_close.png', 'pos': (1215,1,1600,269)},#html;公告界面的关闭
     'got':{'img': 'imgs/got.png', 'pos': (757,38,847,131)},#html;获得物品界面
     'checkin':{'img': 'imgs/checkin.png', 'pos': (995,124,903,45)},#html;每日初次登录的签到界面
-    'login': {'img': 'imgs/login.png', 'pos': (590, 510, 200, 50)},#html
+    'login': {'img': 'imgs/login.png', 'pos': (175,0,1077,667)},#html
     'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (157,560,1501,696)},#html;主界面
     'notmenu': {'img': 'imgs/go_back_1.png', 'pos': (0,0,225,94)},#html;白色的返回键
     'notmenu2': {'img': 'imgs/go_back_2.png', 'pos': (0,0,225,94)},#html;黑色的返回键
@@ -124,12 +124,12 @@ def to_menu():
             cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
             print('已将确认内容保存至cache/confirm.png')
             time.sleep(1)
-        
+
         elif status == 'menu':
             print('已在主菜单')
             break    
 
-def to_title():
+def to_title(autologin=True):
     start_time = time.time()
     while True:
         status = where_am_i()
@@ -146,7 +146,16 @@ def to_title():
             print('到达标题界面，本次导航结束')
             break
         elif status == 'login':
-            print('登陆界面还没写')
+            if autologin:
+                print('尝试自动登录')
+                out=f.cut_find_html('imgs/login_back',572,234,654,295,False)
+                if out is not None:
+                    adb.touch(out)
+                    time.sleep(1)
+                adb.touch([804,525])
+                time.sleep(1)
+            else:
+                print('到达登陆界面')
             break
         elif status == 'got':
             #获得界面瞎点一下(不点到物品就行)
@@ -191,19 +200,20 @@ def to_title():
             time.sleep(1)
         elif status == 'menu':
             adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
-            time.sleep(1)
+            time.sleep(1.5)
             adb.touch(f.cut_find_html('imgs/setting',82,565,520,794))
-            time.sleep(1)
+            time.sleep(1.5)
             adb.touch((1096,656))
-            time.sleep(1)
+            time.sleep(1.5)
             adb.touch((1011,532))
             break
 
 def to_login():
     to_title()
-    adb.touch(f.cut_find_html('imgs/title_exit',1502,778,1573,867,False))
+    time.sleep(1.5)
+    adb.touch(f.cut_find_html('imgs/title_exit',1502,778,1573,867))
     time.sleep(1)
-    adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))
+    adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))   
 
 def to_fight():
     to_menu()
