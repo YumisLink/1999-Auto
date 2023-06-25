@@ -5,6 +5,9 @@ import plugins.active as active
 import lib.find as f
 import plugins.Turn as Turn
 import plugins.auto_battle as auto
+from plugins import wilderness, mission, refresh_battle
+
+
 # import cv2 as cv
 # from time import sleep
 # import os
@@ -51,12 +54,8 @@ init()
 # auto.checkTurn(t)
 
 
-
-
-
-
-
-
-
-
-
+# 自动凹技能+敌人行动
+team = ['Lilya', 'BalloonParty', 'Sonetto', 'Bkornblume']
+expected_cards = {('侧风起飞', 1): 2}
+# 需要自行进入战斗界面后，执行该方法
+refresh_battle.start(team, expected_cards, {})
