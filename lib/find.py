@@ -61,7 +61,7 @@ def find(id: str, take=True):
 def cut_find(template, x, y, w, h,take=True):
     """
     识别截图中指定区域的目标坐标
-    :param template: 模板图片(省略.png)
+    :param template: 模板图片(省略.png后缀)
     :param x: 指定区域左上角的横坐标
     :param y: 指定区域左上角的纵坐标
     :param w: 指定区域的宽度
@@ -228,9 +228,9 @@ def get_digit_templates() -> list[cv.Mat]:
         return get_digit_templates.templates
     get_digit_templates.templates = []
     for i in range(10):
-        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) # TODO: 需要修改为正确的路径
+        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) 
         digit = digit[4: 33, :, :] # 去掉上下的空白
-        digit = cv.resize(digit, (0, 0), fx=1.7, fy=1.7)
+        digit = cv.resize(digit, (0, 0), fx=1.1, fy=1.1)
         
         alpha = digit[:, :, 3]
         digit = digit[:, :, :3]
@@ -248,7 +248,7 @@ def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
     @return: [(number, (x, y))]
     """
     img = cv.blur(img, (5, 5))
-    img = img[1100: 1170, :, :] # TODO: 可能需要解决分辨率一致性问题
+    img = img[687: 731, :, :] #已替换为适合1600*900的坐标
     
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
     img[background == 255] = (0, 0, 0)
