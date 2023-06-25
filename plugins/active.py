@@ -35,6 +35,9 @@ IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_REPLAY = 'imgs/enter_replay_mode2'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
+IMAGE_BATTLE_INFO = "imgs/battle_info"
+IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
+
 
 
 def Auto_Active(level: str, type: str, times ):

@@ -1,5 +1,5 @@
 import cv2 as cv
-import numpy as np 
+import numpy as np
 import lib.api as api
 from cards.aname import card_reflect
 
@@ -7,6 +7,7 @@ from cards.aname import card_reflect
 def read_screenshot():
     img = cv.imread("cache/cache/screenshot.png")
     return img
+
 
 def find_image(id: str, take=True):
     """
@@ -25,9 +26,17 @@ def find_image(id: str, take=True):
 
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
     upper_left = cv.minMaxLoc(result)[2]
-    img2 = img[upper_left[1]:upper_left[1]+height,
-               upper_left[0]:upper_left[0] + width]
+    img2 = img[upper_left[1]:upper_left[1] + height,
+           upper_left[0]:upper_left[0] + width]
     return img2
+
+
+def find_boolean(id: str, take=True):
+    avg = find(id, take)
+    return (avg[0],
+            avg[1],
+            avg[2] > 0.7)
+
 
 def find(id: str, take=True):
     """
@@ -47,18 +56,19 @@ def find(id: str, take=True):
     result = cv.matchTemplate(img, img_terminal, cv.TM_SQDIFF_NORMED)
 
     upper_left = cv.minMaxLoc(result)[2]
-    img2 = img[upper_left[1]:upper_left[1]+height,
-               upper_left[0]:upper_left[0] + width]
-    lower_right = (upper_left[0]+width, upper_left[1]+height)
+    img2 = img[upper_left[1]:upper_left[1] + height,
+           upper_left[0]:upper_left[0] + width]
+    lower_right = (upper_left[0] + width, upper_left[1] + height)
 
-    avg = (int((upper_left[0]+lower_right[0])/2),
-           int((upper_left[1]+lower_right[1])/2),
+    avg = (int((upper_left[0] + lower_right[0]) / 2),
+           int((upper_left[1] + lower_right[1]) / 2),
            similar(img_terminal, img2))
     # cv.imwrite(f'cache/{id}2.png', img2)
     return avg
 
-#裁屏匹配
-def cut_find(template, x, y, w, h,take=True):
+
+# 裁屏匹配
+def cut_find(template, x, y, w, h, take=True):
     """
     识别截图中指定区域的目标坐标
     :param template: 模板图片(省略.png)
@@ -73,23 +83,24 @@ def cut_find(template, x, y, w, h,take=True):
         api.get_screen_shot()
     screen = cv.imread("cache/screenshot.png")
     template_img = cv.imread(f'{template}.png')
-    screen_cut = screen[y:y+h, x:x+w]
-    result = cv.matchTemplate(screen_cut , template_img, cv.TM_CCOEFF_NORMED)
+    screen_cut = screen[y:y + h, x:x + w]
+    result = cv.matchTemplate(screen_cut, template_img, cv.TM_CCOEFF_NORMED)
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
         # 在匹配结果上画框
         for pt in zip(*loc[::-1]):
-            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2) 
+            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
         cv.imwrite('cache/result2.png', screen_cut)
-        x=loc[1][0]+x 
-        y=loc[0][0]+y
-        return x,y
+        x = loc[1][0] + x
+        y = loc[0][0] + y
+        return x, y
     else:
-        print('匹配度过低'+ str(result))
+        print('匹配度过低' + str(result))
         return None
 
-def cut_find_html(template, x2, y2, x1, y1,take=True):
+
+def cut_find_html(template, x2, y2, x1, y1, take=True):
     """
     识别截图中指定区域的目标坐标
     :param template: 模板图片(省略.png)
@@ -100,18 +111,18 @@ def cut_find_html(template, x2, y2, x1, y1,take=True):
     :take: 是否截图
     :return x,y:返回的坐标
     """
-    #用于处理从 https://www.image-map.net 框出来的坐标
-    if x2<x1:
-        a=x2
-        x2=x1
-        x1=a
-    if y2<y1:
-        a=y2
-        y2=y1
-        y1=a
-    w=x2-x1
-    h=y2-y1
-    out= cut_find(template, x1, y1, w, h,take)
+    # 用于处理从 https://www.image-map.net 框出来的坐标
+    if x2 < x1:
+        a = x2
+        x2 = x1
+        x1 = a
+    if y2 < y1:
+        a = y2
+        y2 = y1
+        y1 = a
+    w = x2 - x1
+    h = y2 - y1
+    out = cut_find(template, x1, y1, w, h, take)
     return out
 
 
@@ -122,22 +133,22 @@ def search_cards(character: list):
     ls = []
     star = []
     for i in range(0, 7):
-        finally_y = y+i*154
+        finally_y = y + i * 154
 
-        star_x = x-15
+        star_x = x - 15
         s = 0
-        ls.append(img[x:x+180, finally_y:finally_y+140])
-        cut = img[star_x:star_x+1+3, finally_y+39:finally_y+40+5]
+        ls.append(img[x:x + 180, finally_y:finally_y + 140])
+        cut = img[star_x:star_x + 1 + 3, finally_y + 39:finally_y + 40 + 5]
         # print(f'{i} 1:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 1
         # cv.imwrite(f'{i}star1.png',cut)
-        cut = img[star_x:star_x+1+3, finally_y+80:finally_y+80+5]
+        cut = img[star_x:star_x + 1 + 3, finally_y + 80:finally_y + 80 + 5]
         # print(f'{i} 2:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 2
         # cv.imwrite(f'{i}star2.png',cut)
-        cut = img[star_x:star_x+1+3, finally_y+100:finally_y+100+5]
+        cut = img[star_x:star_x + 1 + 3, finally_y + 100:finally_y + 100 + 5]
         # print(f'{i} 3:{cut[0][0][2]}')
         if cut[0][0][2] > 200:
             s = 3
@@ -157,9 +168,9 @@ def search_cards(character: list):
     cards = []
     for i in range(0, 7):
         best = 0
-        target = len(ccard)-1
+        target = len(ccard) - 1
         sim_val = 0
-        for j in range(0,len(ccard)-1):
+        for j in range(0, len(ccard) - 1):
             best = similar(ccard[j], ls[i])
             # print(f'{i} and {characters[j]} sim = {best}')
             if best > sim_val and best > 0.55:
@@ -180,14 +191,15 @@ def calculate(image1, image2):
     """
     # 灰度直方图算法
     # 计算单通道的直方图的相似值
-    hist1 = cv.calcHist([image1], [0], None, [256], [0.0, 255.0]) # type: ignore 文档写的浮点数 https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
-    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0]) # type: ignore
+    hist1 = cv.calcHist([image1], [0], None, [256], [0.0,
+                                                     255.0])  # type: ignore 文档写的浮点数 https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
+    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0])  # type: ignore
     # 计算直方图的重合度
     degree = 0
     for i in range(len(hist1)):
         if hist1[i] != hist2[i]:
             degree = degree + \
-                (1 - abs(hist1[i] - hist2[i]) / max(hist1[i], hist2[i]))
+                     (1 - abs(hist1[i] - hist2[i]) / max(hist1[i], hist2[i]))
         else:
             degree = degree + 1
     degree = degree / len(hist1)
@@ -201,7 +213,7 @@ def similar(image1, image2, size=(160, 210)):
     :param image2:用来比较的图2.
     :param size:重缩放的大小.
     :Return: degree:重合度
-    """    
+    """
     image1 = cv.resize(image1, size)
     image2 = cv.resize(image2, size)
     sub_image1 = cv.split(image1)
@@ -228,18 +240,19 @@ def get_digit_templates() -> list[cv.Mat]:
         return get_digit_templates.templates
     get_digit_templates.templates = []
     for i in range(10):
-        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) # TODO: 需要修改为正确的路径
-        digit = digit[4: 33, :, :] # 去掉上下的空白
+        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED)  # TODO: 需要修改为正确的路径
+        digit = digit[4: 33, :, :]  # 去掉上下的空白
         digit = cv.resize(digit, (0, 0), fx=1.7, fy=1.7)
-        
+
         alpha = digit[:, :, 3]
         digit = digit[:, :, :3]
-        digit[alpha < 170] = [0, 0, 0] # 透明度小于170的像素点认为是背景
-        
-        mask = cv.inRange(digit, (0, 0, 0), (125, 125, 125)) # 将背景变成纯黑
+        digit[alpha < 170] = [0, 0, 0]  # 透明度小于170的像素点认为是背景
+
+        mask = cv.inRange(digit, (0, 0, 0), (125, 125, 125))  # 将背景变成纯黑
         digit[mask == 255] = (0, 0, 0)
         get_digit_templates.templates.append(digit)
     return get_digit_templates.templates
+
 
 def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
     """
@@ -248,13 +261,13 @@ def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
     @return: [(number, (x, y))]
     """
     img = cv.blur(img, (5, 5))
-    img = img[1100: 1170, :, :] # TODO: 可能需要解决分辨率一致性问题
-    
+    img = img[1100: 1170, :, :]  # TODO: 可能需要解决分辨率一致性问题
+
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
     img[background == 255] = (0, 0, 0)
-    
+
     digit_templates = get_digit_templates()
-    locations_num = [] # 识别到的坐标+数字
+    locations_num = []  # 识别到的坐标+数字
     for i in range(10):
         digit = digit_templates[i]
         res = cv.matchTemplate(img, digit, cv.TM_CCOEFF_NORMED)
@@ -266,14 +279,14 @@ def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
         near = lambda x1, x2: abs(x1 - x2) < 10
         for x, y in points:
             for cx, cy in clustered_points:
-                if near(x, cx): # 只需判断x坐标
+                if near(x, cx):  # 只需判断x坐标
                     break
             else:
                 clustered_points.append((x, y))
-        assert len(clustered_points) <= 5 # 一个数字最多出现5次
+        assert len(clustered_points) <= 5  # 一个数字最多出现5次
         locations_num.extend([((x, y), i) for x, y in clustered_points])
     locations_num.sort()
-    
+
     results: list[tuple[int, tuple[int, int]]] = []
     near = lambda x1, x2: abs(x1 - x2) < 60
     for (x, y), num in locations_num:
@@ -281,7 +294,7 @@ def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
             results.append((num, (x, y)))
             continue
         pre_num, (pre_x, pre_y) = results[-1]
-        if near(x, pre_x): # 和前一个数字组成同一个数
+        if near(x, pre_x):  # 和前一个数字组成同一个数
             results[-1] = (pre_num * 10 + num, (x, y))
         else:
             results.append((num, (x, y)))

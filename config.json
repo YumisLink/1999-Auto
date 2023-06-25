@@ -1,6 +1,6 @@
 {
     "adb_path": "C:\\Users\\Administrator\\Desktop\\1999-Auto\\lib\\adb\\adb.exe",
-    "adb_address": "16384",
+    "adb_address": "127.0.0.1:16384",
     "device_id": "",
     "adb_head": "C:\\Users\\Administrator\\Desktop\\1999-Auto\\lib\\adb\\adb.exe",
     "bluestacks_conf_path": "",
