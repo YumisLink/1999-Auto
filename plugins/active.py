@@ -85,7 +85,7 @@ def Auto_Active(level: str, type: str, times ):
         print(f"选择复现模式")
     time.sleep(1.7)
     adb.touch(f.find(IMAGE_REPLAY_SELECT))
-    print(f"选择复现程度")
+    print(f"选择复现次数")
     adb.touch((data['y'] * times[0], data['x'] * times[1]))
 
     adb.touch(f.find(IMAGE_START_REPLAY))

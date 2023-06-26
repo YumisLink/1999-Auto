@@ -191,9 +191,8 @@ def calculate(image1, image2):
     """
     # 灰度直方图算法
     # 计算单通道的直方图的相似值
-    hist1 = cv.calcHist([image1], [0], None, [256], [0.0,
-                                                     255.0])  # type: ignore 文档写的浮点数 https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
-    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0])  # type: ignore
+    hist1 = cv.calcHist([image1], [0], None, [256], [0.0,255.0])  # 文档写的浮点数 https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
+    hist2 = cv.calcHist([image2], [0], None, [256], [0.0, 255.0])  #
     # 计算直方图的重合度
     degree = 0
     for i in range(len(hist1)):
@@ -235,16 +234,17 @@ def similar(image1, image2, size=(160, 210)):
 # print(calculate(checker,img))
 
 
-def get_digit_templates() -> list[cv.Mat]:
+def get_digit_templates(is_event=False) -> list[cv.Mat]:
     if hasattr(get_digit_templates, 'templates'):
         return get_digit_templates.templates
     get_digit_templates.templates = []
     for i in range(10):
-
-        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) 
-        digit = digit[4: 33, :, :] # 去掉上下的空白
-        digit = cv.resize(digit, (0, 0), fx=1.1, fy=1.1)
-
+        if is_event:
+            digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED)
+            digit = cv.resize(digit, (0, 0), fx=1.1, fy=1.1)
+            digit = digit[4: 33, :, :] # 去掉上下的空白 
+        else:
+            digit = cv.imread(f'imgs/alpha/{i}.png', cv.IMREAD_UNCHANGED) 
         alpha = digit[:, :, 3]
         digit = digit[:, :, :3]
         digit[alpha < 170] = [0, 0, 0]  # 透明度小于170的像素点认为是背景
@@ -254,20 +254,20 @@ def get_digit_templates() -> list[cv.Mat]:
         get_digit_templates.templates.append(digit)
     return get_digit_templates.templates
 
-
-def detect_numbers(img: cv.Mat) -> list[tuple[int, tuple[int, int]]]:
+def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int]]]:
     """
     识别关卡数字
     img: 原始图片
+    is_event: 是否是活动关卡(字体不同)
     @return: [(number, (x, y))]
     """
     img = cv.blur(img, (5, 5))
-    img = img[687: 731, :, :] #已替换为适合1600*900的坐标
+    img = img[680: 735, :, :] #已替换为适合1600*900的坐标
 
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
     img[background == 255] = (0, 0, 0)
 
-    digit_templates = get_digit_templates()
+    digit_templates = get_digit_templates(is_event)
     locations_num = []  # 识别到的坐标+数字
     for i in range(10):
         digit = digit_templates[i]
