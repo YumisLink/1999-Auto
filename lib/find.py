@@ -233,22 +233,35 @@ def similar(image1, image2, size=(160, 210)):
 # checker = cv.imread("cards/disappear.png")
 # print(calculate(checker,img))
 
-
-def get_digit_templates(is_event=False) -> list[cv.Mat]:
-    if hasattr(get_digit_templates, 'templates'):
-        return get_digit_templates.templates
-    get_digit_templates.templates = []
+def get_event_digit_templates() -> list[cv.Mat]:
+    if hasattr(get_event_digit_templates, 'templates'):
+        return get_event_digit_templates.templates
+    get_event_digit_templates.templates = []
     for i in range(10):
-        if is_event:
-            digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED)
-            digit = cv.resize(digit, (0, 0), fx=1.1, fy=1.1)
-            digit = digit[4: 33, :, :] # 去掉上下的空白 
-        else:
-            digit = cv.imread(f'imgs/alpha/{i}.png', cv.IMREAD_UNCHANGED) 
+
+        digit = cv.imread(f'imgs/event/digit_{i}.png', cv.IMREAD_UNCHANGED) 
+        digit = digit[4: 33, :, :] # 去掉上下的空白
+        digit = cv.resize(digit, (0, 0), fx=1.1, fy=1.1)
+
         alpha = digit[:, :, 3]
         digit = digit[:, :, :3]
         digit[alpha < 170] = [0, 0, 0]  # 透明度小于170的像素点认为是背景
 
+        mask = cv.inRange(digit, (0, 0, 0), (125, 125, 125))  # 将背景变成纯黑
+        digit[mask == 255] = (0, 0, 0)
+        get_event_digit_templates.templates.append(digit)
+    return get_event_digit_templates.templates
+
+def get_digit_templates() -> list[cv.Mat]:
+    if hasattr(get_digit_templates, 'templates'):
+        return get_digit_templates.templates
+    get_digit_templates.templates = []
+    for i in range(10):
+        digit = cv.imread(f'imgs/alpha/{i}.png', cv.IMREAD_UNCHANGED) 
+        alpha = digit[:, :, 3]
+        digit = digit[:, :, :3]
+        digit[alpha < 170] = [0, 0, 0]  # 透明度小于170的像素点认为是背景
+        
         mask = cv.inRange(digit, (0, 0, 0), (125, 125, 125))  # 将背景变成纯黑
         digit[mask == 255] = (0, 0, 0)
         get_digit_templates.templates.append(digit)
@@ -266,8 +279,10 @@ def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int
 
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
     img[background == 255] = (0, 0, 0)
-
-    digit_templates = get_digit_templates(is_event)
+    if is_event:
+        digit_templates = get_event_digit_templates()
+    else:
+        digit_templates = get_digit_templates()
     locations_num = []  # 识别到的坐标+数字
     for i in range(10):
         digit = digit_templates[i]
