@@ -4,6 +4,7 @@ import time
 import lib.adb_command as adb
 from config.config import data
 import lib.ppocr as pp
+import lib.api as api
 
 IMAGE_RESOURCE = "imgs/active_resource"
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
@@ -23,11 +24,11 @@ REPLAY_3 = (0.63, 0.68)
 """复现3次"""
 REPLAY_4 = (0.63, 0.59)
 """复现4次"""
-LEVEL_4 = 'imgs/4'
+LEVEL_4 = 4
 """第4关"""
-LEVEL_5 = 'imgs/5'
+LEVEL_5 = 5
 """第5关"""
-LEVEL_6 = 'imgs/6'
+LEVEL_6 = 6
 """第6关"""
 
 
@@ -40,7 +41,7 @@ IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
 
 
-def Auto_Active(level: str, type: str, times ):
+def Auto_Active(type: str, level: int, times ):
     """
     进入特定关卡进行复现.
     :param level:第几关.
@@ -49,7 +50,10 @@ def Auto_Active(level: str, type: str, times ):
     """    
     if not mission_ready.ready():
         raise RuntimeError('无法返回主菜单')
-    adb.touch(f.find('imgs/enter_the_show'))
+    res=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
+    if res is None:
+        x,y=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    adb.touch([x,y+20])
     print("正在进入主会场")
     time.sleep(1)
 
@@ -57,19 +61,20 @@ def Auto_Active(level: str, type: str, times ):
     adb.touch(f.find(IMAGE_RESOURCE))
     print("点击资源")
     time.sleep(1)
-
-    level_click = f.find(level)
-    print(level_click)
-    if (level_click[2] < 0.6):
-        adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
-        level_click = f.find(level)
-    adb.touch(level_click)
-    print(f"正在进入{level}")
-    time.sleep(0.8)
-
     adb.touch(f.find(type))
     print(f"正在进入{type}")
     time.sleep(0.8)
+
+    # level_click = f.find(level)
+    # print(level_click)
+    # if (level_click[2] < 0.6):
+    #     adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
+    #     level_click = f.find(level)
+    # adb.touch(level_click)
+    to_level(level)
+    print(f"正在进入{level}")
+    time.sleep(0.8) 
+
 
 
 
@@ -100,6 +105,23 @@ def Auto_Active(level: str, type: str, times ):
             if ans[2] is not None and '复现' in ans[2]:
                 break
     # time.sleep(3)
-
+def to_level(level:int):
+    for i in range(1,10):
+        adb.swipe((1500,744),(200,750))
+        time.sleep(0.1)
+    for i in range(1,99):
+        screen=api.get_scrren_shot_bytes()
+        res=f.detect_numbers(screen)
+        for num,xy in res:
+            if num==level:
+                x,y=xy
+                y=y+50
+                adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此进行修正
+                time.sleep(1)
+                return True
+        adb.swipe((100,744),(1040,750))
+        time.sleep(1)
+    return False
+        
 
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
