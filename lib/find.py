@@ -274,7 +274,7 @@ def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int
     is_event: 是否是活动关卡(字体不同)
     @return: [(number, (x, y))]
     """
-    img = cv.blur(img, (5, 5))
+    img = cv.blur(img, (2, 2))
     img = img[680: 735, :, :] #已替换为适合1600*900的坐标
 
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
@@ -311,7 +311,13 @@ def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int
             continue
         pre_num, (pre_x, pre_y) = results[-1]
         if near(x, pre_x):  # 和前一个数字组成同一个数
-            results[-1] = (pre_num * 10 + num, (x, y))
+            if x-pre_x <10 :
+                pre_num=0
+                num=0
+            results[-1] = (pre_num * 10 + num, (x, y+680))#恢复y坐标
         else:
-            results.append((num, (x, y)))
+            results.append((num, (x, y+680)))
+    # for (x, y), num in locations_num:
+    #     cv.rectangle(img, (x, y), (x + digit_templates[num].shape[1], y + digit_templates[num].shape[0]), (0, 255, 0), 2)
+    # cv.imwrite("cache/result.jpg", img)
     return results
