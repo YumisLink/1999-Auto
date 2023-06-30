@@ -56,6 +56,6 @@ init()
 
 # 自动凹技能+敌人行动
 team = ['Lilya', 'BalloonParty', 'Sonetto', 'Bkornblume']
-expected_cards = {('侧风起飞', 1): 2}
+expected_ally_list = [{('侧风起飞', 1): 2}, {('钟型摆动', 1): 2}]
 # 需要自行进入战斗界面后，执行该方法
-refresh_battle.start(team, expected_cards, {})
+refresh_battle.start(team, expected_ally_list, {})
