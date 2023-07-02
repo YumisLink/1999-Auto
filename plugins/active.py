@@ -12,9 +12,9 @@ IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
 IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'
 """钱"""
 IMAGE_HARVEST = 'imgs/level_harvest'
-"""基建"""
+"""基建（丰收时令）"""
 IMAGE_ANALYSIS = 'imgs/level_analysis'
-"""圣遗物狗粮"""
+"""圣遗物狗粮（意志解析）"""
 
 REPLAY_1 = (0.63, 0.85)
 """复现1次"""
@@ -41,7 +41,7 @@ IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
 
 
-def Auto_Active(type: str, level: int, times ):
+def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=10 ):
     """
     进入特定关卡进行复现.
     :param level:第几关.
@@ -50,18 +50,17 @@ def Auto_Active(type: str, level: int, times ):
     """    
     if not mission_ready.ready():
         raise RuntimeError('无法返回主菜单')
-    res=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
-    if res is None:
-        x,y=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
-    adb.touch([x,y+20])
-    print("正在进入主会场")
-    time.sleep(1)
-
-
-    adb.touch(f.find(IMAGE_RESOURCE))
-    print("点击资源")
-    time.sleep(1)
-    adb.touch(f.find(type))
+    if go_resource:
+        to_resource()
+    exist=f.find((type))
+    if exist[2]>0.6:
+        adb.touch(exist)
+        time.sleep(1)
+    else:
+        adb.swipe((1344,485),(156,488))
+        time.sleep(0.3)
+        adb.touch(f.find((type)))
+        time.sleep(0.3)
     print(f"正在进入{type}")
     time.sleep(0.8)
 
@@ -71,7 +70,7 @@ def Auto_Active(type: str, level: int, times ):
     #     adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
     #     level_click = f.find(level)
     # adb.touch(level_click)
-    to_level(level)
+    to_level(level,level_swipetimes)
     print(f"正在进入{level}")
     time.sleep(0.8) 
 
@@ -105,8 +104,8 @@ def Auto_Active(type: str, level: int, times ):
             if ans[2] is not None and '复现' in ans[2]:
                 break
     # time.sleep(3)
-def to_level(level:int):
-    for i in range(1,10):
+def to_level(level:int,swipetimes=10):
+    for i in range(swipetimes+1):
         adb.swipe((1500,744),(200,750))
         time.sleep(0.1)
     for i in range(1,99):
@@ -116,12 +115,29 @@ def to_level(level:int):
             if num==level:
                 x,y=xy
                 y=y+50
-                adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此进行修正
+                adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此修正点击位置
                 time.sleep(1)
                 return True
         adb.swipe((100,744),(1040,750))
         time.sleep(1)
     return False
         
+def to_resource():
+    """
+    进入资源关.
+    """    
+    if not mission_ready.ready():
+        raise RuntimeError('无法返回主菜单')
+    res=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
+    if res is None:
+        x,y=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    else:
+        x,y=res
+    adb.touch([x,y+20])
+    print("正在进入主会场")
+    time.sleep(1)
 
+    adb.touch(f.find(IMAGE_RESOURCE))
+    print("点击资源")
+    time.sleep(1)
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)

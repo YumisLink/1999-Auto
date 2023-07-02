@@ -97,7 +97,7 @@ def cut_find(template, x, y, w, h, take=True):
         return x, y
     else:
         print('匹配度过低' + str(result))
-        return None
+        return None,None
 
 
 def cut_find_html(template, x2, y2, x1, y1, take=True):
