@@ -125,7 +125,62 @@ def cut_find_html(template, x2, y2, x1, y1, take=True):
     out = cut_find(template, x1, y1, w, h, take)
     return out
 
-
+def cut_match(template, x, y, w, h, take=True):
+    """
+    识别截图中指定区域的目标是否存在并返回坐标
+    :param template: 模板图片(省略.png后缀)
+    :param x: 指定区域左上角的横坐标
+    :param y: 指定区域左上角的纵坐标
+    :param w: 指定区域的宽度
+    :param h: 指定区域的高度
+    :take: 是否截图
+    :return x,y:返回的坐标,匹配度
+    """
+    if take:
+        api.get_screen_shot()
+    screen = cv.imread("cache/screenshot.png")
+    template_img = cv.imread(f'{template}.png')
+    screen_cut = screen[y:y + h, x:x + w]
+    result = cv.matchTemplate(screen_cut, template_img, cv.TM_CCOEFF_NORMED)
+    threshold = 0.6  # 阈值
+    loc = np.where(result >= threshold)
+    if len(loc[0]) > 0:
+        # 在匹配结果上画框
+        for pt in zip(*loc[::-1]):
+            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        cv.imwrite('cache/result2.png', screen_cut)
+        x = loc[1][0] + x
+        y = loc[0][0] + y
+        return x, y,result.max()
+    else:
+        print('匹配度过低' + str(result.max()))
+        return None
+    
+def cut_match_html(template, x2, y2, x1, y1, take=True):
+    """
+    识别截图中指定区域的目标坐标
+    :param template: 模板图片(省略.png)
+    :param x1: 指定区域的某个横坐标
+    :param y1: 指定区域的某个的纵坐标
+    :param x2: 指定区域的某个横坐标
+    :param y2: 指定区域的某个的纵坐标
+    :take: 是否截图
+    :return x,y:返回的坐标,匹配度
+    """
+    # 用于处理从 https://www.image-map.net 框出来的坐标
+    if x2 < x1:
+        a = x2
+        x2 = x1
+        x1 = a
+    if y2 < y1:
+        a = y2
+        y2 = y1
+        y1 = a
+    w = x2 - x1
+    h = y2 - y1
+    out = cut_match(template, x1, y1, w, h, take)
+    return out
+    
 def search_cards(character: list):
     img = cv.imread("cache/screenshot.png")
     x = 687
