@@ -36,6 +36,7 @@ IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_REPLAY = 'imgs/enter_replay_mode2'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
+IMGAE_IN_REPLAY='imgs/already_in_replay_mode'
 IMAGE_BATTLE_INFO = "imgs/battle_info"
 IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
@@ -81,16 +82,20 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     print(f"正在进入开始界面菜单")
     time.sleep(3.5)
 
-
-    replay = f.find(IMAGE_REPLAY)
-    print(replay)
-    if replay[2] > 0.72:
-        adb.touch(replay)
-        print(f"选择复现模式")
-    time.sleep(1.7)
+    is_replay =f.cut_find_html(IMGAE_IN_REPLAY,883,753,1555,897)
+    if is_replay is not None:
+        replay = f.find(IMAGE_REPLAY)
+        print(replay)
+        if replay[2] > 0.72:
+            adb.touch(replay)
+            print(f"选择复现模式")
+            time.sleep(1.7)
     adb.touch(f.find(IMAGE_REPLAY_SELECT))
     print(f"选择复现次数")
-    adb.touch((data['y'] * times[0], data['x'] * times[1]))
+    time.sleep(1.7)
+    if times>4:
+        times=4#最多4次
+    adb.touch((1029,768-78*(times-1)))#TODO:分辨率问题，目前写死;1029:按钮的x坐标，768:x1按钮的y坐标，78:每个按钮的高度，times:第几个按钮
 
     adb.touch(f.find(IMAGE_START_REPLAY))
     print(f"开始复现")
