@@ -12,19 +12,23 @@ exe_path=current_path+"\\OCR\\PaddleOCR-json.exe"
 #文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
 
 #启动时初始化
-ocr = GetOcrApi(exe_path, argument_cn)
+#ocr = GetOcrApi(exe_path, argument_cn)
 #ocr2 = GetOcrApi(exe_path, argument_en)
-
+ocr_cn_engine = None
 def ocr_cn(target):
     target_path =os.path.join(project_path, target.replace('/', '\\'))
-    #ocr = GetOcrApi(exe_path, argument_cn)
-    res = ocr.run(target_path)
+    global ocr_cn_engine
+    if ocr_cn_engine is None:
+        ocr_cn_engine = GetOcrApi(exe_path, argument_cn)
+    res = ocr_cn_engine.run(target_path)
     return res
-
+ocr_en_engine = None
 def ocr_en(target):
     target_path =os.path.join(project_path, target.replace('/', '\\'))
-    ocr2 = GetOcrApi(exe_path, argument_en)
-    res = ocr2.run(target_path)
+    global ocr_en_engine
+    if ocr_en_engine is None:
+        ocr_en_engine = GetOcrApi(exe_path, argument_en)
+    res = ocr_en_engine.run(target_path)
 
     return res
 
@@ -130,6 +134,6 @@ def match_text_area_char_by_char(res, text):
         center = np.mean(area, axis=0)
         centers.append(center)
     centers = np.array(centers)
-    distances = np.linalg.norm(centers - np.array(res['image_size']) / 2, axis=1)
+    distances = np.linalg.norm(centers - np.array((1600, 900)) / 2, axis=1)#TODO:兼容更多屏幕分辨率
     min_idx = np.argmin(distances)
     return centers[min_idx].tolist(), texts[min_idx], similarities[min_idx]
