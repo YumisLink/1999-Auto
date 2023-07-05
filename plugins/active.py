@@ -48,9 +48,9 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     :param type:关卡类型.
     :param times:复现次数.
     """    
-    if not mission_ready.ready():
-        raise RuntimeError('无法返回主菜单')
     if go_resource:
+        if not mission_ready.ready():
+            raise RuntimeError('无法返回主菜单')
         to_resource()
     exist=f.find((type))
     if exist[2]>0.6:
@@ -98,11 +98,14 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
 
     while(True):
         adb.touch((50,data['x']/2))
-        time.sleep(3)
-        ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
-        if (len(ans)>0):
-            if ans[2] is not None and '复现' in ans[2]:
-                break
+        time.sleep(1)
+        res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
+        if res is not None:
+            break
+        # ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
+        # if (len(ans)>0):
+        #     if ans[2] is not None and '复现' in ans[2]:
+        #         break
     # time.sleep(3)
 def to_level(level:int,swipetimes=10):
     for i in range(swipetimes+1):

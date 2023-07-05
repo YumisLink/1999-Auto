@@ -124,7 +124,9 @@ def to_menu():
             cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
             print('已将确认内容保存至cache/confirm.png')
             time.sleep(1)
-
+        elif status == 'win':
+            #胜利界面随便点一下
+            adb.touch([1007,576])
         elif status == 'menu':
             print('已在主菜单')
             break    
@@ -198,6 +200,9 @@ def to_title(autologin=True):
             cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
             print('已将确认内容保存至cache/confirm.png')
             time.sleep(1)
+        elif status == 'win':
+            #胜利界面随便点一下
+            adb.touch([1007,576])
         elif status == 'menu':
             adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
             time.sleep(1.5)

@@ -43,7 +43,7 @@ while True:
     interval = (next_run_time_seconds - time.time()) / TIMES_A_DAY
     # 等待到下一次执行时间
     time.sleep(interval)
-
+    print(f'将于{interval}秒后开始任务')
     #开始执行
     #检测游戏是否运行，如果没有运行就启动游戏
     adb.is_game_on()
@@ -74,7 +74,8 @@ while True:
     active.to_resource()
     #看看能不能直接进入意志解析，能就直接打，不能就去打本
     res=f.find(active.IMAGE_ANALYSIS)
-    if res is not None:
+    if res[2] >0.6:
+        print('白嫖解析')
         active.Auto_Active(active.IMAGE_ANALYSIS, 7, active.REPLAY_2,False,1)
     path.to_menu()
     active.Auto_Active(active.IMAGE_HARVEST, 4, active.REPLAY_4,True,1)
