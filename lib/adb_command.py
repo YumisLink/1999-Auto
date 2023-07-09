@@ -72,34 +72,37 @@ def check_device_connection():
     with open('config.json', 'r') as f:
         config = json.load(f)
     adb_path = config['adb_path']
-    # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
-    device = None  # 初始化device变量为None
-    output = os.popen(f'{adb_path} devices').read().strip().split('\n')
-    if len(output) <= 1 or output[0] != 'List of devices attached':
-        print('Error: 无设备，尝试连接adb_address')
-        if 'adb_address' in config and config['adb_address']:
-            device = config['adb_address']
-            os.system(f'{adb_path} connect {device}')
-            output = os.popen(f'{adb_path} devices').read().strip().split('\n')
-            if len(output) <= 1 or output[0] != 'List of devices attached':
-                print('Error: 无法连接adb_address，尝试连接蓝叠')
-                blurestack=connect_bluestack()
-                if not blurestack:
-                    return None
-                else:
-                    return blurestack
-            else:
-                print(f'已连接设备：{device}')
-                config['device_id'] = device
-                api.write_config()
-                return device
-        else:
-            print('Error:adb_address为空，尝试连接蓝叠')
+    if 'adb_address' in config and config['adb_address']:
+        device = config['adb_address']
+        os.system(f'{adb_path} connect {device}')
+        output = os.popen(f'{adb_path} devices').read().strip().split('\n')
+        if len(output) <= 1 or output[0] != 'List of devices attached':
+            print('Error: 无法连接adb_address，尝试连接蓝叠')
             blurestack=connect_bluestack()
             if not blurestack:
                 return None
             else:
                 return blurestack
+        else:
+            print(f'已连接设备：{device}')
+            config['device_id'] = device
+            api.write_config()
+            return device
+    else:
+        print('Error:adb_address为空，尝试连接蓝叠')
+        blurestack=connect_bluestack()
+        if blurestack:
+            return blurestack
+    # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
+    device = None  # 初始化device变量为None
+    output = os.popen(f'{adb_path} devices').read().strip().split('\n')
+    if len(output) <= 1 or output[0] != 'List of devices attached':
+        print('Error: 无法连接adb_address，尝试连接蓝叠')
+        blurestack=connect_bluestack()
+        if not blurestack:
+            return None
+        else:
+            return blurestack
     else:
         for line in output[1:]:
             if not line.endswith('\tdevice'):
