@@ -213,6 +213,35 @@ def to_title(autologin=True):
             adb.touch((1011,532))
             break
 
+def login(account:str,password:str):
+    """
+    登录账号
+    account:账号
+    password:密码
+    """
+    to_login()
+    time.sleep(1)
+    adb.touch([917,584])
+    time.sleep(0.5)
+    adb.touch([801,336])
+    time.sleep(0.5)
+    adb.touch([667,394])
+    time.sleep(1)
+    adb.input(account)
+    time.sleep(1)
+    adb.touch([674,459])
+    time.sleep(1)
+    adb.input(password)
+    time.sleep(1)
+    out,_=f.cut_find_html('imgs/login_confirm',574,532,664,599,False)
+    print(out)
+    if out is None:
+        adb.touch([610,560])#同意协议
+        time.sleep(1)
+    adb.touch([801,629])
+    time.sleep(1)
+    print('登录完成')
+
 def to_login():
     to_title()
     time.sleep(1.5)

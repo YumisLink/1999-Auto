@@ -8,8 +8,8 @@ argument_en = {'config_path': "models/config_en.txt"}
 current_path = os.path.abspath(os.path.dirname(__file__))
 project_path = os.path.dirname(current_path)
 exe_path=current_path+"\\OCR\\PaddleOCR-json.exe"
-#print(exe_path)
-#文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
+#输出结果文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main#readme
+#API文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
 
 #启动时初始化
 #ocr = GetOcrApi(exe_path, argument_cn)
@@ -70,6 +70,40 @@ def ocr_bytes_xy(imagebytes,text='',cn=True):
         res=match_text_area(ocr_bytes_en(imagebytes), text)
     return res
 
+def cut_ocr_bytes(imagebytes,x,y,w,h,is_cn=True):
+    """
+    识别target图片中包含text的区域，返回中心坐标
+    :param imagebytes:需要识别的图片字节流.
+    :param x: 指定区域左上角的横坐标
+    :param y: 指定区域左上角的纵坐标
+    :param w: 指定区域的宽度
+    :param h: 指定区域的高度
+    :param is_cn:是否使用中文ocr.
+    :Return: {"code": 识别码, "data": 内容列表或错误信息字符串}.
+    """
+    img_cut=imagebytes[y:y+h,x:x+w]
+    if is_cn:
+        res=ocr_bytes_cn(img_cut)
+    else:
+        res=ocr_bytes_en(img_cut)
+    return res
+
+def cut_html_ocr_bytes(imagebytes,x1,y1,x2,y2,is_cn=True):
+    # 用于处理从 https://www.image-map.net 框出来的坐标
+    if x2 < x1:
+        a = x2
+        x2 = x1
+        x1 = a
+    if y2 < y1:
+        a = y2
+        y2 = y1
+        y1 = a
+    img_cut=imagebytes[y1:y2,x1:x2]
+    if is_cn:
+        res=ocr_bytes_cn(img_cut)
+    else:
+        res=ocr_bytes_en(img_cut)
+    return res
 
 
 def match_text_area(res, text):

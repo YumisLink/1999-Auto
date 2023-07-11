@@ -5,8 +5,8 @@ data = {
     'x': 0,
     'y': 0
 }
-user_config = None
 with open('config.json', 'r') as f:
+    global user_config
     user_config = json.load(f)
 ADB_PATH = user_config["adb_path"]
 DEVICE_ID = user_config["device_id"]

@@ -88,10 +88,10 @@ def cut_find(template, x, y, w, h, take=True):
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
-        # 在匹配结果上画框
-        for pt in zip(*loc[::-1]):
-            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-        cv.imwrite('cache/result2.png', screen_cut)
+        # # 在匹配结果上画框
+        # for pt in zip(*loc[::-1]):
+        #     cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        # cv.imwrite('cache/result2.png', screen_cut)
         x = loc[1][0] + x
         y = loc[0][0] + y
         return x, y
@@ -145,10 +145,10 @@ def cut_match(template, x, y, w, h, take=True):
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
-        # 在匹配结果上画框
-        for pt in zip(*loc[::-1]):
-            cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-        cv.imwrite('cache/result2.png', screen_cut)
+        # # 在匹配结果上画框
+        # for pt in zip(*loc[::-1]):
+        #     cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        # cv.imwrite('cache/result2.png', screen_cut)
         x = loc[1][0] + x
         y = loc[0][0] + y
         return x, y,result.max()

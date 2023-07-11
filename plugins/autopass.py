@@ -18,7 +18,7 @@ def pass_start():
     time.sleep(1)
 
     res = f.cut_find_html('imgs/pass/redpoint',1524,84,1555,50)
-    if res is not None:
+    if res[0] is not None:
         print('开始领取')
         #读碟
         adb.touch([1417,98])
@@ -41,7 +41,7 @@ def pass_start():
 def claim():
     while True:
         res=f.cut_find_html(IMG_CLAIM,1410,324,1546,784)
-        if res is not None:
+        if res[0] is not None:
             adb.touch(res)
             time.sleep(0.3)
             db_upgarde()
@@ -49,7 +49,7 @@ def claim():
             return False
 def claim_all():
     res=f.cut_find_html(IMG_CLAIM_ALL,1194,777,1598,897)
-    if res is not None:
+    if res[0] is not None:
         adb.touch(res)
         time.sleep(0.3)
         db_upgarde()
@@ -59,7 +59,7 @@ def claim_all():
 
 def db_upgarde():
     res=f.cut_find_html(IMG_UPGARDE,695,483,881,534)
-    if res is not None:
+    if res[0] is not None:
         adb.touch([928,575])
         time.sleep(0.3)
         return True

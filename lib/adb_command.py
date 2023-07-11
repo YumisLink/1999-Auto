@@ -7,11 +7,6 @@ from config.config import user_config,APPID,ADB_HEAD,DEVICE_ID
 import lib.api as api
 
 
-def touch(x, y):
-    print(f'click {x} {y}')
-    print(os.system(f'{ADB_HEAD} shell input tap {x} {y}'))
-
-
 def touch(point):
     print(f'click {point[0]} {point[1]}')
     print(os.system(f'{ADB_HEAD} shell input tap {point[0]} {point[1]}'))
@@ -54,34 +49,37 @@ def is_game_on():
 def get_bluestacks_adb_port():
     # 读取bluestacks.conf文件
     bluestacks_adb_port_keys = user_config.get('bluestacks_adb_port_keys', [])
-    bluestacks_conf_path = user_config.get('bluestacks_conf_path', 'C:/ProgramData/BlueStacks_nxt_cn/bluestacks.conf').strip()
-    if not os.path.exists(bluestacks_conf_path):
-        print(f'Error: 文件"{bluestacks_conf_path}"不存在')
-    else:
-        with open(bluestacks_conf_path, 'r') as f:
-            conf = f.read()
-        # 使用正则表达式匹配adb端口号
-        for key in bluestacks_adb_port_keys:
-            match = re.search(rf'{key}="(\d+)"', conf)
-            if match:
-                adb_port = match.group(1)
-                return adb_port
-    return None
+    bluestacks_conf_path = user_config.get('bluestacks_conf_path').strip()
+    with open(bluestacks_conf_path, encoding="UTF-8") as f:
+        configs = dict(list(map(lambda line: line.replace('\n', '').split('='), f.readlines())))
+        return int(configs[bluestacks_adb_port_keys].replace('"', ""))
+    # if not os.path.exists(bluestacks_conf_path):
+    #     print(f'Error: 文件"{bluestacks_conf_path}"不存在')
+    # else:
+    #     with open(bluestacks_conf_path, 'r',encoding='utf-8') as f:
+    #         conf = f.read()
+    #     # 使用正则表达式匹配adb端口号
+    #     for key in bluestacks_adb_port_keys:
+    #         match = re.search(rf'{key}="(\d+)"', conf)
+    #         if match:
+    #             adb_port = match.group(1)
+    #             return adb_port
+    # return None
 
 def check_device_connection():
     with open('config.json', 'r') as f:
         config = json.load(f)
     adb_path = config['adb_path']
+    device = None  # 初始化device变量为None
     if 'adb_address' in config and config['adb_address']:
         device = config['adb_address']
         os.system(f'{adb_path} connect {device}')
+        # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
         output = os.popen(f'{adb_path} devices').read().strip().split('\n')
         if len(output) <= 1 or output[0] != 'List of devices attached':
             print('Error: 无法连接adb_address，尝试连接蓝叠')
             blurestack=connect_bluestack()
-            if not blurestack:
-                return None
-            else:
+            if blurestack:
                 return blurestack
         else:
             print(f'已连接设备：{device}')
@@ -93,52 +91,6 @@ def check_device_connection():
         blurestack=connect_bluestack()
         if blurestack:
             return blurestack
-    # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
-    device = None  # 初始化device变量为None
-    output = os.popen(f'{adb_path} devices').read().strip().split('\n')
-    if len(output) <= 1 or output[0] != 'List of devices attached':
-        print('Error: 无法连接adb_address，尝试连接蓝叠')
-        blurestack=connect_bluestack()
-        if not blurestack:
-            return None
-        else:
-            return blurestack
-    else:
-        for line in output[1:]:
-            if not line.endswith('\tdevice'):
-                continue
-            elif line.endswith('\tdevice'):
-                device =line.split('\t')[0]
-                break
-        if not device:
-            print('Error: 无设备，尝试连接adb_address')
-            if 'adb_address' in config and config['adb_address'].strip():
-                device = config['adb_address']
-                os.system(f'{adb_path} connect {device}')
-                output = os.popen(f'{adb_path} devices').read().strip().split('\n')
-                if len(output) <= 1 or output[0] != 'List of devices attached':
-                    print('Error: 无法连接adb_address，尝试连接蓝叠')
-                    blurestack=connect_bluestack()
-                    if not blurestack:
-                        return None
-                    else:
-                        return blurestack
-                else:
-                    print(f'已连接设备：{device}')
-                    config['device_id'] = device
-                    api.write_config()
-                    return device
-            else:
-                print('Error:adb_address为空，尝试连接蓝叠')
-                blurestack=connect_bluestack()
-                if not blurestack:
-                    return None
-                else:
-                    return blurestack
-        else:
-            print(f'已连接设备：{device}')
-            api.write_config()
-            return device
 
 def connect_bluestack():
     adb_path = user_config['adb_path']
@@ -158,6 +110,7 @@ def connect_bluestack():
 def is_device_connected():
     adb_head = ''
     device=None
+    global user_config
     # 检查adb路径是否存在
     if 'adb_path' in user_config and os.path.exists(user_config['adb_path'].strip()):
         adb_path = user_config['adb_path']
@@ -172,6 +125,8 @@ def is_device_connected():
         print('Error: config.json有关adb的设置有误')
     else:
         device = check_device_connection()
+        with open('config.json', 'r') as f:
+            user_config = json.load(f)
         if 'device_id' in user_config and user_config['device_id'].strip():
             adb_head = f'{adb_path} -s {DEVICE_ID}'
         else:

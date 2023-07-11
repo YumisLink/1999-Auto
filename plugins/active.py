@@ -1,4 +1,4 @@
-import plugins.mission_ready as mission_ready
+import plugins.path as path
 import lib.find as f
 import time
 import lib.adb_command as adb
@@ -16,13 +16,13 @@ IMAGE_HARVEST = 'imgs/level_harvest'
 IMAGE_ANALYSIS = 'imgs/level_analysis'
 """圣遗物狗粮（意志解析）"""
 
-REPLAY_1 = (0.63, 0.85)
+REPLAY_1 = 1
 """复现1次"""
-REPLAY_2 = (0.63, 0.76)
+REPLAY_2 = 2
 """复现2次"""
-REPLAY_3 = (0.63, 0.68)
+REPLAY_3 = 3
 """复现3次"""
-REPLAY_4 = (0.63, 0.59)
+REPLAY_4 = 4
 """复现4次"""
 LEVEL_4 = 4
 """第4关"""
@@ -50,8 +50,6 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     :param times:复现次数.
     """    
     if go_resource:
-        if not mission_ready.ready():
-            raise RuntimeError('无法返回主菜单')
         to_resource()
     exist=f.find((type))
     if exist[2]>0.6:
@@ -80,7 +78,7 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
 
     adb.touch(f.find(IMAGE_START))
     print(f"正在进入开始界面菜单")
-    time.sleep(3.5)
+    time.sleep(4)
 
     is_replay =f.cut_find_html(IMGAE_IN_REPLAY,883,753,1555,897)
     if is_replay is not None:
@@ -102,10 +100,11 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     time.sleep(20)
 
     while(True):
-        adb.touch((50,data['x']/2))
-        time.sleep(1)
+        adb.touch((50,3))
+        time.sleep(4)
         res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
         if res is not None:
+            print('复现完成')
             break
         # ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
         # if (len(ans)>0):
@@ -134,14 +133,17 @@ def to_resource():
     """
     进入资源关.
     """    
-    if not mission_ready.ready():
-        raise RuntimeError('无法返回主菜单')
-    res=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
-    if res is None:
-        x,y=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    path.to_menu()
+    #活动期间先识别反着的提高效率
+    res=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    if res[0] is None:
+        x,y=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
     else:
         x,y=res
-    adb.touch([x,y+20])
+    if not y:
+        print('主会场正反都没有，加群联系作者或者提issue吧')
+        exit(1)
+    adb.touch((x,y+20))
     print("正在进入主会场")
     time.sleep(1)
 
