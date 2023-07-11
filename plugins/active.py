@@ -81,7 +81,7 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     time.sleep(4)
 
     is_replay =f.cut_find_html(IMGAE_IN_REPLAY,883,753,1555,897)
-    if is_replay is not None:
+    if is_replay[0] is not None:
         replay = f.find(IMAGE_REPLAY)
         print(replay)
         if replay[2] > 0.72:
@@ -103,7 +103,7 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
         adb.touch((50,3))
         time.sleep(4)
         res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
-        if res is not None:
+        if res[0] is not None:
             print('复现完成')
             break
         # ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))

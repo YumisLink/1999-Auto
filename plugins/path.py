@@ -62,7 +62,7 @@ def where_am_i():
         cv.imwrite('cache/result.png', screen)
         return max_template_name
 
-def to_menu():
+def to_menu(autologin=True):
     start_time = time.time()
     while True:
         status = where_am_i()
@@ -75,8 +75,18 @@ def to_menu():
                 #print('似乎正在启动')
                 time.sleep(1)
         elif status == 'login':
-            print('登陆界面还没写')
-            break
+            if autologin:
+                print('尝试自动登录')
+                out=f.cut_find_html('imgs/login_back',572,234,654,295,False)
+                if out[0] is not None:
+                    adb.touch(out)
+                    time.sleep(1)
+                adb.touch([804,525])
+                autologin=False
+                time.sleep(1)
+            else:
+                print('无法处理的登陆界面')
+                break
         elif status == 'title':
             #等待,开始键应该能出现了
             time.sleep(1.5)
@@ -151,7 +161,7 @@ def to_title(autologin=True):
             if autologin:
                 print('尝试自动登录')
                 out=f.cut_find_html('imgs/login_back',572,234,654,295,False)
-                if out is not None:
+                if out[0] is not None:
                     adb.touch(out)
                     time.sleep(1)
                 adb.touch([804,525])

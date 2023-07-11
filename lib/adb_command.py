@@ -26,6 +26,9 @@ def input(text,clear=False):
         os.system(f"{ADB_HEAD} input keyevent --longpress $(printf 'KEYCODE_DEL %.0s' {{1..250}})")
     print(os.system(f'{ADB_HEAD} shell input text {text}'))
 
+def kill_app():
+    print(f'关闭 {APPID}')
+    print(os.system(f'{ADB_HEAD} shell am force-stop {APPID}'))
 def is_game_on():
     '''检测游戏是否在前台'''
     config = user_config
