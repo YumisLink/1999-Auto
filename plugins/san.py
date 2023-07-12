@@ -10,9 +10,10 @@ import lib.api as api
 
 def get_san():
     status=path.where_am_i()
+    print('san status:',status)
     if status == 'menu':
         adb.touch([1460,204])
-        sleep(1)
+        sleep(2)
         out=detect_san_in_san()
         return out
     elif status == 'san':
@@ -35,7 +36,7 @@ def get_san():
     
 def detect_san_in_san():
     api.get_screen_shot()
-    out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),675,674,853,764)
+    out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),682,675,859,767)
     if out['code'] != 100:
         print(out)
         return None

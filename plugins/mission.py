@@ -3,6 +3,7 @@ import time
 import cv2 as cv
 import lib.adb_command as adb
 import plugins.mission_ready as ready
+import plugins.path as path
 import lib.ppocr as pp
 
 IMAGE_MISSION = 'imgs/menu_mission'
@@ -14,8 +15,7 @@ IMAGE_WEEK = 'imgs/mission_week'
 
 def mission_start():
     """领取任务奖励"""
-    if not ready.ready():   
-        raise RuntimeError('无法返回主页面')
+    path.to_menu()
     adb.touch(f.find(IMAGE_MISSION,False))
     time.sleep(1)
 

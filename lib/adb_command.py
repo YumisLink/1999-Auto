@@ -108,6 +108,7 @@ def connect_bluestack():
         print(f'已连接设备：{device}')
         user_config['device_id'] = device
         api.write_config()
+        print('已设置devide为蓝叠端口')
         return device
             
 def is_device_connected():
@@ -134,8 +135,12 @@ def is_device_connected():
             adb_head = f'{adb_path} -s {DEVICE_ID}'
         else:
             adb_head = f'{adb_path}'
+    global ADB_HEAD
+    print('已重组adb_head')
+    ADB_HEAD = adb_head
     user_config['adb_head'] = adb_head
-    api.write_config()
+    with open('config.json', 'w') as f:
+        json.dump(user_config, f, indent=4)
     return device
     
             

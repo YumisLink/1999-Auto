@@ -53,14 +53,15 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     if go_resource:
         to_resource()
     exist=f.find((type))
-    if exist[2]>0.6:
+    print('目标关卡识别率：',exist[2])
+    if exist[2]>0.7:
         adb.touch(exist)
         time.sleep(1)
     else:
         adb.swipe((1344,485),(156,488))
-        time.sleep(0.3)
+        time.sleep(1)
         adb.touch(f.find((type)))
-        time.sleep(0.3)
+        time.sleep(1)
     print(f"正在进入{type}")
     time.sleep(0.8)
 
@@ -84,12 +85,12 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     is_replay =f.cut_find_html(IMGAE_IN_REPLAY,883,753,1555,897)
     if is_replay[0] is not None:
         replay = f.find(IMAGE_REPLAY)
-        print(replay)
+        print('replay:',replay)
         if replay[2] > 0.72:
             adb.touch(replay)
             print(f"选择复现模式")
             time.sleep(1.7)
-    adb.touch(f.find(IMAGE_REPLAY_SELECT))
+    adb.touch(f.cut_find_html(IMAGE_REPLAY_SELECT,971,782,1100,860))
     print(f"选择复现次数")
     time.sleep(1.7)
     if times>4:
@@ -160,9 +161,11 @@ def active_as_much(type: str, level: int,level_san:int):
         print('理智识别失败，退出')
         return None
     print('活力:',sanum)
-    total_times=sanum//level_san
+    intsan=int(sanum)
+    total_times=intsan//level_san
     fourtimes=total_times//4
     times=total_times%4
+    print('fourtimes:',fourtimes,'times:',times)
     if fourtimes >0:
         for i in range(fourtimes):
             Auto_Active(type, level, 4)
