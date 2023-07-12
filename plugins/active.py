@@ -1,4 +1,5 @@
-import plugins.path as path
+import plugins.path as path 
+import plugins.san as san
 import lib.find as f
 import time
 import lib.adb_command as adb
@@ -151,3 +152,20 @@ def to_resource():
     print("点击资源")
     time.sleep(1)
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
+
+def active_as_much(type: str, level: int,level_san:int):
+    path.to_menu()
+    sanum=san.get_san()
+    if not sanum:
+        print('理智识别失败，退出')
+        return None
+    print('活力:',sanum)
+    total_times=sanum//level_san
+    fourtimes=total_times//4
+    times=total_times%4
+    if fourtimes >0:
+        for i in range(fourtimes):
+            Auto_Active(type, level, 4)
+    if times>0:
+        Auto_Active(type, level, times)
+

@@ -17,6 +17,7 @@ template_imgs = {
     'notmenu2': {'img': 'imgs/go_back_2.png', 'pos': (0,0,225,94)},#html;黑色的返回键
     'win':{'img': 'imgs/VICTOR.png', 'pos': (927,33,1364,293)},#html;作战胜利界面
     'confirm':{'img': 'imgs/confirm.png', 'pos': (612,458,1596,724)},#html;管他是啥呢，确认就完了！
+    'san':{'img': 'imgs/menu_san_checker.png', 'pos': (695,294,922,569)},#html;活力值
 }
 
 def where_am_i():
@@ -62,7 +63,7 @@ def where_am_i():
         cv.imwrite('cache/result.png', screen)
         return max_template_name
 
-def to_menu(autologin=True):
+def to_menu(autologin=True,back_to_title=False):
     start_time = time.time()
     while True:
         status = where_am_i()
@@ -88,87 +89,15 @@ def to_menu(autologin=True):
                 print('无法处理的登陆界面')
                 break
         elif status == 'title':
-            #等待,开始键应该能出现了
-            time.sleep(1.5)
-            #标题界面点开始
-            adb.touch([791,670])
-            time.sleep(1)
-        elif status == 'got':
-            #获得界面瞎点一下(不点到物品就行)
-            adb.touch([799,247])
-            time.sleep(1)
-        elif status == 'checkin':
-            #签到界面瞎点一下
-            adb.touch([103,73])
-            time.sleep(1)
-        elif status == 'alert':
-            #能关的界面点关闭
-            xy=f.cut_find_html('imgs/alert_close',1215,1,1600,269,False)
-            adb.touch(xy)
-            time.sleep(1)
-        elif status == 'update':
-            print('开始更新！重新计时')
-            start_time = time.time()
-            #更新界面点下载(切换到1600*900以来还没用过)
-            adb.touch([1007,576])
-            time.sleep(1)
-        elif status == 'notmenu2': #在签到界面点返回键竟然能给到签了，神奇
-            print('action:notmenu2')
-            #返回
-            adb.touch([60,58])
-            time.sleep(1)
-        elif status == 'notmenu':
-            print('action:notmenu')
-            #返回
-            adb.touch([60,57])
-            time.sleep(1)
-        elif status == 'nothome':
-            print('action:nothome')
-            #返回菜单
-            adb.touch([177,58])
-            time.sleep(1)
-        elif status == 'confirm':
-            print('action:confirm')
-            #管他是啥呢，确认就完了！
-            adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724,False))
-            cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
-            print('已将确认内容保存至cache/confirm.png')
-            time.sleep(1)
-        elif status == 'win':
-            #胜利界面随便点一下
-            adb.touch([1007,576])
-        elif status == 'menu':
-            print('已在主菜单')
-            break    
-
-def to_title(autologin=True):
-    start_time = time.time()
-    while True:
-        status = where_am_i()
-        if status is None:
-            if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
-                print('启动超时')
-                time.sleep(1)
+            if back_to_title:
+                print('到达标题界面')
                 break
             else:
-                #print('似乎正在启动')
+                #等待,开始键应该能出现了
+                time.sleep(1.5)
+                #标题界面点开始
+                adb.touch([791,670])
                 time.sleep(1)
-        elif status == 'title':
-            #标题界面
-            print('到达标题界面，本次导航结束')
-            break
-        elif status == 'login':
-            if autologin:
-                print('尝试自动登录')
-                out=f.cut_find_html('imgs/login_back',572,234,654,295,False)
-                if out[0] is not None:
-                    adb.touch(out)
-                    time.sleep(1)
-                adb.touch([804,525])
-                time.sleep(1)
-            else:
-                print('到达登陆界面')
-            break
         elif status == 'got':
             #获得界面瞎点一下(不点到物品就行)
             adb.touch([799,247])
@@ -214,14 +143,24 @@ def to_title(autologin=True):
             #胜利界面随便点一下
             adb.touch([1007,576])
         elif status == 'menu':
-            adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
-            time.sleep(1.5)
-            adb.touch(f.cut_find_html('imgs/setting',82,565,520,794))
-            time.sleep(1.5)
-            adb.touch((1096,656))
-            time.sleep(1.5)
-            adb.touch((1011,532))
-            break
+            if back_to_title:
+                adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
+                time.sleep(1.5)
+                adb.touch(f.cut_find_html('imgs/setting',82,565,520,794))
+                time.sleep(1.5)
+                adb.touch((1096,656))
+                time.sleep(1.5)
+                adb.touch((1011,532))
+            else:
+                print('已在主菜单')
+                break
+        elif status == 'san':
+            #活力界面随便点一下
+            adb.touch([84,855])
+            time.sleep(1)    
+
+def to_title(autologin=True):
+    to_menu(autologin,True)
 
 def login(account:str,password:str):
     """
@@ -253,7 +192,7 @@ def login(account:str,password:str):
     print('登录完成')
 
 def to_login():
-    to_title()
+    to_title(False)
     time.sleep(1.5)
     adb.touch(f.cut_find_html('imgs/title_exit',1502,778,1573,867))
     time.sleep(1)
