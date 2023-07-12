@@ -24,7 +24,7 @@ def wild_start():
     """领不休荒原产物"""
     path.to_menu()
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
-    print('进入不朽荒原')
+    print('进入不休荒原')
     while(True):
         time.sleep(3)
         if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
