@@ -96,7 +96,7 @@ def cut_find(template, x, y, w, h, take=True):
         y = loc[0][0] + y
         return x, y
     else:
-        print('匹配度过低' + str(result))
+        print('匹配度过低' + str(result.max()))
         return None,None
 
 

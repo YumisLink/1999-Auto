@@ -5,6 +5,9 @@ import lib.adb_command as adb
 import lib.api as api
 
 template_imgs = {
+    'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (157,560,1501,696)},#html;主界面
+    'notmenu': {'img': 'imgs/go_back_1.png', 'pos': (0,0,225,94)},#html;白色的返回键
+    'notmenu2': {'img': 'imgs/go_back_2.png', 'pos': (0,0,225,94)},#html;黑色的返回键
     'title': {'img': 'imgs/title.png', 'pos': (462,285,1129,525)},#html坐标格式(以下简称html);标题界面
     #'policy': {'img': 'imgs/agree.png', 'pos': (600, 430, 200, 100)},#TODO:html;隐私政策界面
     'update': {'img': 'imgs/download.png', 'pos': (821,542,1193,618)},#html;更新界面
@@ -12,9 +15,6 @@ template_imgs = {
     'got':{'img': 'imgs/got.png', 'pos': (757,38,847,131)},#html;获得物品界面
     'checkin':{'img': 'imgs/checkin.png', 'pos': (995,124,903,45)},#html;每日初次登录的签到界面
     'login': {'img': 'imgs/login.png', 'pos': (175,0,1077,667)},#html
-    'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (157,560,1501,696)},#html;主界面
-    'notmenu': {'img': 'imgs/go_back_1.png', 'pos': (0,0,225,94)},#html;白色的返回键
-    'notmenu2': {'img': 'imgs/go_back_2.png', 'pos': (0,0,225,94)},#html;黑色的返回键
     'win':{'img': 'imgs/VICTOR.png', 'pos': (927,33,1364,293)},#html;作战胜利界面
     'confirm':{'img': 'imgs/confirm.png', 'pos': (612,458,1596,724)},#html;管他是啥呢，确认就完了！
     'san':{'img': 'imgs/menu_san_checker.png', 'pos': (695,294,922,569)},#html;活力值
@@ -144,6 +144,7 @@ def to_menu(autologin=True,back_to_title=False):
             adb.touch([1007,576])
         elif status == 'menu':
             if back_to_title:
+                print('返回标题界面')
                 adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
                 time.sleep(1.5)
                 adb.touch(f.cut_find_html('imgs/setting',82,565,520,794))
@@ -169,7 +170,8 @@ def login(account:str,password:str):
     password:密码
     """
     to_login()
-    time.sleep(1)
+    print('开始登录')
+    time.sleep(8)
     adb.touch([917,584])
     time.sleep(0.5)
     adb.touch([801,336])

@@ -119,7 +119,7 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
 def to_level(level:int,swipetimes=10):
     for i in range(swipetimes+1):
         adb.swipe((1500,744),(200,750))
-        time.sleep(0.1)
+        time.sleep(1)
     for i in range(1,99):
         screen=api.get_scrren_shot_bytes()
         res=f.detect_numbers(screen)

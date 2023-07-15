@@ -41,6 +41,7 @@ def wild_start():
     #if (f.find(IMAGE_BASE_FRIEND,False)[2]>0.5):
     #    adb.touch(f.find(IMAGE_BASE_FRIEND,False))
     #处理对话
+    time.sleep(2)
     res=f.cut_find_html(IMGAE_CHAT,1462,165,1579,768)
     res2=f.cut_find_html(IMAGE_CHAT_CHECKER,1365,801,1585,890,False)
     if res[0] is not None or  res2[0] is not None:

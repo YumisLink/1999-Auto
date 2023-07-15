@@ -30,6 +30,9 @@ def get_san():
                 return None
             text=out['data']['text']
             return (text)
+        else:
+            print('未找到活力值')
+            return None
     else:
         print('未找到活力值')
         return None
