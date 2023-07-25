@@ -1,0 +1,24 @@
+{
+    "login":
+    {
+        "login": false,
+        "username": "Username",
+        "password": "Password"
+       
+    },
+    "daily":{
+        "fight":{
+            "free_mind_analyze": true,
+            "harvest":{
+                "level": 4,
+                "asmuch": false,
+                "times": 4
+            }
+        },
+        "wild":true,
+        "pass":true,
+        "mission":true,
+        "mail":true
+
+    }
+}

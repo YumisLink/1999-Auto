@@ -41,7 +41,7 @@ def find_boolean(id: str, take=True):
 def find(id: str, take=True):
     """
     从id中匹配图片并返回其中心点的xy坐标及匹配度
-    :param id:图片的id.
+    :param id:图片的路径（不需要.png后缀）.
     :param take:图片要不要现截.
     :Return: avg:找到的图片的中心点坐标，以及相似度
     """

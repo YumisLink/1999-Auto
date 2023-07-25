@@ -47,6 +47,7 @@ def ocr_xy(target,text='',cn=True):
     return res
 
 def ocr_bytes_cn(imagebytes):
+    #直接传入图片字节流有问题处理不了，先存到本地再识别（先用着，将来可能会修吧）
     cv.imwrite('cache/ocr_bytes_cn.png', imagebytes)
     res=ocr_cn('cache/ocr_bytes_cn.png')
     return res
@@ -72,7 +73,7 @@ def ocr_bytes_xy(imagebytes,text='',cn=True):
 
 def cut_ocr_bytes(imagebytes,x,y,w,h,is_cn=True):
     """
-    识别target图片中包含text的区域，返回中心坐标
+    OCR识别裁切区域
     :param imagebytes:需要识别的图片字节流.
     :param x: 指定区域左上角的横坐标
     :param y: 指定区域左上角的纵坐标
@@ -90,6 +91,16 @@ def cut_ocr_bytes(imagebytes,x,y,w,h,is_cn=True):
 
 def cut_html_ocr_bytes(imagebytes,x1,y1,x2,y2,is_cn=True):
     # 用于处理从 https://www.image-map.net 框出来的坐标
+    """
+    OCR识别裁切区域
+    :param imagebytes:需要识别的图片字节流.
+    :param x1: 指定区域的某个横坐标
+    :param y1: 指定区域的某个的纵坐标
+    :param x2: 指定区域的某个横坐标
+    :param y2: 指定区域的某个的纵坐标
+    :param is_cn:是否使用中文ocr.
+    :Return: {"code": 识别码, "data": 内容列表或错误信息字符串}.
+    """
     if x2 < x1:
         a = x2
         x2 = x1
@@ -105,6 +116,40 @@ def cut_html_ocr_bytes(imagebytes,x1,y1,x2,y2,is_cn=True):
         res=ocr_bytes_en(img_cut)
     return res
 
+def cut_html_ocr_bytes_xy(imagebytes,x1,y1,x2,y2,text='',is_cn=True):
+    # 用于处理从 https://www.image-map.net 框出来的坐标
+    """
+    识别target图片中包含text的区域，返回中心坐标
+    :param imagebytes:需要识别的图片字节流.
+    :param x1: 指定区域的某个横坐标
+    :param y1: 指定区域的某个的纵坐标
+    :param x2: 指定区域的某个横坐标
+    :param y2: 指定区域的某个的纵坐标
+    :param text:预期文本.
+    :param cn:是否使用中文ocr.
+    :Return: 中心坐标、识别文本和匹配度.
+    """
+    if x2 < x1:
+        a = x2
+        x2 = x1
+        x1 = a
+    if y2 < y1:
+        a = y2
+        y2 = y1
+        y1 = a
+    img_cut=imagebytes[y1:y2,x1:x2]
+    if is_cn:
+        res=match_text_area(ocr_bytes_cn(img_cut), text)
+    else:
+        res=match_text_area(ocr_bytes_en(img_cut), text)
+    if res[0] is None:
+        print('未识别到目标文本')
+        return None,None,None
+    result=res
+    result[0][0]=res[0][0]+x1
+    result[0][1]=res[0][1]+y1
+    return result
+    
 
 def match_text_area(res, text):
     """

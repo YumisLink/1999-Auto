@@ -8,32 +8,18 @@ import lib.ppocr as pp
 import lib.api as api
 
 IMAGE_RESOURCE = "imgs/active_resource"
-IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'
-"""经验"""
-IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'
-"""钱"""
-IMAGE_HARVEST = 'imgs/level_harvest'
-"""基建（丰收时令）"""
-IMAGE_ANALYSIS = 'imgs/level_analysis'
-"""圣遗物狗粮（意志解析）"""
+IMAGE_INSIGHT = 'imgs/active/insight'#洞察
+IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'#经验
+IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'#钱
+IMAGE_HARVEST = 'imgs/level_harvest' #基建（丰收时令）
+IMAGE_ANALYSIS = 'imgs/level_analysis' #圣遗物狗粮（意志解析）
 
-REPLAY_1 = 1
-"""复现1次"""
-REPLAY_2 = 2
-"""复现2次"""
-REPLAY_3 = 3
-"""复现3次"""
-REPLAY_4 = 4
-"""复现4次"""
-LEVEL_4 = 4
-"""第4关"""
-LEVEL_5 = 5
-"""第5关"""
-LEVEL_6 = 6
-"""第6关"""
+
+
 
 
 IMAGE_START = "imgs/START_ACTIVE"
+IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
 IMAGE_REPLAY = 'imgs/enter_replay_mode2'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
@@ -43,7 +29,7 @@ IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
 
 
-def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=10 ):
+def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetimes=10 ):
     """
     进入特定关卡进行复现.
     :param level:第几关.
@@ -83,6 +69,30 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
     print(f"正在进入开始界面菜单")
     time.sleep(4)
 
+    sub_replay(times)
+        
+def to_level(level:int,swipetimes=2):
+    print(f'开始寻找第{level}关')
+    for i in range(swipetimes+1):
+        adb.swipe((1500,744),(200,750))
+        time.sleep(1)
+    for i in range(1,99):
+        screen=api.get_scrren_shot_bytes()
+        res=f.detect_numbers(screen)
+        for num,xy in res:
+            if num==level:
+                x,y=xy
+                y=y+50
+                adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此修正点击位置
+                time.sleep(1)
+                print('到达目标关卡')
+                return True
+        print('未找到目标关卡，继续滑动')
+        adb.swipe((500,744),(1040,750))
+        time.sleep(1)
+    return False
+
+def sub_replay(times:int):
     is_replay =f.cut_match_html(IMGAE_IN_REPLAY,883,753,1555,897)
     if is_replay is None or is_replay[2] > 0.7:
         print('不在复现模式')
@@ -90,8 +100,8 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
         if replay[0] is not None:
             adb.touch(replay)
             print(f"选择复现模式")
-            time.sleep(1.7)
-        
+            time.sleep(1.7)   
+
     adb.touch(f.cut_find_html(IMAGE_REPLAY_SELECT,971,782,1100,860))
     print(f"选择复现次数")
     time.sleep(1.7)
@@ -116,24 +126,6 @@ def Auto_Active(type: str, level: int, times,go_resource=True,level_swipetimes=1
         #     if ans[2] is not None and '复现' in ans[2]:
         #         break
     # time.sleep(3)
-def to_level(level:int,swipetimes=10):
-    for i in range(swipetimes+1):
-        adb.swipe((1500,744),(200,750))
-        time.sleep(1)
-    for i in range(1,99):
-        screen=api.get_scrren_shot_bytes()
-        res=f.detect_numbers(screen)
-        for num,xy in res:
-            if num==level:
-                x,y=xy
-                y=y+50
-                adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此修正点击位置
-                time.sleep(1)
-                return True
-        adb.swipe((100,744),(1040,750))
-        time.sleep(1)
-    return False
-        
 def to_resource():
     """
     进入资源关.
@@ -156,6 +148,56 @@ def to_resource():
     print("点击资源")
     time.sleep(1)
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
+
+def to_story(chapter:int,level:int,times:int,is_hard=False):
+    """
+    进入故事关.
+    :param chapter:第几章.
+    :param level:第几关.
+    :param times:复现次数.
+    :param is_hard:是否为厄险模式.
+    因为主线有厄险所以单列
+    """    
+    path.to_menu()
+    #活动期间先识别反着的提高效率
+    res=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    if res[0] is None:
+        x,y=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
+    else:
+        x,y=res
+    if not y:
+        print('主会场正反都没有，加群联系作者或者提issue吧')
+        exit(1)
+    adb.touch((x,y+20))
+    print("正在进入主会场")
+    time.sleep(1)
+
+    adb.touch([178,817])
+    print("点击故事")
+    time.sleep(1)
+
+    adb.touch(f.find('imgs/active/chapter'+str(chapter)))
+    print("点击第"+str(chapter)+"章")
+    time.sleep(1)
+
+    to_level(level)
+    time.sleep(0.8) 
+
+    if is_hard:
+        res=pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(),1112,291,1525,365,'厄险')
+        if res[0] is not None:
+            adb.touch(res[0])
+            print('点击厄险')
+            time.sleep(1)
+        else:
+            print('未找到厄险，退出')
+            return None
+    adb.touch(f.find(IMAGE_START_HARD))
+    print(f"正在进入开始界面菜单")
+    time.sleep(4)   
+    
+    sub_replay(times)
+
 
 def active_as_much(type: str, level: int,level_san:int):
     path.to_menu()
