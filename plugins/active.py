@@ -14,9 +14,22 @@ IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'#钱
 IMAGE_HARVEST = 'imgs/level_harvest' #基建（丰收时令）
 IMAGE_ANALYSIS = 'imgs/level_analysis' #圣遗物狗粮（意志解析）
 
+IMAGE_CHAPTER1 = 'imgs/active/chapter1'
+IMAGE_CHAPTER2 = 'imgs/active/chapter2'
+IMAGE_CHAPTER3 = 'imgs/active/chapter3'
+IMAGE_CHAPTER4 = 'imgs/active/chapter4'
+IMAGE_CHAPTERX = 'imgs/active/chapter%d'
 
-
-
+IMAGE_MOUNTAIN_ECHOS = 'imgs/active/ME'
+IMAGE_STARTFALL_LOCALE = 'imgs/active/SL'
+IMAGE_SYLVANUS_SHAPE = 'imgs/active/SS'
+IMAGE_BRUTES_WILDS = 'imgs/active/BW'
+IMAGE_INSIGHT_MAP = {
+    '群山之声': IMAGE_MOUNTAIN_ECHOS,
+    '星陨之所': IMAGE_STARTFALL_LOCALE,
+    '深林之形': IMAGE_SYLVANUS_SHAPE,
+    '荒兽之野': IMAGE_BRUTES_WILDS,
+}
 
 IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
@@ -49,7 +62,7 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
         time.sleep(1)
         adb.touch(f.find((type)))
         time.sleep(1)
-    print(f"正在进入{type}")
+    print(f"进入{type}")
     time.sleep(0.8)
 
     # level_click = f.find(level)
@@ -58,15 +71,15 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
     #     adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
     #     level_click = f.find(level)
     # adb.touch(level_click)
-    to_level(level,level_swipetimes)
-    print(f"正在进入{level}")
+    assert to_level(level,level_swipetimes)
+    print(f"进入{level}")
     time.sleep(0.8) 
 
 
 
 
     adb.touch(f.find(IMAGE_START))
-    print(f"正在进入开始界面菜单")
+    print(f"进入行动界面")
     time.sleep(4)
 
     sub_replay(times)
@@ -139,7 +152,7 @@ def to_resource():
         x,y=res
     if not y:
         print('主会场正反都没有，加群联系作者或者提issue吧')
-        exit(1)
+        raise Exception('进入主会场失败')
     adb.touch((x,y+20))
     print("正在进入主会场")
     time.sleep(1)

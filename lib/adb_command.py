@@ -3,7 +3,7 @@ import json
 import time
 import re
 from config.mappoint import clickcard
-from config.config import user_config,APPID,ADB_HEAD,DEVICE_ID
+from config.config import user_config,APPID,ADB_HEAD,DEVICE_ID, ACTIVITY
 import lib.api as api
 
 
@@ -29,7 +29,7 @@ def input(text,clear=False):
 def kill_app():
     print(f'关闭 {APPID}')
     print(os.system(f'{ADB_HEAD} shell am force-stop {APPID}'))
-def is_game_on():
+def is_game_on(re_try=True):
     '''检测游戏是否在前台'''
     config = user_config
     adb_path = config['adb_path'] 
@@ -39,15 +39,22 @@ def is_game_on():
         output = process.read()
         process.close()
         if APPID not in output:
+            if not re_try:
+                print('游戏不在前台')
+                return False
             # 应用不在前台，运行应用
             print("游戏不在前台，正在启动")
-            os.popen(f'{ADB_HEAD} shell monkey -p {APPID} -c android.intent.category.LAUNCHER 1')
+            # os.popen(f'{ADB_HEAD} shell monkey -p {APPID} -c android.intent.category.LAUNCHER 1')
+            os.popen(f"{ADB_HEAD} shell am start {APPID}/{ACTIVITY}")
             time.sleep(8)
+            return is_game_on(False)
         else:
             # 处理输出
             print('应用已在前台')
+            return True
     except Exception as e:
         print(f'Error: {e}')
+        return False
 
 def get_bluestacks_adb_port():
     # 读取bluestacks.conf文件
@@ -128,6 +135,10 @@ def is_device_connected():
     if result != 0:
         print('Error: config.json有关adb的设置有误')
     else:
+        os.system(f'{adb_path} disconnect')
+        time.sleep(0.5)
+        os.system(f'{adb_path} kill-server')
+        time.sleep(0.5)
         device = check_device_connection()
         with open('config.json', 'r') as f:
             user_config = json.load(f)

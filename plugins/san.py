@@ -8,13 +8,14 @@ import lib.adb_command as adb
 import lib.api as api
 
 
-def get_san():
+def get_san() -> int|None:
     status=path.where_am_i()
     print('san status:',status)
     if status == 'menu':
         adb.touch([1460,204])
         sleep(2)
         out=detect_san_in_san()
+        adb.touch([1460,204]) # 返回
         return out
     elif status == 'san':
         out=detect_san_in_san()

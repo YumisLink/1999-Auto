@@ -71,7 +71,7 @@ def to_menu(autologin=True,back_to_title=False):
             if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
                 print('启动超时')
                 time.sleep(1)
-                break
+                return False
             else:
                 #print('似乎正在启动')
                 time.sleep(1)
@@ -87,11 +87,11 @@ def to_menu(autologin=True,back_to_title=False):
                 time.sleep(1)
             else:
                 print('无法处理的登陆界面')
-                break
+                return False
         elif status == 'title':
             if back_to_title:
                 print('到达标题界面')
-                break
+                return True
             else:
                 #等待,开始键应该能出现了
                 time.sleep(1.5)
@@ -154,14 +154,14 @@ def to_menu(autologin=True,back_to_title=False):
                 adb.touch((1011,532))
             else:
                 print('已在主菜单')
-                break
+                return True
         elif status == 'san':
             #活力界面随便点一下
             adb.touch([84,855])
             time.sleep(1)    
 
 def to_title(autologin=True):
-    to_menu(autologin,True)
+    return to_menu(autologin,True)
 
 def login(account:str,password:str):
     """

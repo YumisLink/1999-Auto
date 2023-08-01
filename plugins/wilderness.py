@@ -22,7 +22,8 @@ def back_to_land():
 
 def wild_start():
     """领不休荒原产物"""
-    path.to_menu()
+    while not path.to_menu():
+        pass
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     print('进入不休荒原')
     while(True):
@@ -44,15 +45,19 @@ def wild_start():
     time.sleep(2)
     res=f.cut_find_html(IMGAE_CHAT,1462,165,1579,768)
     res2=f.cut_find_html(IMAGE_CHAT_CHECKER,1365,801,1585,890,False)
-    if res[0] is not None or  res2[0] is not None:
-        while True:
+    if res[0] is not None or res2[0] is not None:
+        for _ in range(10):
             if res[0] is not None:
+                print('存在IMAGE_CHAT')
                 adb.touch(res)
             if res2[0] is not None:
+                print('存在IMAGE_CHAT_CHECKER')
                 adb.touch(res2)
             time.sleep(1)
             res=f.cut_find_html(IMGAE_CHAT,1462,165,1579,768)
             res2=f.cut_find_html(IMAGE_CHAT_CHECKER,1365,801,1585,890,False)
             if res[0] is None and res2[0] is None:
-                break    
-    
+                break
+        else:
+            return False
+    return True

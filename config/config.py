@@ -12,6 +12,7 @@ ADB_PATH = user_config["adb_path"]
 DEVICE_ID = user_config["device_id"]
 ADB_HEAD = user_config["adb_head"]
 APPID = "com.shenlan.m.reverse1999" 
+ACTIVITY = "com.ssgame.mobile.gamesdk.frame.AppStartUpActivity"
 
 def check_path():
     if not os.path.exists('cache'):
