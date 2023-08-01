@@ -1,5 +1,6 @@
 import lib.find as f
 import time
+from loguru import logger
 import lib.adb_command as adb
 import plugins.mission_ready as ready
 import plugins.path as path
@@ -16,7 +17,7 @@ IMGAE_CHAT = 'imgs/chat'
 def back_to_land():
     out=f.cut_find_html(IMGAE_BUILDING_CHECKER,1140,14,1307,81)
     if out[0]is not None:
-        print('误入建筑，返回')
+        logger.debug('误入建筑，返回')
         adb.touch((60,60))
         time.sleep(1)    
 
@@ -25,7 +26,7 @@ def wild_start():
     while not path.to_menu():
         pass
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
-    print('进入不休荒原')
+    logger.info('进入不休荒原')
     while(True):
         time.sleep(3)
         if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
@@ -48,10 +49,10 @@ def wild_start():
     if res[0] is not None or res2[0] is not None:
         for _ in range(10):
             if res[0] is not None:
-                print('存在IMAGE_CHAT')
+                logger.debug('存在IMAGE_CHAT')
                 adb.touch(res)
             if res2[0] is not None:
-                print('存在IMAGE_CHAT_CHECKER')
+                logger.debug('存在IMAGE_CHAT_CHECKER')
                 adb.touch(res2)
             time.sleep(1)
             res=f.cut_find_html(IMGAE_CHAT,1462,165,1579,768)

@@ -1,5 +1,6 @@
 #领取通行证（点唱机）奖励
 import time
+from loguru import logger
 import lib.find as f
 import lib.adb_command as adb
 import plugins.path as path
@@ -19,12 +20,12 @@ def pass_start():
 
     res = f.cut_find_html('imgs/pass/redpoint',1524,84,1555,50)
     if res[0] is not None:
-        print('开始领取')
+        logger.info('开始领取')
         #读碟
         adb.touch([1417,98])
         time.sleep(0.3)
     else:
-        print('没有奖励可领取')
+        logger.info('没有奖励可领取')
         return
     #日记
     claim_all()
