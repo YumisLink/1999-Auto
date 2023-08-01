@@ -47,18 +47,16 @@ class LogLevel(Enum):
     ERROR = 5
 
 def log(token: str, task_id: int, level: LogLevel, message: str):
-    print(f"LOG {level.name}: {message}")
-    return
-    response = requests.post(url + '/log', params={'task_id': task_id, 'level': level.value}, data={'message': message}, cookies={'access-token': token})
+    # print(f"LOG {level.name}: {message}")
+    response = requests.post(url + '/log', params={'task_id': task_id, 'level': level.value}, json={'message': message}, cookies={'access-token': token})
     res = response.json()
     if 'success' not in res or not res['success']:
         raise Exception(res['detail'])
     return
 
 def email(token: str, task_id: int, title: str, content: str):
-    print(f"EMAIL {title}: {content}")
-    return
-    response = requests.post(url + '/email', params={'task_id': task_id}, data={'title': title, 'content': content}, cookies={'access-token': token})
+    # print(f"EMAIL {title}: {content}")
+    response = requests.post(url + '/email', params={'task_id': task_id}, json={'title': title, 'content': content}, cookies={'access-token': token})
     res = response.json()
     if 'success' not in res or not res['success']:
         raise Exception(res['detail'])

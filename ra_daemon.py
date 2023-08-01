@@ -205,7 +205,6 @@ def loop(username: str, password: str):
             token = client.login(username, password)
             for task_id, task_name in client.get_tasks(token):
                 print(f"任务编号 {task_id}: {task_name}")
-                client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                 summary = []
                 skip = False
                 try:
@@ -214,6 +213,7 @@ def loop(username: str, password: str):
                         print(f"任务 {task_name} 被设为暂停，跳过")
                         skip = True
                         continue
+                    client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
                     if energy < 100: # TODO: get energy thresh from server
                         print(f"任务 {task_name} 体力未到执行阈值，跳过")
@@ -249,7 +249,7 @@ def loop(username: str, password: str):
         finally:
             terminate_program()
             print('等待 30 分钟')
-            time.sleep(30 * 60) # 0.5 hours
+            time.sleep(1 * 60) # 0.5 hours
 
 if __name__ == '__main__':
     config.check_path()
@@ -259,7 +259,7 @@ if __name__ == '__main__':
     if not device:
         print("Error: 未连接设备，请回看上面的错误信息")
         exit(1)
-    # sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
+    sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
     username = sys.argv[1]
     password = sys.argv[2]
     if 'server' in config.user_config:
@@ -272,6 +272,7 @@ if __name__ == '__main__':
     for task_id, task_name in client.get_tasks(token):
         print(f"任务编号 {task_id}: {task_name}")
         task = client.get_task(token, task_id)
+        client.log(token, task_id, client.LogLevel.HERTBEAT, '')
         if task['paused']:
             print(f"任务 {task_name} 被设为暂停，跳过")
             continue

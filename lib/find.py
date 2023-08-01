@@ -88,6 +88,7 @@ def cut_find(template, x, y, w, h, take=True):
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
+        print('匹配度' + str(result.max()))
         # # 在匹配结果上画框
         # for pt in zip(*loc[::-1]):
         #     cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
