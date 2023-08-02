@@ -58,6 +58,9 @@ def startup_program():
     return res
 
 def terminate_program():
+    if config.user_config.get('ProgramKeepAlive', True):
+        logger.info('保持模拟器运行不关闭')
+        return
     logger.info('正在关闭模拟器')
     os.system('taskkill /im MuMuPlayer.exe')
     time.sleep(5)
@@ -248,7 +251,7 @@ def loop(username: str, password: str):
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
-                    if energy < 106: # TODO: get energy thresh from server
+                    if energy < 100: # TODO: get energy thresh from server
                         logger.success(f"任务 {task_name} 体力未到执行阈值，跳过")
                         skip = True
                         continue
@@ -274,12 +277,13 @@ def loop(username: str, password: str):
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
                         client.notify(token, task_id, '发生未知错误', trace_info)
                     except Exception as e:
-                        logger.error(f'=============== Uncaught Error in error handler: {e} ===============')
+                        logger.error(f'=============== Uncaught Error in error handler: {e} ===============')                    
                 finally:
                     if not skip:
                         summary = '\n'.join(summary)
                         logger.success("执行完成, 总结:\n" + summary)
                         try:
+                            adb.kill_app()
                             client.log(token, task_id, client.LogLevel.NOTICE, summary)
                             client.notify(token, task_id, f'任务{task_name} 执行完成', summary)
                         except Exception as e:
@@ -290,7 +294,7 @@ def loop(username: str, password: str):
         finally:
             terminate_program()
             logger.info('等待 30 分钟')
-            time.sleep(1 * 60) # 0.5 hours
+            time.sleep(30 * 60) # 0.5 hours
 
 @logger.catch
 def main():
@@ -329,8 +333,9 @@ def main():
             exit(1)
         
         client.set_energy(token, task_id, energy)
-        if energy > 106: # TODO: get energy thresh from server
+        if energy > 100: # TODO: get energy thresh from server
             need_terminate = False
+        adb.kill_app()
         logger.success(f"任务 {task_name} 预检查完成")
     if need_terminate:
         terminate_program()

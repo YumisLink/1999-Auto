@@ -10,7 +10,7 @@ import lib.api as api
 
 def touch(point):
     logger.debug(f'click {point[0]} {point[1]}')
-    logger.debug(os.system(f'{ADB_HEAD} shell input tap {point[0]} {point[1]}'))
+    os.system(f'{ADB_HEAD} shell input tap {point[0]} {point[1]}')
 
 
 def swipe(p1, p2):
@@ -28,7 +28,8 @@ def input(text,clear=False):
 
 def kill_app():
     logger.info(f'关闭 {APPID}')
-    logger.debug(os.system(f'{ADB_HEAD} shell am force-stop {APPID}'))
+    res = os.system(f'{ADB_HEAD} shell am force-stop {APPID}')
+    logger.debug(f'关闭 {APPID} 结果：{res}')
 def is_game_on(re_try=True):
     '''检测游戏是否在前台'''
     config = user_config
