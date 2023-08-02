@@ -54,9 +54,9 @@ def log(token: str, task_id: int, level: LogLevel, message: str):
         raise Exception(res['detail'])
     return
 
-def email(token: str, task_id: int, title: str, content: str):
-    # print(f"EMAIL {title}: {content}")
-    response = requests.post(url + '/email', params={'task_id': task_id}, json={'title': title, 'content': content}, cookies={'access-token': token})
+def notify(token: str, task_id: int, title: str, content: str):
+    # print(f"NOTIFY {title}: {content}")
+    response = requests.post(url + '/notify', params={'task_id': task_id}, json={'title': title, 'content': content}, cookies={'access-token': token})
     res = response.json()
     if 'success' not in res or not res['success']:
         raise Exception(res['detail'])

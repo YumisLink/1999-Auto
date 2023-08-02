@@ -27,13 +27,24 @@ def program_is_running() -> bool:
     out, err = p.communicate()
     return 'MuMuPlayer.exe' in out.decode('gbk')
 
+def hideMuMu():
+    import pyautogui
+    # pyautogui.press('Alt+Q')
+    pyautogui.keyDown('alt')
+    pyautogui.press('q')
+    pyautogui.keyUp('alt')
+    return
+
 def startup_program():
     if program_is_running():
         print('模拟器已经在运行')
         return True
     print('正在启动模拟器')
     os.system('start MuMu12.lnk')
-    time.sleep(20)
+    time.sleep(5)
+    if config.user_config.get('MuMuHeadless', False):
+        hideMuMu()
+    time.sleep(15)
     res = program_is_running()
     if res:
         print('模拟器启动成功')
@@ -207,6 +218,7 @@ def loop(username: str, password: str):
                 print(f"任务编号 {task_id}: {task_name}")
                 summary = []
                 skip = False
+                start_time = datetime.now()
                 try:
                     task = client.get_task(token, task_id)
                     if task['paused']:
@@ -215,7 +227,7 @@ def loop(username: str, password: str):
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
-                    if energy < 100: # TODO: get energy thresh from server
+                    if energy < 0: # TODO: get energy thresh from server
                         print(f"任务 {task_name} 体力未到执行阈值，跳过")
                         skip = True
                         continue
@@ -229,7 +241,8 @@ def loop(username: str, password: str):
                     energy = get_san()
                     if not isinstance(energy, int):
                         raise Exception('无法获取体力')
-                    summary.append(f"任务 {task_name} 执行完成，剩余体力: {energy}")
+                    time_cost = datetime.now() - start_time
+                    summary.append(f"任务 {task_name} 执行完成，剩余体力: {energy}, 耗时: {time_cost.total_seconds():.2f} 秒")
                     client.set_energy(token, task_id, energy)
                 except Exception as e:
                     print(f'=============== Uncaught Error in task {task_name}: {e} ===============')
@@ -237,19 +250,20 @@ def loop(username: str, password: str):
                         trace_info = traceback.format_exc()
                         summary.append(f'发生未知错误: {e}, 执行中断')
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
-                        client.email(token, task_id, '发生未知错误', trace_info)
+                        client.notify(token, task_id, '发生未知错误', trace_info)
                     except Exception as e:
                         raise
                 finally:
                     if not skip:
                         client.log(token, task_id, client.LogLevel.NOTICE, '\n'.join(summary))
+                        client.notify(token, task_id, f'任务{task_name} 执行完成', '\n'.join(summary))
                 
         except Exception as e:
             print(f'=============== Uncaught Error: {e} ===============')
         finally:
             terminate_program()
             print('等待 30 分钟')
-            time.sleep(1 * 60) # 0.5 hours
+            time.sleep(30 * 60) # 0.5 hours
 
 if __name__ == '__main__':
     config.check_path()
@@ -287,7 +301,7 @@ if __name__ == '__main__':
             exit(1)
         
         client.set_energy(token, task_id, energy)
-        if energy > 100: # TODO: get energy thresh from server
+        if energy > 0: # TODO: get energy thresh from server
             need_terminate = False
     if need_terminate:
         terminate_program()
