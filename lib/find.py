@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from loguru import logger
 import lib.api as api
 from cards.aname import card_reflect
 
@@ -88,7 +89,7 @@ def cut_find(template, x, y, w, h, take=True):
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
     if len(loc[0]) > 0:
-        print('匹配度' + str(result.max()))
+        logger.debug('匹配度' + str(result.max()))
         # # 在匹配结果上画框
         # for pt in zip(*loc[::-1]):
         #     cv.rectangle(screen_cut, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
@@ -97,7 +98,7 @@ def cut_find(template, x, y, w, h, take=True):
         y = loc[0][0] + y
         return x, y
     else:
-        print('匹配度过低' + str(result.max()))
+        logger.debug('匹配度过低' + str(result.max()))
         return None,None
 
 
@@ -154,7 +155,7 @@ def cut_match(template, x, y, w, h, take=True):
         y = loc[0][0] + y
         return x, y,result.max()
     else:
-        print('匹配度过低' + str(result.max()))
+        logger.debug('匹配度过低' + str(result.max()))
         return None
     
 def cut_match_html(template, x2, y2, x1, y1, take=True):

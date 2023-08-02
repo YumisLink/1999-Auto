@@ -1,6 +1,6 @@
 import cv2 as cv
 from time import sleep
-
+from loguru import logger
 import plugins.path as path
 import lib.find as f
 import lib.ppocr as pp
@@ -10,7 +10,7 @@ import lib.api as api
 
 def get_san() -> int|None:
     status=path.where_am_i()
-    print('san status:',status)
+    logger.debug('当前界面:',status)
     if status == 'menu':
         adb.touch([1460,204])
         sleep(2)
@@ -27,22 +27,22 @@ def get_san() -> int|None:
             api.get_screen_shot()
             out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),1338,2,1598,75)
             if out['code'] != 100:
-                print(out)
+                logger.debug(out)
                 return None
             text=out['data']['text']
             return (text)
         else:
-            print('未找到活力值')
+            logger.warning('未找到活力值')
             return None
     else:
-        print('未找到活力值')
+        logger.warning('未找到活力值')
         return None
     
 def detect_san_in_san():
     api.get_screen_shot()
     out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),682,675,859,767)
     if out['code'] != 100:
-        print(out)
+        logger.debug(out)
         return None
     text=out['data'][0]['text']
     return int(text)

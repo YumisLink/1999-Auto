@@ -1,5 +1,6 @@
 import cv2 as cv
 import time
+from loguru import logger
 import lib.find as f
 import lib.adb_command as adb
 import lib.api as api
@@ -54,11 +55,11 @@ def where_am_i():
             # 在匹配到的目标上画一个矩形框
             cv.rectangle(screen, (x1 + max_loc[0], y1 + max_loc[1]), (x1 + max_loc[0] + tw, y1 + max_loc[1] + th), (0, 0, 255), 2)
     if max_val < 0.6:
-        print('未匹配到任何模板图像')
-        print(max_val,max_template_name)
+        logger.debug('未匹配到任何模板图像')
+        logger.debug(max_val,max_template_name)
         return None
     else:
-        print(f'匹配到了{max_template_name}')
+        logger.debug(f'匹配到了{max_template_name}')
         # 将结果保存到cache/result.png文件中
         cv.imwrite('cache/result.png', screen)
         return max_template_name
@@ -69,15 +70,15 @@ def to_menu(autologin=True,back_to_title=False):
         status = where_am_i()
         if status is None:
             if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
-                print('启动超时')
+                logger.error('启动超时')
                 time.sleep(1)
                 return False
             else:
-                #print('似乎正在启动')
+                #logger.debug('似乎正在启动')
                 time.sleep(1)
         elif status == 'login':
             if autologin:
-                print('尝试自动登录')
+                logger.debug('尝试自动登录')
                 out=f.cut_find_html('imgs/login_back',572,234,654,295,False)
                 if out[0] is not None:
                     adb.touch(out)
@@ -86,11 +87,11 @@ def to_menu(autologin=True,back_to_title=False):
                 autologin=False
                 time.sleep(1)
             else:
-                print('无法处理的登陆界面')
+                logger.error('无法处理的登陆界面')
                 return False
         elif status == 'title':
             if back_to_title:
-                print('到达标题界面')
+                logger.debug('到达标题界面')
                 return True
             else:
                 #等待,开始键应该能出现了
@@ -112,39 +113,39 @@ def to_menu(autologin=True,back_to_title=False):
             adb.touch(xy)
             time.sleep(1)
         elif status == 'update':
-            print('开始更新！重新计时')
+            logger.info('开始更新！重新计时')
             start_time = time.time()
             #更新界面点下载(切换到1600*900以来还没用过)
             adb.touch([1007,576])
             time.sleep(1)
         elif status == 'notmenu2': #在签到界面点返回键竟然能给到签了，神奇
-            print('action:notmenu2')
+            logger.debug('action:notmenu2')
             #返回
             adb.touch([60,58])
             time.sleep(1)
         elif status == 'notmenu':
-            print('action:notmenu')
+            logger.debug('action:notmenu')
             #返回
             adb.touch([60,57])
             time.sleep(1)
         elif status == 'nothome':
-            print('action:nothome')
+            logger.debug('action:nothome')
             #返回菜单
             adb.touch([177,58])
             time.sleep(1)
         elif status == 'confirm':
-            print('action:confirm')
+            logger.debug('action:confirm')
             #管他是啥呢，确认就完了！
             adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724,False))
             cv.imwrite('cache/confirm.png', cv.imread('cache/screenshot.png'))
-            print('已将确认内容保存至cache/confirm.png')
+            logger.info('已将确认内容保存至cache/confirm.png')
             time.sleep(1)
         elif status == 'win':
             #胜利界面随便点一下
             adb.touch([1007,576])
         elif status == 'menu':
             if back_to_title:
-                print('返回标题界面')
+                logger.debug('返回标题界面')
                 adb.touch(f.cut_find_html('imgs/menu',44,616,157,730,False))
                 time.sleep(1.5)
                 adb.touch(f.cut_find_html('imgs/setting',82,565,520,794))
@@ -153,7 +154,7 @@ def to_menu(autologin=True,back_to_title=False):
                 time.sleep(1.5)
                 adb.touch((1011,532))
             else:
-                print('已在主菜单')
+                logger.debug('已在主菜单')
                 return True
         elif status == 'san':
             #活力界面随便点一下
@@ -170,7 +171,7 @@ def login(account:str,password:str):
     password:密码
     """
     to_login()
-    print('开始登录')
+    logger.info('开始登录')
     time.sleep(8)
     adb.touch([917,584])
     time.sleep(0.5)
@@ -185,13 +186,13 @@ def login(account:str,password:str):
     adb.input(password)
     time.sleep(1)
     out,_=f.cut_find_html('imgs/login_confirm',574,532,664,599,False)
-    print(out)
+    logger.debug(out)
     if out is None:
         adb.touch([610,560])#同意协议
         time.sleep(1)
     adb.touch([801,629])
     time.sleep(1)
-    print('登录完成')
+    logger.info('登录完成')
 
 def to_login():
     to_title(False)
@@ -203,4 +204,4 @@ def to_login():
 def to_fight():
     to_menu()
     adb.touch(f.find('imgs/enter_the_show'))
-    print("正在进入主会场")
+    logger.info("正在进入主会场")

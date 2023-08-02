@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import cv2 as cv
+from loguru import logger
 from lib.OCR.api import GetOcrApi
 #config_path是相对于PaddleOCR-json.exe的路径
 argument_cn = {'config_path': "models/config_chinese.txt"}
@@ -143,7 +144,7 @@ def cut_html_ocr_bytes_xy(imagebytes,x1,y1,x2,y2,text='',is_cn=True):
     else:
         res=match_text_area(ocr_bytes_en(img_cut), text)
     if res[0] is None:
-        print('未识别到目标文本')
+        logger.debug('未识别到目标文本')
         return None,None,None
     result=res
     result[0][0]=res[0][0]+x1
@@ -159,7 +160,7 @@ def match_text_area(res, text):
     :Return: 中心坐标x、y、识别文本和匹配度.
     """
     if res['code'] != 100:
-        print(res)
+        logger.debug(res)
         return None, None, None, None
     match_areas = []
     similarities = []
@@ -192,7 +193,7 @@ def match_text_area_char_by_char(res, text):
     :Return: 中心坐标x、y、识别文本和匹配度.
     """
     if res['code'] != 100:
-        print(res)
+        logger.debug(res)
         return None, None, None, None
     match_areas = []
     similarities = []

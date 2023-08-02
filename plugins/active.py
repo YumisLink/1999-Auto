@@ -2,6 +2,7 @@ import plugins.path as path
 import plugins.san as san
 import lib.find as f
 import time
+from loguru import logger
 import lib.adb_command as adb
 from config.config import data
 import lib.ppocr as pp
@@ -52,7 +53,7 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
     if go_resource:
         to_resource()
     exist=f.find((type))
-    print('目标关卡识别率：',exist[2])
+    logger.debug('目标关卡识别率：',exist[2])
     if exist[2]>0.7:
         adb.touch(exist)
         time.sleep(1)
@@ -62,7 +63,7 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
         time.sleep(1)
         adb.touch(f.find((type)))
         time.sleep(1)
-    print(f"进入{type}")
+    logger.info(f"进入{type}")
     time.sleep(0.8)
 
     # level_click = f.find(level)
@@ -72,20 +73,19 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
     #     level_click = f.find(level)
     # adb.touch(level_click)
     assert to_level(level,level_swipetimes)
-    print(f"进入{level}")
     time.sleep(0.8) 
 
 
 
 
     adb.touch(f.find(IMAGE_START))
-    print(f"进入行动界面")
+    logger.info(f"进入行动界面")
     time.sleep(4)
 
     sub_replay(times)
         
 def to_level(level:int,swipetimes=2):
-    print(f'开始寻找第{level}关')
+    logger.info(f'开始寻找第{level}关')
     for i in range(swipetimes+1):
         adb.swipe((1500,744),(200,750))
         time.sleep(1)
@@ -98,9 +98,9 @@ def to_level(level:int,swipetimes=2):
                 y=y+50
                 adb.touch([x+70,y+20])#输出坐标为数字左上角坐标，在此修正点击位置
                 time.sleep(1)
-                print('到达目标关卡')
+                logger.info(f"进入第{level}关")
                 return True
-        print('未找到目标关卡，继续滑动')
+        logger.debug('未找到目标关卡，继续滑动')
         adb.swipe((500,744),(1040,750))
         time.sleep(1)
     return False
@@ -108,15 +108,15 @@ def to_level(level:int,swipetimes=2):
 def sub_replay(times:int):
     is_replay =f.cut_match_html(IMGAE_IN_REPLAY,883,753,1555,897)
     if is_replay is None or is_replay[2] > 0.7:
-        print('不在复现模式')
+        logger.debug('不在复现模式')
         replay = f.cut_find_html(IMAGE_REPLAY,819,736,1126,895)
         if replay[0] is not None:
             adb.touch(replay)
-            print(f"选择复现模式")
+            logger.debug(f"选择复现模式")
             time.sleep(1.7)   
 
     adb.touch(f.cut_find_html(IMAGE_REPLAY_SELECT,971,782,1100,860))
-    print(f"选择复现次数")
+    logger.debug(f"选择复现次数")
     time.sleep(1.7)
     if times>4:
         times=4#最多4次
@@ -124,7 +124,7 @@ def sub_replay(times:int):
     
     time.sleep(1)
     adb.touch(f.find(IMAGE_START_REPLAY))
-    print(f"开始复现")
+    logger.info(f"开始复现")
     time.sleep(60)
 
     while(True):
@@ -132,7 +132,7 @@ def sub_replay(times:int):
         time.sleep(4)
         res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
         if res[0] is not None:
-            print('复现完成')
+            logger.info('复现完成')
             break
         # ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
         # if (len(ans)>0):
@@ -151,14 +151,14 @@ def to_resource():
     else:
         x,y=res
     if not y:
-        print('主会场正反都没有，加群联系作者或者提issue吧')
+        logger.error('主会场正反都没有，加群联系作者或者提issue吧')
         raise Exception('进入主会场失败')
     adb.touch((x,y+20))
-    print("正在进入主会场")
+    logger.info("正在进入主会场")
     time.sleep(1)
 
     adb.touch(f.find(IMAGE_RESOURCE))
-    print("点击资源")
+    logger.info("点击资源")
     time.sleep(1)
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
 
@@ -179,18 +179,18 @@ def to_story(chapter:int,level:int,times:int,is_hard=False):
     else:
         x,y=res
     if not y:
-        print('主会场正反都没有，加群联系作者或者提issue吧')
+        logger.error('主会场正反都没有，加群联系作者或者提issue吧')
         exit(1)
     adb.touch((x,y+20))
-    print("正在进入主会场")
+    logger.info("正在进入主会场")
     time.sleep(1)
 
     adb.touch([178,817])
-    print("点击故事")
+    logger.info("点击故事")
     time.sleep(1)
 
     adb.touch(f.find('imgs/active/chapter'+str(chapter)))
-    print("点击第"+str(chapter)+"章")
+    logger.info("点击第"+str(chapter)+"章")
     time.sleep(1)
 
     to_level(level)
@@ -200,13 +200,13 @@ def to_story(chapter:int,level:int,times:int,is_hard=False):
         res=pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(),1112,291,1525,365,'厄险')
         if res[0] is not None:
             adb.touch(res[0])
-            print('点击厄险')
+            logger.info('点击厄险')
             time.sleep(1)
         else:
-            print('未找到厄险，退出')
+            logger.debug('未找到厄险，退出')
             return None
     adb.touch(f.find(IMAGE_START_HARD))
-    print(f"正在进入开始界面菜单")
+    logger.info(f"正在进入开始界面菜单")
     time.sleep(4)   
     
     sub_replay(times)
@@ -216,14 +216,14 @@ def active_as_much(type: str, level: int,level_san:int):
     path.to_menu()
     sanum=san.get_san()
     if not sanum:
-        print('理智识别失败，退出')
+        logger.warning('理智识别失败，退出')
         return None
-    print('活力:',sanum)
+    logger.info('活力:',sanum)
     intsan=int(sanum)
     total_times=intsan//level_san
     fourtimes=total_times//4
     times=total_times%4
-    print('fourtimes:',fourtimes,'times:',times)
+    logger.info(f"打:{fourtimes}次4倍，{times}次1倍复现")
     if fourtimes >0:
         for i in range(fourtimes):
             Auto_Active(type, level, 4)

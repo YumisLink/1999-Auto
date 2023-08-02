@@ -2,19 +2,20 @@ import os
 import json
 import time
 import re
+from loguru import logger
 from config.mappoint import clickcard
 from config.config import user_config,APPID,ADB_HEAD,DEVICE_ID, ACTIVITY
 import lib.api as api
 
 
 def touch(point):
-    print(f'click {point[0]} {point[1]}')
-    print(os.system(f'{ADB_HEAD} shell input tap {point[0]} {point[1]}'))
+    logger.debug(f'click {point[0]} {point[1]}')
+    logger.debug(os.system(f'{ADB_HEAD} shell input tap {point[0]} {point[1]}'))
 
 
 def swipe(p1, p2):
-    print(f'swipe from  {p1[0]} {p1[1]} to {p2[0]} {p2[1]}')
-    print(
+    logger.debug(f'swipe from  {p1[0]} {p1[1]} to {p2[0]} {p2[1]}')
+    logger.debug(
         os.system(f'{ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} 100'))
     
 def input(text,clear=False):
@@ -24,11 +25,11 @@ def input(text,clear=False):
         os.system(f'{ADB_HEAD} shell input keyevent KEYCODE_MOVE_END ')
         # 模拟长按“删除”键250次
         os.system(f"{ADB_HEAD} input keyevent --longpress $(printf 'KEYCODE_DEL %.0s' {{1..250}})")
-    print(os.system(f'{ADB_HEAD} shell input text {text}'))
+    logger.debug(os.system(f'{ADB_HEAD} shell input text {text}'))
 
 def kill_app():
-    print(f'关闭 {APPID}')
-    print(os.system(f'{ADB_HEAD} shell am force-stop {APPID}'))
+    logger.info(f'关闭 {APPID}')
+    logger.debug(os.system(f'{ADB_HEAD} shell am force-stop {APPID}'))
 def is_game_on(re_try=True):
     '''检测游戏是否在前台'''
     config = user_config
@@ -40,20 +41,20 @@ def is_game_on(re_try=True):
         process.close()
         if APPID not in output:
             if not re_try:
-                print('游戏不在前台')
+                logger.info('游戏不在前台')
                 return False
             # 应用不在前台，运行应用
-            print("游戏不在前台，正在启动")
+            logger.info("游戏不在前台，正在启动")
             # os.popen(f'{ADB_HEAD} shell monkey -p {APPID} -c android.intent.category.LAUNCHER 1')
             os.popen(f"{ADB_HEAD} shell am start {APPID}/{ACTIVITY}")
             time.sleep(8)
             return is_game_on(False)
         else:
             # 处理输出
-            print('应用已在前台')
+            logger.info('应用已在前台')
             return True
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return False
 
 def get_bluestacks_adb_port():
@@ -87,17 +88,17 @@ def check_device_connection():
         # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
         output = os.popen(f'{adb_path} devices').read().strip().split('\n')
         if len(output) <= 1 or output[0] != 'List of devices attached':
-            print('Error: 无法连接adb_address，尝试连接蓝叠')
+            logger.error('Error: 无法连接adb_address，尝试连接蓝叠')
             blurestack=connect_bluestack()
             if blurestack:
                 return blurestack
         else:
-            print(f'已连接设备：{device}')
+            logger.debug(f'已连接设备：{device}')
             config['device_id'] = device
             api.write_config()
             return device
     else:
-        print('Error:adb_address为空，尝试连接蓝叠')
+        logger.error('Error:adb_address为空，尝试连接蓝叠')
         blurestack=connect_bluestack()
         if blurestack:
             return blurestack
@@ -108,14 +109,14 @@ def connect_bluestack():
     os.system(f'{adb_path} connect {device}')
     output = os.popen(f'{adb_path} devices').read().strip().split('\n')
     if len(output) <= 1 or output[0] != 'List of devices attached':
-        print('Error: 无法连接蓝叠(列表为空))')
+        logger.error('Error: 无法连接蓝叠(列表为空))')
         return None
     else:
         user_config['adb_address'] = device
-        print(f'已连接设备：{device}')
+        logger.debug(f'已连接设备：{device}')
         user_config['device_id'] = device
         api.write_config()
-        print('已设置devide为蓝叠端口')
+        logger.debug('已设置devide为蓝叠端口')
         return device
             
 def is_device_connected():
@@ -133,12 +134,10 @@ def is_device_connected():
     # 检查adb是否存在
     result = os.system(f'{adb_path} version')
     if result != 0:
-        print('Error: config.json有关adb的设置有误')
+        logger.error('Error: config.json有关adb的设置有误')
     else:
         os.system(f'{adb_path} disconnect')
-        time.sleep(0.5)
-        os.system(f'{adb_path} kill-server')
-        time.sleep(0.5)
+        os.system(f'{adb_path} kill-server')#TODO:没必要都kill-server
         device = check_device_connection()
         with open('config.json', 'r') as f:
             user_config = json.load(f)
@@ -147,7 +146,7 @@ def is_device_connected():
         else:
             adb_head = f'{adb_path}'
     global ADB_HEAD
-    print('已重组adb_head')
+    logger.info('已重组adb_head')
     ADB_HEAD = adb_head
     user_config['adb_head'] = adb_head#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
     with open('config.json', 'w') as f:
