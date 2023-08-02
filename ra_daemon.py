@@ -108,11 +108,16 @@ def work_fight(fight: dict, energy: int):
             if times is None:
                 raise Exception('暂不支持“尽可能多”选项')
             path.to_fight()
+            if fight['hard'] > 1:
+                hard_handle = active.choose_story_disaster
+            else:
+                hard_handle = lambda: active.IMAGE_START
             active.Auto_Active(
                 entry,
                 fight['level'],
                 times,
-                False, 1
+                False, 1,
+                hard_handle
             )
         case '意', *_: # 意志解析
             active.to_resource()
@@ -155,8 +160,16 @@ def work_fight(fight: dict, energy: int):
                 True, 1
             )
         case '绿', *_: # 绿湖噩梦
-            raise NotImplementedError('绿湖噩梦')
-            # path.to_festival()
+            active.to_festival()
+            time.sleep(2) # wait for animation
+            hard_handle = lambda: active.choose_green_lake(fight['hard'])
+            active.Auto_Active(
+                active.IMAGE_GREEN_MAINLINE,
+                fight['level'],
+                fight['times'],
+                False, 1,
+                hard_handle
+            )
 
 def work(task: dict, summary: list[str]):
     all_success = True

@@ -8,12 +8,16 @@ from config.config import data
 import lib.ppocr as pp
 import lib.api as api
 
+from typing import Callable, Optional
+
 IMAGE_RESOURCE = "imgs/active_resource"
 IMAGE_INSIGHT = 'imgs/active/insight'#洞察
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'#经验
 IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'#钱
 IMAGE_HARVEST = 'imgs/level_harvest' #基建（丰收时令）
 IMAGE_ANALYSIS = 'imgs/level_analysis' #圣遗物狗粮（意志解析）
+
+IMAGE_GREEN_MAINLINE = "imgs/active/green_lake_mainline"
 
 IMAGE_CHAPTER1 = 'imgs/active/chapter1'
 IMAGE_CHAPTER2 = 'imgs/active/chapter2'
@@ -34,6 +38,7 @@ IMAGE_INSIGHT_MAP = {
 
 IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
+IMAGE_START_GREEN = "imgs/active/START_ACTIVE_GREEN"
 IMAGE_REPLAY = 'imgs/enter_replay_mode2'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
@@ -43,17 +48,25 @@ IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
 
 
-def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetimes=10 ):
+def Auto_Active(
+    type: str, level: int, times:int,
+    go_resource=True,
+    level_swipetimes=10,
+    choose_hardness: Optional[Callable[[], Optional[str]]]=None
+):
     """
     进入特定关卡进行复现.
     :param level:第几关.
     :param type:关卡类型.
     :param times:复现次数.
+    :param go_resource:是否进入资源关.
+    :param level_swipetimes:关卡滑动次数.
+    :param choose_hardness:选择难度的函数, 若成功选择, 则返回开始按钮的名称, 否则返回None.
     """    
     if go_resource:
         to_resource()
-    exist=f.find((type))
-    logger.debug('目标关卡识别率：',exist[2])
+    exist=f.find(type)
+    logger.debug('目标关卡识别率：{}',exist[2])
     if exist[2]>0.7:
         adb.touch(exist)
         time.sleep(1)
@@ -72,13 +85,17 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
     #     adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
     #     level_click = f.find(level)
     # adb.touch(level_click)
-    assert to_level(level,level_swipetimes)
+    assert to_level(level, level_swipetimes)
     time.sleep(0.8) 
 
-
-
-
-    adb.touch(f.find(IMAGE_START))
+    if choose_hardness:
+        start_btn = choose_hardness()
+    else:
+        start_btn = IMAGE_START
+    
+    if start_btn is None:
+        raise Exception('选择难度失败')
+    adb.touch(f.find(start_btn))
     logger.info(f"进入行动界面")
     time.sleep(4)
 
@@ -86,10 +103,10 @@ def Auto_Active(type: str, level: int, times:int,go_resource=True,level_swipetim
         
 def to_level(level:int,swipetimes=2):
     logger.info(f'开始寻找第{level}关')
-    for i in range(swipetimes+1):
+    for _ in range(swipetimes+1):
         adb.swipe((1500,744),(200,750))
         time.sleep(1)
-    for i in range(1,99):
+    for i in range(20):
         screen=api.get_scrren_shot_bytes()
         res=f.detect_numbers(screen)
         for num,xy in res:
@@ -100,7 +117,7 @@ def to_level(level:int,swipetimes=2):
                 time.sleep(1)
                 logger.info(f"进入第{level}关")
                 return True
-        logger.debug('未找到目标关卡，继续滑动')
+        logger.debug(f'第{i}次识别，未找到目标关卡，继续滑动')
         adb.swipe((500,744),(1040,750))
         time.sleep(1)
     return False
@@ -161,6 +178,57 @@ def to_resource():
     logger.info("点击资源")
     time.sleep(1)
 # Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
+
+def to_festival():
+    """
+    进入活动关（即点击主会场的上面一些的位置，此方法以后可能会失效）
+    """
+    path.to_menu()
+    #活动期间先识别反着的提高效率
+    res=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
+    if res[0] is None:
+        x,y=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
+    else:
+        x,y=res
+    if not x or not y:
+        logger.error('识别主会场失败')
+        raise Exception('识别主会场失败')
+    adb.touch((x+20, y-40))
+    logger.info("进入活动")
+    time.sleep(1)
+
+def choose_story_disaster():
+    res = pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(), 1112,291,1525,365, '厄险')
+    if res[0] is not None:
+        adb.touch(res[0])
+        logger.debug('点击厄险')
+        time.sleep(1)
+        return IMAGE_START_HARD
+    else:
+        logger.error('未找到厄险，退出')
+        return None
+
+def detect_hard_green():
+    ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), 1270, 300, 1350, 340)
+    assert ocr_res['code'] == 100
+    res: list[dict] = ocr_res['data']
+    res = sorted(res, key=lambda x: -x['score'])[0]
+    return ['故事', '意外', '艰难'].index(res['text']) + 1
+
+def choose_green_lake(hard: int):
+    now_hard = detect_hard_green()
+    logger.info(f'当前难度：{now_hard}, 目标难度：{hard}')
+    while now_hard < hard:
+        adb.touch((1490, 315))
+        time.sleep(1)
+        now_hard += 1
+    while now_hard > hard:
+        adb.touch((1130, 315))
+        time.sleep(1)
+        now_hard -= 1
+    now_hard = detect_hard_green()
+    assert now_hard == hard
+    return IMAGE_START_GREEN
 
 def to_story(chapter:int,level:int,times:int,is_hard=False):
     """
