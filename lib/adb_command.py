@@ -15,8 +15,7 @@ def touch(point):
 
 def swipe(p1, p2):
     logger.debug(f'swipe from  {p1[0]} {p1[1]} to {p2[0]} {p2[1]}')
-    logger.debug(
-        os.system(f'{ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} 100'))
+    os.system(f'{ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} 100')
     
 def input(text,clear=False):
     #print(f'input {text}')
@@ -51,7 +50,7 @@ def is_game_on(re_try=True):
             return is_game_on(False)
         else:
             # 处理输出
-            logger.info('应用已在前台')
+            logger.debug('应用已在前台')
             return True
     except Exception as e:
         logger.error(f'Error: {e}')

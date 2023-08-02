@@ -22,6 +22,8 @@ from plugins import active
 
 from typing import Optional
 
+from loguru import logger
+
 def program_is_running() -> bool:
     p = subprocess.Popen('tasklist', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
@@ -30,16 +32,19 @@ def program_is_running() -> bool:
 def hideMuMu():
     import pyautogui
     # pyautogui.press('Alt+Q')
-    pyautogui.keyDown('alt')
-    pyautogui.press('q')
-    pyautogui.keyUp('alt')
+    try:
+        pyautogui.keyDown('alt')
+        pyautogui.press('q')
+        pyautogui.keyUp('alt')
+    except Exception as e:
+        logger.warning(f'Error: {e}')
     return
 
 def startup_program():
     if program_is_running():
-        print('模拟器已经在运行')
+        logger.info('模拟器已经在运行')
         return True
-    print('正在启动模拟器')
+    logger.info('正在启动模拟器')
     os.system('start MuMu12.lnk')
     time.sleep(5)
     if config.user_config.get('MuMuHeadless', False):
@@ -47,22 +52,23 @@ def startup_program():
     time.sleep(15)
     res = program_is_running()
     if res:
-        print('模拟器启动成功')
+        logger.success('模拟器启动成功')
     else:
-        print('模拟器启动失败')
+        logger.error('模拟器启动失败')
     return res
 
 def terminate_program():
+    logger.info('正在关闭模拟器')
     os.system('taskkill /im MuMuPlayer.exe')
     time.sleep(5)
     if program_is_running():
-        print('模拟器关闭失败, 强制关闭')
+        logger.warning('模拟器关闭失败, 强制关闭')
         os.system('taskkill /im MuMuPlayer.exe /f')
         time.sleep(5)
         if program_is_running():
-            print('模拟器关闭失败, 请手动关闭')
+            logger.warning('模拟器关闭失败, 请手动关闭')
             return False
-    print('模拟器关闭成功')
+    logger.info('模拟器关闭成功')
     return True
 
 def calc_energy(pre_time: datetime|str|float, pre_energy: int, now: Optional[datetime] = None) -> int:
@@ -111,7 +117,7 @@ def work_fight(fight: dict, energy: int):
         case '意', *_: # 意志解析
             active.to_resource()
             if f.find(active.IMAGE_ANALYSIS)[2] > 0.6: # 仅免费解析
-                print('进行免费解析')
+                logger.info('进行免费解析')
                 active.Auto_Active(
                     active.IMAGE_ANALYSIS,
                     fight['level'], 2,
@@ -169,7 +175,7 @@ def work(task: dict, summary: list[str]):
             if res:
                 summary.append(f"荒原: 领取完成")
             else:
-                print('荒原: 无法回到主界面')
+                logger.error('荒原: 无法回到主界面')
                 summary.append(f"荒原: 无法回到主界面")
                 adb.kill_app()
                 assert adb.is_game_on()
@@ -179,12 +185,13 @@ def work(task: dict, summary: list[str]):
     # Fights
     for fight in task['detail'].get('fights', []):
         try:
+            fight_name = f"{fight['name']}-{fight['level']}-难度{fight['hard']}"
             assert path.to_menu()
             energy = get_san()
             if not isinstance(energy, int):
                 raise Exception('无法获取体力')
             msg = work_fight(fight, energy)
-            summary.append(f"战斗: {fight['name']} 执行完成{ f': {msg}' if msg else '' }")
+            summary.append(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
         except Exception as e:
             all_success = False
             summary.append(f"战斗: {fight['name']} 执行失败: {e}")
@@ -207,6 +214,7 @@ def work(task: dict, summary: list[str]):
     return all_success
 
 def loop(username: str, password: str):
+    logger.info('进入任务循环')
     while True:
         try:
             if not startup_program():
@@ -215,20 +223,20 @@ def loop(username: str, password: str):
                 raise Exception('连接设备失败')
             token = client.login(username, password)
             for task_id, task_name in client.get_tasks(token):
-                print(f"任务编号 {task_id}: {task_name}")
+                logger.info(f"任务编号 {task_id}: {task_name}")
                 summary = []
                 skip = False
                 start_time = datetime.now()
                 try:
                     task = client.get_task(token, task_id)
                     if task['paused']:
-                        print(f"任务 {task_name} 被设为暂停，跳过")
+                        logger.success(f"任务 {task_name} 被设为暂停，跳过")
                         skip = True
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
-                    if energy < 0: # TODO: get energy thresh from server
-                        print(f"任务 {task_name} 体力未到执行阈值，跳过")
+                    if energy < 106: # TODO: get energy thresh from server
+                        logger.success(f"任务 {task_name} 体力未到执行阈值，跳过")
                         skip = True
                         continue
                     # TODO: get account info
@@ -245,35 +253,42 @@ def loop(username: str, password: str):
                     summary.append(f"任务 {task_name} 执行完成，剩余体力: {energy}, 耗时: {time_cost.total_seconds():.2f} 秒")
                     client.set_energy(token, task_id, energy)
                 except Exception as e:
-                    print(f'=============== Uncaught Error in task {task_name}: {e} ===============')
+                    logger.error(f'=============== Uncaught Error in task {task_name}: {e} ===============')
                     try:
                         trace_info = traceback.format_exc()
+                        logger.error(trace_info)
                         summary.append(f'发生未知错误: {e}, 执行中断')
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
                         client.notify(token, task_id, '发生未知错误', trace_info)
                     except Exception as e:
-                        raise
+                        logger.error(f'=============== Uncaught Error in error handler: {e} ===============')
                 finally:
                     if not skip:
-                        client.log(token, task_id, client.LogLevel.NOTICE, '\n'.join(summary))
-                        client.notify(token, task_id, f'任务{task_name} 执行完成', '\n'.join(summary))
+                        summary = '\n'.join(summary)
+                        logger.success("执行完成, 总结:\n" + summary)
+                        try:
+                            client.log(token, task_id, client.LogLevel.NOTICE, summary)
+                            client.notify(token, task_id, f'任务{task_name} 执行完成', summary)
+                        except Exception as e:
+                            logger.error(f'=============== Uncaught Error in summary: {e} ===============')
                 
         except Exception as e:
-            print(f'=============== Uncaught Error: {e} ===============')
+            logger.error(f'=============== Uncaught Error: {e} ===============')
         finally:
             terminate_program()
-            print('等待 30 分钟')
-            time.sleep(30 * 60) # 0.5 hours
+            logger.info('等待 30 分钟')
+            time.sleep(1 * 60) # 0.5 hours
 
-if __name__ == '__main__':
+@logger.catch
+def main():
     config.check_path()
     if not startup_program():
         exit(1)
     device = adb.is_device_connected()
     if not device:
-        print("Error: 未连接设备，请回看上面的错误信息")
+        logger.critical("Error: 未连接设备，请回看上面的错误信息")
         exit(1)
-    sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
+    # sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
     username = sys.argv[1]
     password = sys.argv[2]
     if 'server' in config.user_config:
@@ -284,27 +299,30 @@ if __name__ == '__main__':
     token = client.login(username, password)
     need_terminate = True
     for task_id, task_name in client.get_tasks(token):
-        print(f"任务编号 {task_id}: {task_name}")
+        logger.info(f"预检查 任务编号 {task_id}: {task_name}")
         task = client.get_task(token, task_id)
         client.log(token, task_id, client.LogLevel.HERTBEAT, '')
         if task['paused']:
-            print(f"任务 {task_name} 被设为暂停，跳过")
+            logger.success(f"任务 {task_name} 被设为暂停，跳过")
             continue
         # TODO: get account info
         if not adb.is_game_on():
-            print('Error: 游戏无法启动')
+            logger.critical('Error: 游戏无法启动')
             exit(1)
         assert path.to_menu()
         energy = get_san()
         if energy is None:
-            print('Error: 无法获取体力')
+            logger.critical('Error: 无法获取体力')
             exit(1)
         
         client.set_energy(token, task_id, energy)
-        if energy > 0: # TODO: get energy thresh from server
+        if energy > 106: # TODO: get energy thresh from server
             need_terminate = False
+        logger.success(f"任务 {task_name} 预检查完成")
     if need_terminate:
         terminate_program()
     
-    print()
     loop(username, password)
+
+if __name__ == '__main__':
+    main()

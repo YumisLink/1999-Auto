@@ -6,6 +6,8 @@ import plugins.mission_ready as ready
 import plugins.path as path
 import lib.ppocr as pp
 
+from loguru import logger
+
 IMAGE_MISSION = 'imgs/menu_mission'
 IMAGE_CLAIM_ALL = 'imgs/mission_claim_all'
 IMAGE_CLAIM = 'imgs/mission_claim'
@@ -24,13 +26,13 @@ def mission_start():
     day = f.find_image(IMAGE_DAY_FIND)
     if '每日' not in pp.ocr_bytes_xy(day,'每日'):
         adb.touch(f.find(IMAGE_DAY))
-        print("点击每日任务")
+        logger.info("点击每日任务")
         time.sleep(1)
     
     claim = f.find(IMAGE_CLAIM_ALL)
     if (claim[2] > 0.7):
         adb.touch(claim)
-        print("完成所有任务")
+        logger.info("完成所有任务")
         time.sleep(8)
         adb.touch(claim)
         time.sleep(1)
@@ -38,19 +40,19 @@ def mission_start():
         claim = f.find(IMAGE_CLAIM,False)
         if (claim[2] > 0.7):
             adb.touch(claim)
-            print("完成单个任务")
+            logger.info("完成单个任务")
             time.sleep(8)
             adb.touch(claim)
             time.sleep(1)
 
     
     adb.touch(f.find(IMAGE_WEEK))
-    print("点击每周任务")
+    logger.info("点击每周任务")
     claim = f.find(IMAGE_CLAIM_ALL)
-    print(claim)
+    logger.info(claim)
     if (claim[2] > 0.7):
         adb.touch(claim)
-        print("完成所有任务")
+        logger.info("完成所有任务")
         time.sleep(2)
         adb.touch(claim)
         time.sleep(1)
@@ -58,7 +60,7 @@ def mission_start():
         claim = f.find(IMAGE_CLAIM,False)
         if (claim[2] > 0.7):
             adb.touch(claim)
-            print("完成单个任务")
+            logger.info("完成单个任务")
             time.sleep(1)
             adb.touch(claim)
             time.sleep(1)

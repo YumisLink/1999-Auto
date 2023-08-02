@@ -56,7 +56,7 @@ def where_am_i():
             cv.rectangle(screen, (x1 + max_loc[0], y1 + max_loc[1]), (x1 + max_loc[0] + tw, y1 + max_loc[1] + th), (0, 0, 255), 2)
     if max_val < 0.6:
         logger.debug('未匹配到任何模板图像')
-        logger.debug(max_val,max_template_name)
+        logger.debug('最大相似度 {}, {}', max_val,max_template_name)
         return None
     else:
         logger.debug(f'匹配到了{max_template_name}')
