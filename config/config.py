@@ -14,6 +14,16 @@ ADB_HEAD = user_config["adb_head"]
 APPID = "com.shenlan.m.reverse1999" 
 ACTIVITY = "com.ssgame.mobile.gamesdk.frame.AppStartUpActivity"
 
+def set_channel(channel: str):
+    global APPID
+    match channel:
+        case '官服':
+            APPID = "com.shenlan.m.reverse1999"
+        case 'B服':
+            APPID = "com.shenlan.m.reverse1999.bilibili"
+        case _:
+            raise KeyError("Invalid channel")
+
 def check_path():
     if not os.path.exists('cache'):
         os.mkdir('cache')

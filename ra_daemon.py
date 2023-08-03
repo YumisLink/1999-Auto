@@ -24,6 +24,28 @@ from typing import Optional
 
 from loguru import logger
 
+def override_config(new_config: dict[str, str]):
+    for key, value in new_config.items():
+        try:
+            logger.info(f"Override config: {key} => {value}")
+            # ['emulator', 'adb_path', 'adb_port', 'device', 'channel', 'account', 'password']
+            match key:
+                case 'emulator':
+                    raise NotImplementedError
+                case 'adb_path':
+                    raise NotImplementedError
+                case 'adb_port':
+                    raise NotImplementedError
+                case 'device':
+                    raise NotImplementedError
+                case 'channel':
+                    config.set_channel(value)
+                case _:
+                    raise KeyError("Invalid override key")
+        except Exception as e:
+            logger.warning(f"Error: {e}")
+            continue
+
 def program_is_running() -> bool:
     p = subprocess.Popen('tasklist', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
@@ -230,7 +252,7 @@ def work(task: dict, summary: list[str]):
     return all_success
 
 def loop(username: str, password: str):
-    logger.info('进入任务循环')
+    logger.success('进入任务循环')
     while True:
         try:
             if not startup_program():
@@ -252,10 +274,10 @@ def loop(username: str, password: str):
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
                     if energy < 100: # TODO: get energy thresh from server
-                        logger.success(f"任务 {task_name} 体力未到执行阈值，跳过")
+                        logger.success(f"任务 {task_name} 体力为{energy}, 未到执行阈值，跳过")
                         skip = True
                         continue
-                    # TODO: get account info
+                    override_config(task['detail'].get('config_override', {}))
                     if not adb.is_game_on():
                         raise Exception('游戏无法启动')
                     
@@ -318,11 +340,12 @@ def main():
     for task_id, task_name in client.get_tasks(token):
         logger.info(f"预检查 任务编号 {task_id}: {task_name}")
         task = client.get_task(token, task_id)
+        logger.debug(task)
         client.log(token, task_id, client.LogLevel.HERTBEAT, '')
         if task['paused']:
             logger.success(f"任务 {task_name} 被设为暂停，跳过")
             continue
-        # TODO: get account info
+        override_config(task['detail'].get('config_override', {}))
         if not adb.is_game_on():
             logger.critical('Error: 游戏无法启动')
             exit(1)
@@ -336,7 +359,7 @@ def main():
         if energy > 100: # TODO: get energy thresh from server
             need_terminate = False
         adb.kill_app()
-        logger.success(f"任务 {task_name} 预检查完成")
+        logger.success(f"任务 {task_name} 预检查完成, 体力: {energy}")
     if need_terminate:
         terminate_program()
     
