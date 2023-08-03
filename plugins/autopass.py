@@ -35,7 +35,7 @@ def pass_start():
     claim_all()
     claim()
     #公约
-    adb.touch([1383,483])
+    adb.touch([1383,283])
     claim_all()
     claim()
 
@@ -44,7 +44,7 @@ def claim():
         res=f.cut_find_html(IMG_CLAIM,1410,324,1546,784)
         if res[0] is not None:
             adb.touch(res)
-            time.sleep(0.3)
+            time.sleep(1.5)
             db_upgarde()
         else:
             return False
@@ -52,7 +52,7 @@ def claim_all():
     res=f.cut_find_html(IMG_CLAIM_ALL,1194,777,1598,897)
     if res[0] is not None:
         adb.touch(res)
-        time.sleep(0.3)
+        time.sleep(1.5)
         db_upgarde()
         return True
     else:
@@ -62,5 +62,5 @@ def db_upgarde():
     res=f.cut_find_html(IMG_UPGARDE,695,483,881,534)
     if res[0] is not None:
         adb.touch([928,575])
-        time.sleep(0.3)
+        time.sleep(1)
         return True
