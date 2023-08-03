@@ -18,7 +18,8 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 在运行之前需要使用adb与模拟器链接具体代码在main.py,并且拥有以下的库：
 - opencv-python
 - loguru
-(在命令行运行 pip install opencv-python loguru)
+- pyautogui
+(在命令行运行 pip install opencv-python loguru pyautogui)
 
 在安装结束之后，请配置`config.json`  
 将模拟器分辨率设置为1600*900 240DPI  

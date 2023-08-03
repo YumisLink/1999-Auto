@@ -1,8 +1,13 @@
 {
-    "adb_path": "C:\\Users\\Administrator\\Desktop\\1999-Auto\\lib\\adb\\adb.exe",
-    "adb_address": "16384",
-    "device_id": "",
-    "adb_head": "C:\\Users\\Administrator\\Desktop\\1999-Auto\\lib\\adb\\adb.exe",
+    "adb_path": "C:\\CODE\\R1999\\python\\1999-Auto\\lib\\adb\\adb.exe",
+    "adb_address": "127.0.0.1:5555",
+    "device_id": "emulator-5554",
+    "adb_head": "C:\\CODE\\R1999\\python\\1999-Auto\\lib\\adb\\adb.exe -s emulator-5554",
     "bluestacks_conf_path": "",
-    "bluestacks_adb_port_keys": ""
+    "bluestacks_adb_port_keys": "",
+    "MultiAcc": "0",
+    "server": "https://ra.terase.cn",
+    "emulator":"bs5",
+    "emulator_startarg":"'C:\\Program Files\\BlueStacks_nxt_cn\\HD-Player.exe' --instance Pie64 ",
+    "emulator_KeepAlive": true
 }

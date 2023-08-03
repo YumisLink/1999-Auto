@@ -24,6 +24,26 @@ from typing import Optional
 
 from loguru import logger
 
+global emulator_pid
+emulator_pid = -1
+emulator_info={
+    "mumu":{
+        "exe_name":"MuMuPlayer.exe",
+        "key":{"hide":"alt+q"},
+        "random_port":False
+    },
+    "bs5":{
+        "exe_name":"HD-Player.exe",
+        "key":{"clear_memory":"ctrl+shift+t","hide":""},
+        "random_port":False
+    },
+    "bs5hyper-v":{
+        "exe_name":"HD-Player.exe",
+        "key":{"clear_memory":"ctrl+shift+t","hide":""},
+        "random_port":True
+    },
+}
+
 def override_config(new_config: dict[str, str]):
     for key, value in new_config.items():
         try:
@@ -49,34 +69,48 @@ def override_config(new_config: dict[str, str]):
 def program_is_running() -> bool:
     p = subprocess.Popen('tasklist', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
-    return 'MuMuPlayer.exe' in out.decode('gbk')
+    emulator=config.user_config.get('emulator')
+    try:
+        return emulator_info[emulator]['exe_name'] in out.decode('gbk')
+    except KeyError:
+        logger.warning(f"unknown emulator:{emulator}")
+        raise 
 
 def hideMuMu():
     import pyautogui
     # pyautogui.press('Alt+Q')
     try:
-        pyautogui.keyDown('alt')
-        pyautogui.press('q')
-        pyautogui.keyUp('alt')
+        pyautogui.hotkey('alt', 'q')
     except Exception as e:
         logger.warning(f'Error: {e}')
     return
+
+def start_emulator():
+    # 从 startup.ink 文件中读取模拟器启动参数
+    with open('startup.lnk', 'r') as f:
+        emulator_args = f.read().strip()
+    # 启动模拟器并获取其 PID
+    try:
+        proc = subprocess.Popen(emulator_args)
+        emulator_pid = proc.pid
+    except OSError:
+        emulator_pid = -1
+    return emulator_pid
 
 def startup_program():
     if program_is_running():
         logger.info('模拟器已经在运行')
         return True
     logger.info('正在启动模拟器')
-    os.system('start MuMu12.lnk')
-    time.sleep(5)
+    pid=start_emulator()
+    if pid == -1:
+        logger.error('模拟器启动失败')
+        res=False        
+    else:
+        logger.success('模拟器启动成功')
+        res=True
     if config.user_config.get('MuMuHeadless', False):
         hideMuMu()
-    time.sleep(15)
-    res = program_is_running()
-    if res:
-        logger.success('模拟器启动成功')
-    else:
-        logger.error('模拟器启动失败')
     return res
 
 def terminate_program():
