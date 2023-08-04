@@ -61,3 +61,26 @@ def get_levelsan():
             return int(item['text'])
     logger.warning(f'没有找到数字{out}')
     return None
+
+def get_maxsan() -> int|None:
+    status=path.where_am_i()
+    logger.debug('当前界面:',status)
+    if status == 'menu':
+        adb.touch([1460,204])
+        sleep(2)
+        out=detect_maxsan()
+        adb.touch([1460,204]) # 返回
+        return out
+    elif status == 'san':
+        return detect_maxsan()
+    else:
+        logger.warning('未找到活力值')
+        return None
+    
+def detect_maxsan() -> int|None:
+    out=pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(),866,721,930,773)
+    if out['code'] != 100:
+        logger.debug(out)
+        return None
+    text=out['data'][0]['text']
+    return int(text)
