@@ -5,6 +5,7 @@ import subprocess
 import traceback
 from datetime import datetime
 import multiprocessing
+import psutil
 
 from config import config
 
@@ -86,13 +87,18 @@ def hideMuMu():
     return
 
 def start_emulator():
-    # 从 startup.ink 文件中读取模拟器启动参数
-    with open('startup.lnk', 'r') as f:
-        emulator_args = f.read().strip()
+    emulator_arg = config.user_config.get('emulator_startarg')
+    emulator_args = emulator_arg.split()
     # 启动模拟器并获取其 PID
     try:
         proc = subprocess.Popen(emulator_args)
-        emulator_pid = proc.pid
+        time.sleep(30)
+        adb_address = config.get('adb_address')
+        adb_port = adb_address.split(':')[-1]
+        for conn in psutil.net_connections():
+            if conn.status == 'LISTEN' and str(conn.laddr.port) == adb_port:
+                emulator_pid = conn.pid
+            break
     except OSError:
         emulator_pid = -1
     return emulator_pid
@@ -118,15 +124,12 @@ def terminate_program():
         logger.info('保持模拟器运行不关闭')
         return
     logger.info('正在关闭模拟器')
-    os.system('taskkill /im MuMuPlayer.exe')
+    process = psutil.Process(emulator_pid)
+    process.terminate()
     time.sleep(5)
     if program_is_running():
-        logger.warning('模拟器关闭失败, 强制关闭')
-        os.system('taskkill /im MuMuPlayer.exe /f')
-        time.sleep(5)
-        if program_is_running():
-            logger.warning('模拟器关闭失败, 请手动关闭')
-            return False
+        logger.warning('模拟器关闭失败, 请手动关闭')
+        return False
     logger.info('模拟器关闭成功')
     return True
 

@@ -146,8 +146,7 @@ def is_device_connected():
             config.ADB_HEAD = f'{adb_path} -s {config.DEVICE_ID}'
         else:
             config.ADB_HEAD = f'{adb_path}'
-    logger.info('已重组config.ADB_HEAD')
-    config.ADB_HEAD = config.ADB_HEAD
+    logger.debug('已重组config.ADB_HEAD:',config.ADB_HEAD)  
     config.user_config['config.ADB_HEAD'] = config.ADB_HEAD#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
     with open('config.json', 'w') as f:
         json.dump(config.user_config, f, indent=4)

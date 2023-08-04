@@ -22,18 +22,7 @@ def get_san() -> int|None:
         return out
 
     elif status == 'notmenu2' or status == 'notmenu' or status == 'nothome':
-        is_san=f.cut_find_html('imgs/san_checker',1325,8,1448,72)
-        if is_san[0]is not None:
-            api.get_screen_shot()
-            out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),1338,2,1598,75)
-            if out['code'] != 100:
-                logger.debug(out)
-                return None
-            text=out['data']['text']
-            return (text)
-        else:
-            logger.warning('未找到活力值')
-            return None
+        return detect_san_in_level()
     else:
         logger.warning('未找到活力值')
         return None
@@ -46,3 +35,29 @@ def detect_san_in_san():
         return None
     text=out['data'][0]['text']
     return int(text)
+
+def detect_san_in_level():
+    is_san=f.cut_find_html('imgs/san_checker',1325,8,1448,72)
+    if is_san[0]is not None:
+        api.get_screen_shot()
+        out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),1338,2,1598,75)
+        if out['code'] != 100:
+            logger.debug(out)
+            return None
+        text=out['data']['text']
+        return int(text)
+    else:
+        logger.warning('未找到活力值')
+        return None
+    
+def get_levelsan():
+    #只在进入关卡前界面可用
+    out=pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(),1094,651,1371,888)
+    if out['code'] != 100:
+        logger.debug(out)
+        return None
+    for item in out['data']:
+        if item['score'] > 0.8 and item['text'].isdigit():
+            return int(item['text'])
+    logger.warning(f'没有找到数字{out}')
+    return None
