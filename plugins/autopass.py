@@ -61,6 +61,7 @@ def claim_all():
 def db_upgarde():
     res=f.cut_find_html(IMG_UPGARDE,695,483,881,534)
     if res[0] is not None:
-        adb.touch([928,575])
+        logger.debug('检测到升级')
+        adb.touch([6,899])
         time.sleep(1)
         return True

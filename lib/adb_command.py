@@ -66,18 +66,7 @@ def get_bluestacks_adb_port():
     with open(bluestacks_conf_path, encoding="UTF-8") as f:
         configs = dict(list(map(lambda line: line.replace('\n', '').split('='), f.readlines())))
         return int(configs[bluestacks_adb_port_keys].replace('"', ""))
-    # if not os.path.exists(bluestacks_conf_path):
-    #     print(f'Error: 文件"{bluestacks_conf_path}"不存在')
-    # else:
-    #     with open(bluestacks_conf_path, 'r',encoding='utf-8') as f:
-    #         conf = f.read()
-    #     # 使用正则表达式匹配adb端口号
-    #     for key in bluestacks_adb_port_keys:
-    #         match = re.search(rf'{key}="(\d+)"', conf)
-    #         if match:
-    #             adb_port = match.group(1)
-    #             return adb_port
-    # return None
+
 
 def check_device_connection():
     with open('config.json', 'r') as f:
@@ -142,12 +131,12 @@ def is_device_connected():
         device = check_device_connection()
         with open('config.json', 'r') as f:
             config.user_config = json.load(f)
-        if 'config.DEVICE_ID' in config.user_config and config.user_config['config.DEVICE_ID'].strip():
+        if 'device_id' in config.user_config and config.user_config['device_id'].strip():
             config.ADB_HEAD = f'{adb_path} -s {config.DEVICE_ID}'
         else:
             config.ADB_HEAD = f'{adb_path}'
     logger.debug('已重组config.ADB_HEAD:',config.ADB_HEAD)  
-    config.user_config['config.ADB_HEAD'] = config.ADB_HEAD#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
+    config.user_config['adb_head'] = config.ADB_HEAD#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
     with open('config.json', 'w') as f:
         json.dump(config.user_config, f, indent=4)
     return device
