@@ -52,7 +52,8 @@ def Auto_Active(
     type: str, level: int, times:int,
     go_resource=True,
     level_swipetimes=10,
-    choose_hardness: Optional[Callable[[], Optional[str]]]=None
+    choose_hardness: Optional[Callable[[], Optional[str]]]=None,
+    as_much=False
 ):
     """
     进入特定关卡进行复现.
@@ -79,12 +80,6 @@ def Auto_Active(
     logger.info(f"进入{type}")
     time.sleep(0.8)
 
-    # level_click = f.find(level)
-    # print(level_click)
-    # if (level_click[2] < 0.6):
-    #     adb.swipe((data['y']-100,data['x']/2),(100,data['x']/2))
-    #     level_click = f.find(level)
-    # adb.touch(level_click)
     assert to_level(level, level_swipetimes)
     time.sleep(0.8) 
 
@@ -95,11 +90,27 @@ def Auto_Active(
     
     if start_btn is None:
         raise Exception('选择难度失败')
-    adb.touch(f.find(start_btn))
-    logger.info(f"进入行动界面")
-    time.sleep(4)
+    if as_much:
+        level_san=san.get_levelsan()
+        san=san.detect_san_in_level()
+        total_times=san//level_san
+        fourtimes=total_times//4
+        times=total_times%4
+        logger.info(f"打:{fourtimes}次4倍，{times}次1倍复现")
+        adb.touch(f.find(start_btn))
+        logger.info(f"进入行动界面")
+        time.sleep(4)
+        if fourtimes >0:
+            for i in range(fourtimes):
+                sub_replay(4)
+        if times>0:
+            sub_replay(times)
+    else:
+        adb.touch(f.find(start_btn))
+        logger.info(f"进入行动界面")
+        time.sleep(4)
 
-    sub_replay(times)
+        sub_replay(times)
         
 def to_level(level:int,swipetimes=2):
     logger.info(f'开始寻找第{level}关')
@@ -145,21 +156,14 @@ def sub_replay(times:int):
     time.sleep(60)
 
     while(True):
-        adb.touch((50,3))
+        adb.touch((6,887)) 
         time.sleep(4)
         res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
         if res[0] is not None:
             logger.info('复现完成')
             break
-        # ans = pp.ocr_bytes_xy(f.find_image(IMAGE_START_REPLAY))
-        # if (len(ans)>0):
-        #     if ans[2] is not None and '复现' in ans[2]:
-        #         break
-    # time.sleep(3)
-def to_resource():
-    """
-    进入资源关.
-    """    
+
+def enter_the_show():
     path.to_menu()
     #活动期间先识别反着的提高效率
     res=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
@@ -174,6 +178,11 @@ def to_resource():
     logger.info("正在进入主会场")
     time.sleep(1)
 
+def to_resource():
+    """
+    进入资源关.
+    """    
+    enter_the_show()
     adb.touch(f.find(IMAGE_RESOURCE))
     logger.info("点击资源")
     time.sleep(1)
@@ -196,6 +205,27 @@ def to_festival():
     adb.touch((x+20, y-40))
     logger.info("进入活动")
     time.sleep(1)
+
+def to_story(chapter:int):
+    """
+    进主线.
+    :param chapter:第几章.
+    :param level:第几关.
+    :param times:复现次数.
+    :param is_hard:是否为厄险模式.
+    因为主线有厄险所以单列
+    """    
+    enter_the_show()
+
+    adb.touch([178,817])
+    logger.info("点击故事")
+    time.sleep(1)
+
+    adb.touch(f.find('imgs/active/chapter'+str(chapter)))
+    logger.info("点击第"+str(chapter)+"章")
+    time.sleep(1)
+
+
 
 def choose_story_disaster():
     res = pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(), 1112,291,1525,365, '厄险')
@@ -229,56 +259,6 @@ def choose_green_lake(hard: int):
     now_hard = detect_hard_green()
     assert now_hard == hard
     return IMAGE_START_GREEN
-
-def to_story(chapter:int,level:int,times:int,is_hard=False):
-    """
-    进入故事关.
-    :param chapter:第几章.
-    :param level:第几关.
-    :param times:复现次数.
-    :param is_hard:是否为厄险模式.
-    因为主线有厄险所以单列
-    """    
-    path.to_menu()
-    #活动期间先识别反着的提高效率
-    res=f.cut_find_html('imgs/enter_the_show2',1162,175,1529,738)
-    if res[0] is None:
-        x,y=f.cut_find_html('imgs/enter_the_show',1162,175,1529,738)
-    else:
-        x,y=res
-    if not y:
-        logger.error('主会场正反都没有，加群联系作者或者提issue吧')
-        exit(1)
-    adb.touch((x,y+20))
-    logger.info("正在进入主会场")
-    time.sleep(1)
-
-    adb.touch([178,817])
-    logger.info("点击故事")
-    time.sleep(1)
-
-    adb.touch(f.find('imgs/active/chapter'+str(chapter)))
-    logger.info("点击第"+str(chapter)+"章")
-    time.sleep(1)
-
-    to_level(level)
-    time.sleep(0.8) 
-
-    if is_hard:
-        res=pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(),1112,291,1525,365,'厄险')
-        if res[0] is not None:
-            adb.touch(res[0])
-            logger.info('点击厄险')
-            time.sleep(1)
-        else:
-            logger.debug('未找到厄险，退出')
-            return None
-    adb.touch(f.find(IMAGE_START_HARD))
-    logger.info(f"正在进入开始界面菜单")
-    time.sleep(4)   
-    
-    sub_replay(times)
-
 
 def active_as_much(type: str, level: int,level_san:int):
     path.to_menu()
