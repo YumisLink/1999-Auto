@@ -101,9 +101,11 @@ def start_emulator():
             break
     except OSError:
         emulator_pid = -1
+        raise
     return emulator_pid
 
 def startup_program():
+    #if not config.user_config.get('Multi-emutalors', False):
     if program_is_running():
         logger.info('模拟器已经在运行')
         return True
@@ -160,15 +162,16 @@ def work_mission():
 
 def work_fight(fight: dict, energy: int):
     assert path.to_menu()
+    as_much=False
     if fight['asmuch']:
-        raise Exception('暂不支持“尽可能多”选项')
+        as_much=True
     match list(fight['name']):
         case '主', '线', x:
             x = int(x)
             entry = active.IMAGE_CHAPTERX % x
             times = None if fight['asmuch'] else fight['times']
             if times is None:
-                raise Exception('暂不支持“尽可能多”选项')
+                as_much = True
             path.to_fight()
             if fight['hard'] > 1:
                 hard_handle = active.choose_story_disaster
@@ -179,7 +182,8 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 times,
                 False, 1,
-                hard_handle
+                hard_handle,
+                as_much
             )
         case '意', *_: # 意志解析
             active.to_resource()
@@ -197,21 +201,24 @@ def work_fight(fight: dict, energy: int):
                 active.IMAGE_THE_POUSSIERE,
                 fight['level'],
                 fight['times'],
-                True, 1
+                True, 1,
+                None, as_much
             )
         case '铸', *_: # 铸币美学
             active.Auto_Active(
                 active.IMAGE_MINTAGE_AESTHETICS,
                 fight['level'],
                 fight['times'],
-                True, 1
+                True, 1,
+                None, as_much
             )
         case '丰', *_: # 丰收时令
             active.Auto_Active(
                 active.IMAGE_HARVEST,
                 fight['level'],
                 fight['times'],
-                True, 1
+                True, 1,
+                None, as_much
             )
         case '群'|'星'|'深'|'荒', *_: # 洞悉
             entry = active.IMAGE_INSIGHT_MAP[fight['name']]
@@ -219,7 +226,8 @@ def work_fight(fight: dict, energy: int):
                 entry,
                 fight['level'],
                 fight['times'],
-                True, 1
+                True, 1,
+                None, as_much
             )
         case '绿', *_: # 绿湖噩梦
             active.to_festival()
@@ -230,7 +238,8 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 fight['times'],
                 False, 1,
-                hard_handle
+                hard_handle,
+                as_much
             )
 
 def work(task: dict, summary: list[str]):
