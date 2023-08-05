@@ -92,8 +92,8 @@ def Auto_Active(
         raise Exception('选择难度失败')
     if as_much:
         level_san=san.get_levelsan()
-        san=san.detect_san_in_level()
-        total_times=san//level_san
+        player_san=san.detect_san_in_level()
+        total_times=player_san//level_san
         fourtimes=total_times//4
         times=total_times%4
         logger.info(f"打:{fourtimes}次4倍，{times}次1倍复现")
@@ -115,7 +115,7 @@ def Auto_Active(
 def to_level(level:int,swipetimes=2):
     logger.info(f'开始寻找第{level}关')
     for _ in range(swipetimes+1):
-        adb.swipe((1500,744),(200,750))
+        adb.swipe((1500,744),(300,750))
         time.sleep(1)
     for i in range(20):
         screen=api.get_scrren_shot_bytes()

@@ -105,7 +105,7 @@ def connect_bluestack():
     else:
         config.user_config['adb_address'] = device
         logger.debug(f'已连接设备：{device}')
-        config.user_config['config.DEVICE_ID'] = device
+        config.user_config['device_id'] = device
         api.write_config()
         logger.debug('已设置devide为蓝叠端口')
         return device

@@ -44,6 +44,10 @@ emulator_info={
         "random_port":True
     },
 }
+global game_login
+global game_password
+global game_account
+game_login=False
 
 def override_config(new_config: dict[str, str]):
     for key, value in new_config.items():
@@ -61,6 +65,15 @@ def override_config(new_config: dict[str, str]):
                     raise NotImplementedError
                 case 'channel':
                     config.set_channel(value)
+                case 'account':
+                    global game_account
+                    game_account=value
+                case 'password':
+                    global game_login
+                    global game_password
+                    game_login=True
+                    game_password=value
+                    logger.debug('账密登录开启')
                 case _:
                     raise KeyError("Invalid override key")
         except Exception as e:
@@ -230,6 +243,7 @@ def work_fight(fight: dict, energy: int):
                 None, as_much
             )
         case '绿', *_: # 绿湖噩梦
+            logger.info('打绿湖噩梦')
             active.to_festival()
             time.sleep(2) # wait for animation
             hard_handle = lambda: active.choose_green_lake(fight['hard'])
@@ -299,7 +313,11 @@ def work(task: dict, summary: list[str]):
 
 def loop(username: str, password: str):
     logger.success('进入任务循环')
+    global game_login
+    global game_password
+    global game_account
     while True:
+        game_login=False
         try:
             if not startup_program():
                 raise Exception('模拟器启动失败')
@@ -326,7 +344,13 @@ def loop(username: str, password: str):
                     override_config(task['detail'].get('config_override', {}))
                     if not adb.is_game_on():
                         raise Exception('游戏无法启动')
-                    
+                    #login
+                    if game_login:
+                        logger.debug('开始进行账密登录')
+                        path.login(game_account,game_password)
+                        game_login=False
+                    assert path.to_menu()
+
                     work(task, summary)
                     
                     assert path.to_menu()
@@ -384,6 +408,11 @@ def main():
     token = client.login(username, password)
     need_terminate = True
     for task_id, task_name in client.get_tasks(token):
+        global game_login
+        global game_password
+        global game_account
+        game_login=False
+
         logger.info(f"预检查 任务编号 {task_id}: {task_name}")
         task = client.get_task(token, task_id)
         logger.debug(task)
@@ -395,6 +424,10 @@ def main():
         if not adb.is_game_on():
             logger.critical('Error: 游戏无法启动')
             exit(1)
+        if game_login:
+            logger.debug('开始进行账密登录')
+            path.login(game_account,game_password)
+            game_login=False
         assert path.to_menu()
         energy = get_san()
         if energy is None:
@@ -404,7 +437,7 @@ def main():
         client.set_energy(token, task_id, energy)
         if energy > 100: # TODO: get energy thresh from server
             need_terminate = False
-        adb.kill_app()
+        #adb.kill_app()
         logger.success(f"任务 {task_name} 预检查完成, 体力: {energy}")
     if need_terminate:
         terminate_program()

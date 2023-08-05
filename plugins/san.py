@@ -40,11 +40,11 @@ def detect_san_in_level():
     is_san=f.cut_find_html('imgs/san_checker',1325,8,1448,72)
     if is_san[0]is not None:
         api.get_screen_shot()
-        out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),1338,2,1598,75)
+        out=pp.cut_html_ocr_bytes(cv.imread('cache/screenshot.png'),1429,29,1500,63)
         if out['code'] != 100:
             logger.debug(out)
             return None
-        text=out['data']['text']
+        text=out['data'][0]['text']
         return int(text)
     else:
         logger.warning('未找到活力值')
