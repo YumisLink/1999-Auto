@@ -39,10 +39,11 @@ IMAGE_INSIGHT_MAP = {
 IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
 IMAGE_START_GREEN = "imgs/active/START_ACTIVE_GREEN"
-IMAGE_REPLAY = 'imgs/enter_replay_mode2'
+IMAGE_REPLAY = 'imgs/enter_replay_mode'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
 IMGAE_IN_REPLAY='imgs/already_in_replay_mode'
+IMAGE_NOT_IN_REPLAY = 'not_relay_action'
 IMAGE_BATTLE_INFO = "imgs/battle_info"
 IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 
@@ -135,7 +136,8 @@ def to_level(level:int,swipetimes=2):
 
 def sub_replay(times:int):
     is_replay =f.cut_match_html(IMGAE_IN_REPLAY,883,753,1555,897)
-    if is_replay is None or is_replay[2] > 0.7:
+    is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY,981,706,1556,882)
+    if is_replay is None or is_replay[2] < 0.7 or is_replay2 is not None or is_replay2[2] > 0.7:
         logger.debug('不在复现模式')
         replay = f.cut_find_html(IMAGE_REPLAY,819,736,1126,895)
         if replay[0] is not None:

@@ -197,7 +197,7 @@ def login(account:str,password:str):
 def to_login():
     to_title(False)
     time.sleep(1.5)
-    adb.touch(f.cut_find_html('imgs/title_exit',1502,778,1573,867))
+    adb.touch(f.cut_find_html('imgs/title_exit',1481,776,1594,893))
     time.sleep(1)
     adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))   
 
