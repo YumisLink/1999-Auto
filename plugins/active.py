@@ -43,7 +43,7 @@ IMAGE_REPLAY = 'imgs/enter_replay_mode'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
 IMGAE_IN_REPLAY='imgs/already_in_replay_mode'
-IMAGE_NOT_IN_REPLAY = 'not_relay_action'
+IMAGE_NOT_IN_REPLAY = 'imgs/active/not_relay_action'
 IMAGE_BATTLE_INFO = "imgs/battle_info"
 IMAGE_BATTLE_INFO_RESTART = "imgs/battle_info_restart"
 

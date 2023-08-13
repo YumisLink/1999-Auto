@@ -171,6 +171,8 @@ def login(account:str,password:str):
     password:密码
     """
     to_login()
+    time.sleep(3)
+    to_login()#刚到标题界面有可能会等一会儿才弹公告
     logger.info('开始登录')
     time.sleep(8)
     adb.touch([917,584])
