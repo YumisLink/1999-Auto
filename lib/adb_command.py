@@ -13,9 +13,10 @@ def touch(point):
     os.system(f'{config.ADB_HEAD} shell input tap {point[0]} {point[1]}')
 
 
-def swipe(p1, p2):
-    logger.debug(f'swipe from  {p1[0]} {p1[1]} to {p2[0]} {p2[1]}')
-    os.system(f'{config.ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} 100')
+def swipe(p1, p2, duration: int = None):
+    duration = 100 if not duration else duration
+    logger.debug(f'swipe from {p1[0]} {p1[1]} to {p2[0]} {p2[1]} in {duration}ms')
+    os.system(f'{config.ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} {duration}')
     
 def input(text,clear=False):
     #print(f'input {text}')

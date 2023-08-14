@@ -97,7 +97,7 @@ def Auto_Active(
         total_times=player_san//level_san
         fourtimes=total_times//4
         times=total_times%4
-        logger.info(f"打:{fourtimes}次4倍，{times}次1倍复现")
+        logger.info(f"打: {fourtimes}次4倍，1次{times}倍复现")
         adb.touch(f.find(start_btn))
         logger.info(f"进入行动界面")
         time.sleep(4)
@@ -130,7 +130,7 @@ def to_level(level:int,swipetimes=2):
                 logger.info(f"进入第{level}关")
                 return True
         logger.debug(f'第{i}次识别，未找到目标关卡，继续滑动')
-        adb.swipe((500,744),(1040,750))
+        adb.swipe((500,744),(1040,750), 300)
         time.sleep(1)
     return False
 
@@ -188,7 +188,15 @@ def to_resource():
     adb.touch(f.find(IMAGE_RESOURCE))
     logger.info("点击资源")
     time.sleep(1)
-# Auto_Active(IMAGE_MINTAGE_AESTHEICS, LEVEL_6, REPLAY_4)
+
+def to_insight():
+    """
+    进入洞悉关.
+    """    
+    enter_the_show()
+    adb.touch(f.find(IMAGE_INSIGHT))
+    logger.info("点击洞悉")
+    time.sleep(1)
 
 def to_festival():
     """

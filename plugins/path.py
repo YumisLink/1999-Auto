@@ -201,9 +201,4 @@ def to_login():
     time.sleep(1.5)
     adb.touch(f.cut_find_html('imgs/title_exit',1481,776,1594,893))
     time.sleep(1)
-    adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))   
-
-def to_fight():
-    to_menu()
-    adb.touch(f.find('imgs/enter_the_show'))
-    logger.info("正在进入主会场")
+    adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))

@@ -103,15 +103,16 @@ def start_emulator():
     emulator_arg = config.user_config.get('emulator_startarg')
     emulator_args = emulator_arg.split()
     # 启动模拟器并获取其 PID
+    emulator_pid = -1
     try:
         proc = subprocess.Popen(emulator_args)
         time.sleep(30)
-        adb_address = config.get('adb_address')
+        adb_address = config.user_config.get('adb_address')
         adb_port = adb_address.split(':')[-1]
         for conn in psutil.net_connections():
             if conn.status == 'LISTEN' and str(conn.laddr.port) == adb_port:
                 emulator_pid = conn.pid
-            break
+                break
     except OSError:
         emulator_pid = -1
         raise
@@ -185,7 +186,7 @@ def work_fight(fight: dict, energy: int):
             times = None if fight['asmuch'] else fight['times']
             if times is None:
                 as_much = True
-            path.to_fight()
+            active.enter_the_show()
             if fight['hard'] > 1:
                 hard_handle = active.choose_story_disaster
             else:
@@ -235,11 +236,12 @@ def work_fight(fight: dict, energy: int):
             )
         case '群'|'星'|'深'|'荒', *_: # 洞悉
             entry = active.IMAGE_INSIGHT_MAP[fight['name']]
+            active.to_insight()
             active.Auto_Active(
                 entry,
                 fight['level'],
                 fight['times'],
-                True, 1,
+                False, 1,
                 None, as_much
             )
         case '绿', *_: # 绿湖噩梦
@@ -266,6 +268,7 @@ def work(task: dict, summary: list[str]):
     except Exception as e:
         all_success = False
         summary.append(f"邮件: 领取失败: {e}")
+        logger.error(traceback.format_exc())
     # Wild
     try:
         if task['detail'].get('wild', False):
@@ -280,6 +283,7 @@ def work(task: dict, summary: list[str]):
     except Exception as e:
         all_success = False
         summary.append(f"荒原: 领取失败: {e}")
+        logger.error(traceback.format_exc())
     # Fights
     for fight in task['detail'].get('fights', []):
         try:
@@ -293,6 +297,7 @@ def work(task: dict, summary: list[str]):
         except Exception as e:
             all_success = False
             summary.append(f"战斗: {fight['name']} 执行失败: {e}")
+            logger.error(traceback.format_exc())
     # Pass
     try:
         if task['detail'].get('pas', False):
@@ -301,6 +306,7 @@ def work(task: dict, summary: list[str]):
     except Exception as e:
         all_success = False
         summary.append(f"点唱机: 领取失败: {e}")
+        logger.error(traceback.format_exc())
     # Mission
     try:
         if task['detail'].get('mission', False):
@@ -309,6 +315,7 @@ def work(task: dict, summary: list[str]):
     except Exception as e:
         all_success = False
         summary.append(f"任务: 领取失败: {e}")
+        logger.error(traceback.format_exc())
     return all_success
 
 def loop(username: str, password: str):
@@ -437,7 +444,7 @@ def main():
         client.set_energy(token, task_id, energy)
         if energy > 100: # TODO: get energy thresh from server
             need_terminate = False
-        #adb.kill_app()
+        adb.kill_app()
         logger.success(f"任务 {task_name} 预检查完成, 体力: {energy}")
     if need_terminate:
         terminate_program()
