@@ -137,7 +137,7 @@ def to_level(level:int,swipetimes=2):
 def sub_replay(times:int):
     is_replay =f.cut_match_html(IMGAE_IN_REPLAY,883,753,1555,897)
     is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY,981,706,1556,882)
-    if is_replay is None or is_replay[2] < 0.7 or is_replay2 is not None or is_replay2[2] > 0.7:
+    if is_replay is None or is_replay[2] < 0.7 or (is_replay2 is not None and is_replay2[2] > 0.7):
         logger.debug('不在复现模式')
         replay = f.cut_find_html(IMAGE_REPLAY,819,736,1126,895)
         if replay[0] is not None:
