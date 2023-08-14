@@ -146,6 +146,7 @@ def cut_match(template, x, y, w, h, take=True):
     result = cv.matchTemplate(screen_cut, template_img, cv.TM_CCOEFF_NORMED)
     threshold = 0.6  # 阈值
     loc = np.where(result >= threshold)
+    logger.debug(template + ': 匹配度' + str(result.max()))
     if len(loc[0]) > 0:
         # # 在匹配结果上画框
         # for pt in zip(*loc[::-1]):
@@ -155,7 +156,7 @@ def cut_match(template, x, y, w, h, take=True):
         y = loc[0][0] + y
         return x, y,result.max()
     else:
-        logger.debug('匹配度过低' + str(result.max()))
+        logger.debug('匹配度过低')
         return None
     
 def cut_match_html(template, x2, y2, x1, y1, take=True):

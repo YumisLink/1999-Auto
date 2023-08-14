@@ -13,6 +13,8 @@ from lib import client
 from lib import adb_command as adb
 from lib import find as f
 
+from lib.utils import save_img_log
+
 from plugins import path
 from plugins.san import get_san
 from plugins import mail
@@ -24,6 +26,8 @@ from plugins import active
 from typing import Optional
 
 from loguru import logger
+log_path = os.path.join('logs', f'{datetime.now():%Y-%m-%d-%H-%M-%S}.log')
+logger.add(log_path, level='DEBUG')
 
 global emulator_pid
 emulator_pid = -1
@@ -48,6 +52,14 @@ global game_login
 global game_password
 global game_account
 game_login=False
+
+def log_callback(record: dict):
+    if record['level'].name not in ['SUCCESS', 'WARNING', 'ERROR', 'CRITICAL']:
+        return record
+    if config.user_config.get('image_log', False):
+        save_img_log()
+    return record
+logger = logger.patch(log_callback)
 
 def override_config(new_config: dict[str, str]):
     for key, value in new_config.items():
@@ -136,7 +148,7 @@ def startup_program():
     return res
 
 def terminate_program():
-    if config.user_config.get('ProgramKeepAlive', True):
+    if config.user_config.get('emulator_KeepAlive', True):
         logger.info('保持模拟器运行不关闭')
         return
     logger.info('正在关闭模拟器')
@@ -265,6 +277,7 @@ def work(task: dict, summary: list[str]):
         if task['detail'].get('mail', False):
             work_mail()
             summary.append(f"邮件: 领取完成")
+            logger.success('邮件: 领取完成')
     except Exception as e:
         all_success = False
         summary.append(f"邮件: 领取失败: {e}")
@@ -275,9 +288,10 @@ def work(task: dict, summary: list[str]):
             res = work_wild()
             if res:
                 summary.append(f"荒原: 领取完成")
+                logger.success('荒原: 领取完成')
             else:
-                logger.error('荒原: 无法回到主界面')
                 summary.append(f"荒原: 无法回到主界面")
+                logger.error('荒原: 无法回到主界面')
                 adb.kill_app()
                 assert adb.is_game_on()
     except Exception as e:
@@ -294,6 +308,7 @@ def work(task: dict, summary: list[str]):
                 raise Exception('无法获取体力')
             msg = work_fight(fight, energy)
             summary.append(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
+            logger.success(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
         except Exception as e:
             all_success = False
             summary.append(f"战斗: {fight['name']} 执行失败: {e}")
@@ -303,6 +318,7 @@ def work(task: dict, summary: list[str]):
         if task['detail'].get('pas', False):
             work_pass()
             summary.append(f"点唱机: 领取完成")
+            logger.success('点唱机: 领取完成')
     except Exception as e:
         all_success = False
         summary.append(f"点唱机: 领取失败: {e}")
@@ -312,6 +328,7 @@ def work(task: dict, summary: list[str]):
         if task['detail'].get('mission', False):
             work_mission()
             summary.append(f"任务: 领取完成")
+            logger.success('任务: 领取完成')
     except Exception as e:
         all_success = False
         summary.append(f"任务: 领取失败: {e}")
