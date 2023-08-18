@@ -14,7 +14,7 @@ def touch(point):
 
 
 def swipe(p1, p2, duration: int = None):
-    duration = 100 if not duration else duration
+    duration = 300 if not duration else duration
     logger.debug(f'swipe from {p1[0]} {p1[1]} to {p2[0]} {p2[1]} in {duration}ms')
     os.system(f'{config.ADB_HEAD} shell input touchscreen swipe {p1[0]} {p1[1]} {p2[0]} {p2[1]} {duration}')
     
