@@ -152,6 +152,9 @@ def terminate_program():
         logger.info('保持模拟器运行不关闭')
         return
     logger.info('正在关闭模拟器')
+    if emulator_pid == -1:
+        logger.warning("pid=-1, 模拟器未启动")
+        return True
     process = psutil.Process(emulator_pid)
     process.terminate()
     time.sleep(5)
@@ -357,7 +360,7 @@ def loop(username: str, password: str):
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
-                    if energy < 100: # TODO: get energy thresh from server
+                    if energy < 0: # TODO: get energy thresh from server
                         logger.success(f"任务 {task_name} 体力为{energy}, 未到执行阈值，跳过")
                         skip = True
                         continue
@@ -367,9 +370,9 @@ def loop(username: str, password: str):
                         raise Exception('模拟器启动失败')
                     if not adb.is_device_connected():
                         raise Exception('连接设备失败')
-                    
                     if not adb.is_game_on():
                         raise Exception('游戏无法启动')
+                    
                     #login
                     if game_login:
                         logger.debug('开始进行账密登录')
@@ -414,21 +417,10 @@ def loop(username: str, password: str):
             logger.info('等待 30 分钟')
             time.sleep(30 * 60) # 0.5 hours
 
-@logger.catch
-def main():
-    config.check_path()
-    if not startup_program():
-        exit(1)
-    device = adb.is_device_connected()
-    if not device:
-        logger.critical("Error: 未连接设备，请回看上面的错误信息")
-        exit(1)
-    # sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
-    username = sys.argv[1]
-    password = sys.argv[2]
-    if 'server' in config.user_config:
-        client.set_server(config.user_config['server'])
-    
+def pre_check(username: str, password: str):
+    if config.user_config.get('skipPreCheck', False):
+        logger.info("跳过预检查")
+        return
     # Fetch tasks and update energy first
     # And we will basically check we are doing well, otherwise panic and exit
     token = client.login(username, password)
@@ -447,9 +439,15 @@ def main():
             logger.success(f"任务 {task_name} 被设为暂停，跳过")
             continue
         override_config(task['detail'].get('config_override', {}))
+        
+        if not startup_program():
+            raise Exception('模拟器启动失败')
+        if not adb.is_device_connected():
+            raise Exception('连接设备失败')
         if not adb.is_game_on():
             logger.critical('Error: 游戏无法启动')
             exit(1)
+            
         if game_login:
             logger.debug('开始进行账密登录')
             path.login(game_account,game_password)
@@ -467,6 +465,17 @@ def main():
         logger.success(f"任务 {task_name} 预检查完成, 体力: {energy}")
     if need_terminate:
         terminate_program()
+
+@logger.catch
+def main():
+    config.check_path()
+    # sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
+    username = sys.argv[1]
+    password = sys.argv[2]
+    if 'server' in config.user_config:
+        client.set_server(config.user_config['server'])
+    
+    pre_check(username, password)
     
     loop(username, password)
 
