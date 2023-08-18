@@ -360,7 +360,7 @@ def loop(username: str, password: str):
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
                     energy = calc_energy(task['time_stamp'], task['energy'])
-                    if energy < 0: # TODO: get energy thresh from server
+                    if energy < 100: # TODO: get energy thresh from server
                         logger.success(f"任务 {task_name} 体力为{energy}, 未到执行阈值，跳过")
                         skip = True
                         continue
