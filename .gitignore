@@ -166,3 +166,6 @@ cython_debug/
 
 #.ink
 *.ink
+
+# Log
+logs/
