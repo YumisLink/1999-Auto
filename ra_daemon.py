@@ -343,10 +343,6 @@ def loop(username: str, password: str):
     while True:
         game_login=False
         try:
-            if not startup_program():
-                raise Exception('模拟器启动失败')
-            if not adb.is_device_connected():
-                raise Exception('连接设备失败')
             token = client.login(username, password)
             for task_id, task_name in client.get_tasks(token):
                 logger.info(f"任务编号 {task_id}: {task_name}")
@@ -366,6 +362,12 @@ def loop(username: str, password: str):
                         skip = True
                         continue
                     override_config(task['detail'].get('config_override', {}))
+                    
+                    if not startup_program():
+                        raise Exception('模拟器启动失败')
+                    if not adb.is_device_connected():
+                        raise Exception('连接设备失败')
+                    
                     if not adb.is_game_on():
                         raise Exception('游戏无法启动')
                     #login
