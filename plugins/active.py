@@ -157,13 +157,15 @@ def sub_replay(times:int):
     logger.info(f"开始复现")
     time.sleep(60)
 
-    while(True):
+    for _ in range(120): # max 8 minutes
         adb.touch((6,887)) 
         time.sleep(4)
         res=f.cut_find_html(IMAGE_START_REPLAY,1128,751,1549,892)
         if res[0] is not None:
             logger.info('复现完成')
             break
+    else:
+        raise Exception("复现过程卡死")
 
 def enter_the_show():
     path.to_menu()
