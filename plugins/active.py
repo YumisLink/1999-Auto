@@ -10,7 +10,7 @@ import lib.api as api
 
 from typing import Callable, Optional
 
-IMAGE_RESOURCE = "imgs/active_resource"
+IMAGE_RESOURCE = "imgs/active/active_resource"
 IMAGE_INSIGHT = 'imgs/active/insight'#洞察
 IMAGE_THE_POUSSIERE = 'imgs/level_poussiere'#经验
 IMAGE_MINTAGE_AESTHETICS = 'imgs/level_mintage_aesthetics'#钱
@@ -39,7 +39,7 @@ IMAGE_INSIGHT_MAP = {
 IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
 IMAGE_START_GREEN = "imgs/active/START_ACTIVE_GREEN"
-IMAGE_REPLAY = 'imgs/enter_replay_mode'
+IMAGE_REPLAY = 'imgs/active/enter_replay_mode'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
 IMGAE_IN_REPLAY='imgs/already_in_replay_mode'
@@ -135,11 +135,11 @@ def to_level(level:int,swipetimes=2):
     return False
 
 def sub_replay(times:int):
-    is_replay =f.cut_match_html(IMGAE_IN_REPLAY,883,753,1555,897)
-    is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY,981,706,1556,882)
+    is_replay =f.cut_match_html(IMGAE_IN_REPLAY,600,753,1555,897)
+    is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY,600,706,1556,882)
     if is_replay is None or is_replay[2] < 0.8 or (is_replay2 is not None and is_replay2[2] > 0.7):
         logger.debug('不在复现模式')
-        replay = f.cut_find_html(IMAGE_REPLAY,819,736,1126,895)
+        replay = f.cut_find_html(IMAGE_REPLAY,600,736,1126,895)
         if replay[0] is not None:
             adb.touch(replay)
             logger.debug(f"选择复现模式")
@@ -187,7 +187,9 @@ def to_resource():
     进入资源关.
     """    
     enter_the_show()
-    adb.touch(f.find(IMAGE_RESOURCE))
+    resource =pp.ocr_xy(api.get_screen_shot(),'资源')
+    logger.info(resource)
+    adb.touch(resource[0])
     logger.info("点击资源")
     time.sleep(1)
 

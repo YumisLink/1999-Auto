@@ -19,7 +19,8 @@ QQ群:[707816032](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Htwi2RJhZZqG41c_8loR
 - opencv-python
 - loguru
 - pyautogui
-(在命令行运行 pip install opencv-python loguru pyautogui)
+- requests
+(在命令行运行 pip install opencv-python loguru pyautogui requests)
 
 在安装结束之后，请配置`config.json`  
 将模拟器分辨率设置为1600*900 240DPI  
