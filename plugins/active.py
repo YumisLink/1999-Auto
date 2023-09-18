@@ -18,6 +18,7 @@ IMAGE_HARVEST = 'imgs/level_harvest' #基建（丰收时令）
 IMAGE_ANALYSIS = 'imgs/level_analysis' #圣遗物狗粮（意志解析）
 
 IMAGE_GREEN_MAINLINE = "imgs/active/green_lake_mainline"
+IMAGE_MOR_MAINLINE = "imgs/active/mor_pankh_mainline"
 
 IMAGE_CHAPTER1 = 'imgs/active/chapter1'
 IMAGE_CHAPTER2 = 'imgs/active/chapter2'
@@ -39,6 +40,7 @@ IMAGE_INSIGHT_MAP = {
 IMAGE_START = "imgs/START_ACTIVE"
 IMAGE_START_HARD = "imgs/active/START_ACTIVE_HARD"
 IMAGE_START_GREEN = "imgs/active/START_ACTIVE_GREEN"
+IMAGE_START_MOR = "imgs/active/START_ACTIVE_MOR"
 IMAGE_REPLAY = 'imgs/active/enter_replay_mode'
 IMAGE_REPLAY_SELECT = 'imgs/replay_select'
 IMAGE_START_REPLAY = 'imgs/start_replay'
@@ -218,7 +220,7 @@ def to_festival():
         raise Exception('识别主会场失败')
     adb.touch((x+20, y-40))
     logger.info("进入活动")
-    time.sleep(1)
+    time.sleep(2)
 
 def to_story(chapter:int):
     """
@@ -252,15 +254,15 @@ def choose_story_disaster():
         logger.error('未找到厄险，退出')
         return None
 
-def detect_hard_green():
-    ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), 1270, 300, 1350, 340)
+def detect_hard_festival():
+    ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), 1270, 290, 1380, 340)
     assert ocr_res['code'] == 100
     res: list[dict] = ocr_res['data']
     res = sorted(res, key=lambda x: -x['score'])[0]
     return ['故事', '意外', '艰难'].index(res['text']) + 1
 
-def choose_green_lake(hard: int):
-    now_hard = detect_hard_green()
+def choose_festival_hardness(hard: int):
+    now_hard = detect_hard_festival()
     logger.info(f'当前难度：{now_hard}, 目标难度：{hard}')
     while now_hard < hard:
         adb.touch((1490, 315))
@@ -270,9 +272,9 @@ def choose_green_lake(hard: int):
         adb.touch((1130, 315))
         time.sleep(1)
         now_hard -= 1
-    now_hard = detect_hard_green()
+    now_hard = detect_hard_festival()
     assert now_hard == hard
-    return IMAGE_START_GREEN
+    return IMAGE_START_MOR
 
 def active_as_much(type: str, level: int,level_san:int):
     path.to_menu()

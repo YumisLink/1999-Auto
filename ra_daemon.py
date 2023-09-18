@@ -259,19 +259,22 @@ def work_fight(fight: dict, energy: int):
                 False, 1,
                 None, as_much
             )
-        case '绿', *_: # 绿湖噩梦
-            logger.info('打绿湖噩梦')
+        case '活', *_: # 当期活动
+            logger.info('打活动（当前 V1.3 行至摩卢旁卡）')
             active.to_festival()
             time.sleep(2) # wait for animation
-            hard_handle = lambda: active.choose_green_lake(fight['hard'])
+            hard_handle = lambda: active.choose_festival_hardness(fight['hard'])
             active.Auto_Active(
-                active.IMAGE_GREEN_MAINLINE,
+                active.IMAGE_MOR_MAINLINE,
                 fight['level'],
                 fight['times'],
                 False, 1,
                 hard_handle,
                 as_much
             )
+        case name:
+            logger.error(f"未知任务名 {name}")
+            raise NotImplementedError
 
 def work(task: dict, summary: list[str]):
     all_success = True
