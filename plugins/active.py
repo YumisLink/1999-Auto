@@ -264,6 +264,7 @@ def detect_hard_festival():
 def choose_festival_hardness(hard: int):
     now_hard = detect_hard_festival()
     logger.info(f'当前难度：{now_hard}, 目标难度：{hard}')
+    assert abs(now_hard - hard) <= 5
     while now_hard < hard:
         adb.touch((1490, 315))
         time.sleep(1)

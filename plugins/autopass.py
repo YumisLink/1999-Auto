@@ -14,7 +14,7 @@ IMG_UPGARDE='imgs/pass/upgrade'
 
 def pass_start():
     """领取点唱机奖励"""
-    path.to_menu()
+    assert path.to_menu()
     adb.touch([270,86])
     time.sleep(1)
 
@@ -40,7 +40,7 @@ def pass_start():
     claim()
 
 def claim():
-    while True:
+    for _ in range(10):
         res=f.cut_find_html(IMG_CLAIM,1410,324,1546,784)
         if res[0] is not None:
             adb.touch(res)
@@ -48,6 +48,8 @@ def claim():
             db_upgarde()
         else:
             return False
+    else:
+        raise Exception('领取奖励次数异常')
 def claim_all():
     res=f.cut_find_html(IMG_CLAIM_ALL,1194,777,1598,897)
     if res[0] is not None:

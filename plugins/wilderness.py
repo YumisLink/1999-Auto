@@ -23,14 +23,15 @@ def back_to_land():
 
 def wild_start():
     """领不休荒原产物"""
-    while not path.to_menu():
-        pass
+    assert not path.to_menu()
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     logger.info('进入不休荒原')
-    while(True):
+    for _ in range(3):
         time.sleep(3)
         if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
             break
+    else:
+        raise Exception('未能进入不休荒原')
     adb.touch(f.find(IMAGE_BASE_EXP))
     time.sleep(2)
     back_to_land()#防止进入建筑页面
