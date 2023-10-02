@@ -140,9 +140,15 @@ def cut_html_ocr_bytes_xy(imagebytes,x1,y1,x2,y2,text='',is_cn=True):
         y1 = a
     img_cut=imagebytes[y1:y2,x1:x2]
     if is_cn:
-        res=match_text_area(ocr_bytes_cn(img_cut), text)
+        out=ocr_bytes_cn(img_cut)
     else:
-        res=match_text_area(ocr_bytes_en(img_cut), text)
+        out=ocr_bytes_en(img_cut)
+    
+    # if is_char_by_char:
+    #     res=match_text_area_char_by_char(out, text)
+    # else:
+    #     res=match_text_area(out, text)
+    res=match_text_area(out, text)
     if res[0] is None:
         logger.debug('未识别到目标文本')
         return None,None,None
@@ -153,6 +159,7 @@ def cut_html_ocr_bytes_xy(imagebytes,x1,y1,x2,y2,text='',is_cn=True):
     
 
 def match_text_area(res, text):
+    #这个是中间函数，不要直接调用，请用ocr_xy
     """
     在返回中筛选出包含text的区域，如果有多个区域，选择最接近中心的区域 返回其中心坐标和相似度
     :param res:返回的字典.

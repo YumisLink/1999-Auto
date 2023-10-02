@@ -18,10 +18,12 @@ def get_san() -> int|None:
         adb.touch([1460,204]) # 返回
         return out
     elif status == 'san':
+        #在活力值界面识别
         out=detect_san_in_san()
         return out
 
     elif status == 'notmenu2' or status == 'notmenu' or status == 'nothome':
+        #在关卡界面识别(右上角有活力值时)
         return detect_san_in_level()
     else:
         logger.warning('未找到活力值')
@@ -84,3 +86,23 @@ def detect_maxsan() -> int|None:
         return None
     text=out['data'][0]['text']
     return int(text)
+
+
+
+#自动吃24小时内的糖
+def eat_24H_sugar():
+    status=path.where_am_i()
+    logger.debug('当前界面:',status)
+    if status == 'san':
+        out=pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(),1040,253,1228,392, '小时')
+        if out[0] is not None:
+            adb.touch((out[0][0],out[0][1]-120))#时间上面才是糖
+            logger.debug('点击糖')
+            if f.wait_until_find("imgs/confirm",20,True) is None:
+                return False
+            adb.touch(f.cut_find_html('imgs/confirm',612,458,1596,724))
+            logger.debug('点击确认')
+            return True
+        else:
+            logger.error('未找到"小时",退出')
+            return False
