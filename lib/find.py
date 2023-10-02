@@ -75,6 +75,8 @@ def wait_until_find(id: str, timeoutsec=60,take=True):
     :param id:图片的路径（不需要.png后缀）.
     :param timeoutsec:超时时间（秒）
     :param take:图片要不要现截.
+    :Return: res:找到的图片的中心点坐标，以及相似度
+    :Return: None:超时
     """
     now = time.time()
     elapsed_time = 0
@@ -84,6 +86,7 @@ def wait_until_find(id: str, timeoutsec=60,take=True):
             return res
         time.sleep(1)
         elapsed_time = time.time() - now 
+    return None
 
 
 # 裁屏匹配
