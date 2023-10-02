@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from loguru import logger
+import time
 import lib.api as api
 from cards.aname import card_reflect
 
@@ -13,7 +14,7 @@ def read_screenshot():
 def find_image(id: str, take=True):
     """
     从id中匹配图片并返回其在截图中的样子
-    :param id:图片的id.
+    :param id:图片的id(无.png后缀).
     :param take:图片要不要现截.
     :Return: img2:找到的图片
     """
@@ -66,6 +67,23 @@ def find(id: str, take=True):
            similar(img_terminal, img2))
     # cv.imwrite(f'cache/{id}2.png', img2)
     return avg
+
+#等待直到匹配到
+def wait_until_find(id: str, timeoutsec=60,take=True):
+    """
+    等待直到匹配到id.png
+    :param id:图片的路径（不需要.png后缀）.
+    :param timeoutsec:超时时间（秒）
+    :param take:图片要不要现截.
+    """
+    now = time.time()
+    elapsed_time = 0
+    while elapsed_time < timeoutsec:
+        res = find(id, take)
+        if res[2] > 0.7:
+            return res
+        time.sleep(1)
+        elapsed_time = time.time() - now 
 
 
 # 裁屏匹配
