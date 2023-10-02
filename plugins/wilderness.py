@@ -23,7 +23,7 @@ def back_to_land():
 
 def wild_start():
     """领不休荒原产物"""
-    assert not path.to_menu()
+    assert path.to_menu()
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     logger.info('进入不休荒原')
     for _ in range(3):
