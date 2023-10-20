@@ -152,6 +152,8 @@ def terminate_program():
         logger.info('保持模拟器运行不关闭')
         return
     logger.info('正在关闭模拟器')
+    os.system('taskkill /im MuMuPlayer.exe')
+    return
     if emulator_pid == -1:
         logger.warning("pid=-1, 模拟器未启动")
         return True
@@ -194,6 +196,8 @@ def work_fight(fight: dict, energy: int):
     as_much=False
     if fight['asmuch']:
         as_much=True
+    if fight['times'] == 0:
+        return '设置为 0 次，跳过'
     match list(fight['name']):
         case '主', '线', x:
             x = int(x)
