@@ -69,6 +69,8 @@ def Auto_Active(
     """    
     if go_resource:
         to_resource()
+    adb.swipe((156,488), (1344,485))
+    time.sleep(1)
     exist=f.find(type)
     logger.debug('目标关卡识别率：{}',exist[2])
     if exist[2]>0.7:

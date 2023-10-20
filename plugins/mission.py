@@ -19,10 +19,8 @@ def mission_start():
     """领取任务奖励"""
     path.to_menu()
     adb.touch(f.find(IMAGE_MISSION,False))
-    time.sleep(1)
-
-
     time.sleep(1.5)
+
     day = f.find_image(IMAGE_DAY_FIND)
     if '每日' not in pp.ocr_bytes_xy(day,'每日'):
         adb.touch(f.find(IMAGE_DAY))
@@ -33,7 +31,7 @@ def mission_start():
     if (claim[2] > 0.7):
         adb.touch(claim)
         logger.info("完成所有任务")
-        time.sleep(8)
+        time.sleep(4)
         adb.touch(claim)
         time.sleep(1)
     else:
@@ -41,7 +39,7 @@ def mission_start():
         if (claim[2] > 0.7):
             adb.touch(claim)
             logger.info("完成单个任务")
-            time.sleep(8)
+            time.sleep(4)
             adb.touch(claim)
             time.sleep(1)
 
