@@ -260,6 +260,7 @@ def work_fight(fight: dict, energy: int):
                 None, as_much
             )
         case '活', *_: # 当期活动
+            raise NotImplementedError("当前 V1.4 没有活动关卡")
             logger.info('打活动（当前 V1.3 行至摩卢旁卡）')
             active.to_festival()
             time.sleep(2) # wait for animation
