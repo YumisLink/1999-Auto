@@ -383,6 +383,7 @@ def loop(username: str, password: str):
                         path.login(game_account,game_password)
                         game_login=False
                     assert path.to_menu()
+                    time.sleep(2.) # 等待成就动画
 
                     work(task, summary)
                     

@@ -33,10 +33,10 @@ def wild_start():
     else:
         raise Exception('未能进入不休荒原')
     adb.touch(f.find(IMAGE_BASE_EXP))
-    time.sleep(2)
+    time.sleep(.5)
     back_to_land()#防止进入建筑页面
     adb.touch(f.find(IMAGE_BASE_MONEY))
-    time.sleep(2)
+    time.sleep(.5)
     back_to_land()
     xy=f.cut_find_html(IMAGE_BASE_FRIEND,0,112,140,571)
     if xy[0] is not None:

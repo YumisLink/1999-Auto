@@ -33,18 +33,17 @@ def where_am_i():
         #用于处理从 https://www.image-map.net 框出来的坐标
         x1,y1,x2,y2 = template_info['pos']
         if x2<x1:
-            a=x2
-            x2=x1
-            x1=a
+            x1, x2 = x2, x1
         if y2<y1:
-            a=y2
-            y2=y1
-            y1=a
+            y1, y2 = y2, y1
         w=x2-x1
         h=y2-y1
         img = cv.imread(template_info['img'])
         template_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        h = max(h, template_img.shape[0])
+        w = max(w, template_img.shape[1])
         screen_gray_cropped = screen_gray[y1:y1+h, x1:x1+w]
+        
         result = cv.matchTemplate(screen_gray_cropped, template_img, cv.TM_CCOEFF_NORMED)
         if cv.minMaxLoc(result)[1] > max_val:
             max_val = cv.minMaxLoc(result)[1]
@@ -55,6 +54,9 @@ def where_am_i():
             tw, th = template_img.shape[::-1]
             # 在匹配到的目标上画一个矩形框
             cv.rectangle(screen, (x1 + max_loc[0], y1 + max_loc[1]), (x1 + max_loc[0] + tw, y1 + max_loc[1] + th), (0, 0, 255), 2)
+            if max_val > 0.9:
+                logger.debug('匹配度较高，跳过剩余模板')
+                break
     if max_val < 0.6:
         logger.debug('未匹配到任何模板图像')
         logger.debug('最大相似度 {}, {}', max_val,max_template_name)

@@ -15,7 +15,8 @@ IMG_UPGARDE='imgs/pass/upgrade'
 def pass_start():
     """领取点唱机奖励"""
     assert path.to_menu()
-    adb.touch([270,86])
+    # adb.touch([270,86])
+    adb.touch((407, 86)) # 箱中巡游版本
     time.sleep(1)
 
     res = f.cut_find_html('imgs/pass/redpoint',1524,84,1555,50)
