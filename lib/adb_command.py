@@ -70,12 +70,11 @@ def get_bluestacks_adb_port():
 
 
 def check_device_connection():
-    with open('config.json', 'r') as f:
-        config = json.load(f)
-    adb_path = config['adb_path']
+    cfg = config.user_config
+    adb_path = cfg['adb_path']
     device = None  # 初始化device变量为None
-    if 'adb_address' in config and config['adb_address']:
-        device = config['adb_address']
+    if 'adb_address' in cfg and cfg['adb_address']:
+        device = cfg['adb_address']
         os.system(f'{adb_path} connect {device}')
         # 通过验证adb devices命令的输出结果中List of devices attached下面是否有设备状态为device判断是否有设备连接
         output = os.popen(f'{adb_path} devices').read().strip().split('\n')
@@ -86,7 +85,7 @@ def check_device_connection():
                 return blurestack
         else:
             logger.debug(f'已连接设备：{device}')
-            config['config.DEVICE_ID'] = device
+            cfg['config.DEVICE_ID'] = device
             api.write_config()
             return device
     else:
@@ -138,8 +137,7 @@ def is_device_connected():
             config.ADB_HEAD = f'{adb_path}'
     logger.debug('已重组config.ADB_HEAD:',config.ADB_HEAD)  
     config.user_config['adb_head'] = config.ADB_HEAD#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
-    with open('config.json', 'w') as f:
-        json.dump(config.user_config, f, indent=4)
+    api.write_config()
     return device
     
             
