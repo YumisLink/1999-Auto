@@ -354,7 +354,7 @@ def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int
     @return: [(number, (x, y))]
     """
     img = cv.blur(img, (2, 2))
-    img = img[680: 735, :, :] #已替换为适合1600*900的坐标
+    img = img[680: 725, :, :] #已替换为适合1600*900的坐标
 
     background = cv.inRange(img, (0, 0, 0), (125, 125, 125))
     img[background == 255] = (0, 0, 0)
