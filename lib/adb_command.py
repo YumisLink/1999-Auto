@@ -85,7 +85,7 @@ def check_device_connection():
                 return blurestack
         else:
             logger.debug(f'已连接设备：{device}')
-            cfg['config.DEVICE_ID'] = device
+            config.user_config['device_id'] = device
             api.write_config()
             return device
     else:
@@ -132,7 +132,7 @@ def is_device_connected():
         with open('config.json', 'r') as f:
             config.user_config = json.load(f)
         if 'device_id' in config.user_config and config.user_config['device_id'].strip():
-            config.ADB_HEAD = f'{adb_path} -s {config.DEVICE_ID}'
+            config.ADB_HEAD = f'{adb_path} -s {config.user_config["device_id"]}'
         else:
             config.ADB_HEAD = f'{adb_path}'
     logger.debug('已重组config.ADB_HEAD:',config.ADB_HEAD)  

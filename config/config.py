@@ -3,13 +3,14 @@ import json
 import shutil
 from typing import cast, Any
 
-data = {
-    'x': 0,
-    'y': 0
-}
 
-if not os.path.exists('config.json'):
-    shutil.copy('config.default.json', 'config.json')
+def check_path():
+    if not os.path.exists('cache'):
+        os.mkdir('cache')
+    if not os.path.exists('config.json'):
+        shutil.copy('config.default.json', 'config.json')
+            
+check_path()
 
 with open('config.json', 'r') as f:
     global user_config
@@ -31,20 +32,3 @@ def set_channel(channel: str):
             APPID = "com.shenlan.m.reverse1999.bilibili"
         case _:
             raise KeyError("Invalid channel")
-
-def check_path():
-    if not os.path.exists('cache'):
-        os.mkdir('cache')
-    if not os.path.exists('config.json'):
-        config = {
-                "adb_path": "",
-                "adb_address": "",
-                "device_id": "",
-                "adb_head": "",
-                "bluestacks_conf_path": "",
-                "bluestacks_adb_port_keys": ""
-        }
-        with open('config.json', 'w') as f:
-            json.dump(config, f, indent=4)
-            
-check_path()

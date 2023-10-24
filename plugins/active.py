@@ -4,7 +4,6 @@ import lib.find as f
 import time
 from loguru import logger
 import lib.adb_command as adb
-from config.config import data
 import lib.ppocr as pp
 import lib.api as api
 
@@ -192,7 +191,7 @@ def to_resource():
     """    
     enter_the_show()
     resource =pp.ocr_xy(api.get_screen_shot(),'资源')
-    logger.info(resource)
+    logger.debug(resource)
     adb.touch(resource[0])
     logger.info("点击资源")
     time.sleep(1)
