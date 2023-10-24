@@ -178,6 +178,7 @@ def match_text_area(res, text):
             similarities.append(item['score'])
             texts.append(item['text'])
     if len(match_areas) == 0:
+        logger.debug(res['data'])
         return None, None, None, None
     if len(match_areas) == 1:
         center = np.mean(match_areas[0], axis=0)

@@ -63,8 +63,8 @@ def where_am_i():
         return None
     else:
         logger.debug(f'匹配到了{max_template_name}')
-        # 将结果保存到cache/result.png文件中
-        cv.imwrite('cache/result.png', screen)
+        # 将结果保存到cache/result.png文件中（调试用）
+        #cv.imwrite('cache/result.png', screen)
         return max_template_name
 
 def to_menu(autologin=True,back_to_title=False):

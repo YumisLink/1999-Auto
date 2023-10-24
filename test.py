@@ -1,4 +1,3 @@
-from config.config import data
 import lib.adb_command as adb
 import lib.api as api
 import cv2 as cv
@@ -22,9 +21,10 @@ if not device:
     print("Error: 未连接设备，请回看上面的错误信息")
     exit(1) 
 #检测游戏是否运行，如果没有运行就启动游戏
-adb.is_game_on()
-#进入主菜单
-path.to_menu()
+# adb.is_game_on()
+# #进入主菜单
+# path.to_menu()
+wilderness.wild_start()
 # print(pp.ocr_cn('cache/screenshot.png'))
 # #active.Auto_Active(LEVEL_6,)
 # adb.touch(f.find('imgs/enter_the_show'))
