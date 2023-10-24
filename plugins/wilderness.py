@@ -26,12 +26,7 @@ def wild_start():
     assert path.to_menu()
     adb.touch(f.find(IMAGE_BASE_WILDERNESS))
     logger.info('进入不休荒原')
-    for _ in range(3):
-        time.sleep(3)
-        if (f.find(IMAGE_BASE_CHECKER)[2]>0.7):
-            break
-    else:
-        raise Exception('未能进入不休荒原')
+    assert f.wait_until_func(lambda: f.find(IMAGE_BASE_CHECKER)[2]>0.7,1,40)
     adb.touch(f.find(IMAGE_BASE_EXP))
     time.sleep(.5)
     back_to_land()#防止进入建筑页面

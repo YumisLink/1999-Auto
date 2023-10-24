@@ -89,6 +89,34 @@ def wait_until_find(id: str, timeoutsec=60,take=True):
     return None
 
 
+#eg:wait_until_func(lambda: f.find_image("imgs/confirm", True), 3)
+# def wait_until_func(func, max_attempts_sec=60):
+#     for i in range(max_attempts_sec):
+#         #适应各种奇葩返回
+#         result = func()
+#         try:
+#             # 尝试获取第一个返回值
+#             result0 = result[0]
+#         except TypeError:
+#             # 如果 func 返回的不是元组，直接用返回的结果
+#             result0 = result
+#         #正式判断
+#         if result0 > 0.6:
+#             return True
+#         else:
+#             time.sleep(1)
+#     return False
+#eg:wait_until_func(lambda: f.find(IMAGE_BASE_CHECKER)[2] > 0.7,1,60)
+def wait_until_func(func,sleep_interval=1,max_attempts_sec=60):
+    now = time.time()
+    elapsed_time = 0
+    while elapsed_time < max_attempts_sec:
+        if func():
+            return True
+        time.sleep(sleep_interval)
+        elapsed_time = time.time() - now 
+    return False
+
 # 裁屏匹配
 def cut_find(template, x, y, w, h, take=True):
     """
