@@ -6,7 +6,7 @@ import lib.adb_command as adb
 import lib.api as api
 
 template_imgs = {
-    'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (157,560,1501,696)},#html;主界面
+    'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (1150,560,1501,720)},#html;主界面
     'notmenu': {'img': 'imgs/go_back_1.png', 'pos': (0,0,225,94)},#html;白色的返回键
     'notmenu2': {'img': 'imgs/go_back_2.png', 'pos': (0,0,225,94)},#html;黑色的返回键
     'title': {'img': 'imgs/title.png', 'pos': (462,285,1129,525)},#html坐标格式(以下简称html);标题界面
