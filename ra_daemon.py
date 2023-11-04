@@ -6,6 +6,7 @@ import traceback
 from datetime import datetime
 import multiprocessing
 import psutil
+import itertools
 
 from config import config
 
@@ -86,6 +87,8 @@ def override_config(new_config: dict[str, str]):
                     game_login=True
                     game_password=value
                     logger.debug('账密登录开启')
+                case 'user':
+                    config.set_user(value)
                 case _:
                     raise KeyError("Invalid override key")
         except Exception as e:
@@ -118,7 +121,7 @@ def start_emulator():
     emulator_pid = -1
     try:
         proc = subprocess.Popen(emulator_args)
-        time.sleep(30)
+        time.sleep(20)
         adb_address = config.user_config.get('adb_address')
         adb_port = adb_address.split(':')[-1]
         for conn in psutil.net_connections():
@@ -153,6 +156,7 @@ def terminate_program():
         return
     logger.info('正在关闭模拟器')
     os.system('taskkill /im MuMuPlayer.exe')
+    time.sleep(5)
     return
     if emulator_pid == -1:
         logger.warning("pid=-1, 模拟器未启动")
@@ -346,12 +350,12 @@ def work(task: dict, summary: list[str]):
         logger.error(traceback.format_exc())
     return all_success
 
-def loop(username: str, password: str):
+def loop(accounts):
     logger.success('进入任务循环')
     global game_login
     global game_password
     global game_account
-    while True:
+    for username, password in itertools.cycle(accounts):
         game_login=False
         try:
             token = client.login(username, password)
@@ -479,14 +483,19 @@ def pre_check(username: str, password: str):
 def main():
     config.check_path()
     # sys.argv = [sys.argv[0], 'admin', 'admin'] # debug
-    username = sys.argv[1]
-    password = sys.argv[2]
+    if len(sys.argv) > 1:
+        webui_accounts = sys.argv[1: 3]
+    else:
+        webui_accounts = config.user_config['webui_accounts']
+    assert len(webui_accounts)
+    
     if 'server' in config.user_config:
         client.set_server(config.user_config['server'])
     
-    pre_check(username, password)
+    for user, pwd in webui_accounts:
+        pre_check(user, pwd)
     
-    loop(username, password)
+    loop(webui_accounts)
 
 if __name__ == '__main__':
     main()

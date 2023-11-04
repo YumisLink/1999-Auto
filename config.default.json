@@ -9,5 +9,6 @@
     "server": "https://ra.terase.cn",
     "emulator":"bs5",
     "emulator_startarg":"'C:\\Program Files\\BlueStacks_nxt_cn\\HD-Player.exe' --instance Pie64 ",
-    "emulator_KeepAlive": true
+    "emulator_KeepAlive": true,
+    "webui_accounts": []
 }

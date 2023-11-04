@@ -22,6 +22,7 @@ DEVICE_ID = user_config["device_id"]
 ADB_HEAD = user_config["adb_head"]
 APPID = "com.shenlan.m.reverse1999" 
 ACTIVITY = "com.ssgame.mobile.gamesdk.frame.AppStartUpActivity"
+EXEC_USER = ''
 
 def set_channel(channel: str):
     global APPID
@@ -32,3 +33,7 @@ def set_channel(channel: str):
             APPID = "com.shenlan.m.reverse1999.bilibili"
         case _:
             raise KeyError("Invalid channel")
+
+def set_user(user: str):
+    global EXEC_USER
+    EXEC_USER = user

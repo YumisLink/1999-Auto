@@ -47,9 +47,16 @@ def is_game_on(re_try=True):
                 return False
             # 应用不在前台，运行应用
             logger.info("游戏不在前台，正在启动")
-            logger.debug(f'{config.ADB_HEAD} shell am start {config.APPID}/{config.ACTIVITY}')
+            user = config.EXEC_USER
+            if user:
+                cmd = f'{config.ADB_HEAD} shell am start-user {user}'
+                logger.debug(cmd)
+                os.system(cmd)
+                time.sleep(3)
+            cmd = f'{config.ADB_HEAD} shell am start {f"--user {user}" if user else ""} {config.APPID}/{config.ACTIVITY}'
+            logger.debug(cmd)
             # os.popen(f'{config.ADB_HEAD} shell monkey -p {config.APPID} -c android.intent.category.LAUNCHER 1')
-            os.popen(f"{config.ADB_HEAD} shell am start {config.APPID}/{config.ACTIVITY}")
+            os.popen(cmd)
             time.sleep(8)
             return is_game_on(False)
         else:
