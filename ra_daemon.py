@@ -407,9 +407,13 @@ def loop(accounts):
                     try:
                         trace_info = traceback.format_exc()
                         logger.error(trace_info)
-                        summary.append(f'发生未知错误: {e}, 执行中断')
+                        with open(log_path, 'r') as f:
+                            f.seek(-1000, 2)
+                            f.readline() # clear corrupted line
+                            history_log = f.read()
+                        summary.append(f'发生未知错误: {repr(e)}, 执行中断')
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
-                        client.notify(token, task_id, '发生未知错误', trace_info)
+                        client.notify(token, task_id, '发生未知错误', history_log)
                     except Exception as e:
                         logger.error(f'=============== Uncaught Error in error handler: {e} ===============')                    
                 finally:
