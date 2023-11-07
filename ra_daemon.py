@@ -407,10 +407,9 @@ def loop(accounts):
                     try:
                         trace_info = traceback.format_exc()
                         logger.error(trace_info)
-                        with open(log_path, 'r') as f:
-                            f.seek(-1000, 2)
-                            f.readline() # clear corrupted line
-                            history_log = f.read()
+                        with open(log_path, 'r', encoding='utf-8') as f:
+                            history_log = f.readlines()[-20:]
+                            history_log = ''.join(history_log)
                         summary.append(f'发生未知错误: {repr(e)}, 执行中断')
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
                         client.notify(token, task_id, '发生未知错误', history_log)
