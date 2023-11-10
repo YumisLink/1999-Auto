@@ -19,7 +19,7 @@ template_imgs = {
     'win':{'img': 'imgs/VICTOR.png', 'pos': (927,33,1364,293)},#html;作战胜利界面
     'confirm':{'img': 'imgs/confirm.png', 'pos': (612,458,1596,724)},#html;管他是啥呢，确认就完了！
     'san':{'img': 'imgs/menu_san_checker.png', 'pos': (695,294,922,569)},#html;活力值
-    'gift': {'img': 'imgs/gift.png', 'pos': (1050, 20, 1420, 300)} # 礼物界面，目前是1.4版本的 箱中珍藏·上 （NOTE：每次更新后需要同步最新的特征图和坐标）
+    'gift': {'img': 'imgs/gift.png', 'pos': (1050, 20, 1420, 300)} # 礼物界面，目前是1.4版本的 箱中珍藏·下 （NOTE：每次更新后需要同步最新的特征图和坐标）
 }
 
 def where_am_i():
