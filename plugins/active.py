@@ -18,6 +18,7 @@ IMAGE_ANALYSIS = 'imgs/level_analysis' #圣遗物狗粮（意志解析）
 
 IMAGE_GREEN_MAINLINE = "imgs/active/green_lake_mainline"
 IMAGE_MOR_MAINLINE = "imgs/active/mor_pankh_mainline"
+IMAGE_ULU_MAINLINE = "imgs/active/uluru_games_mainline"
 
 IMAGE_CHAPTER1 = 'imgs/active/chapter1'
 IMAGE_CHAPTER2 = 'imgs/active/chapter2'
