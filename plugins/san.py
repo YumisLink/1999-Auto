@@ -61,7 +61,7 @@ def get_levelsan():
         return None
     for item in out['data']:
         if item['score'] > 0.65 and item['text'].strip('-').isdigit():
-            return int(item['text'])
+            return int(item['text'].strip('-'))
     logger.warning(f'没有找到数字{out}')
     return None
 
