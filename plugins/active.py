@@ -86,7 +86,7 @@ def Auto_Active(
     time.sleep(0.8)
 
     assert to_level(level, level_swipetimes)
-    time.sleep(0.8) 
+    time.sleep(2.5) 
 
     if choose_hardness:
         start_btn = choose_hardness()
