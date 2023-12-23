@@ -19,7 +19,8 @@ template_imgs = {
     'win':{'img': 'imgs/VICTOR.png', 'pos': (927,33,1364,293)},#html;作战胜利界面
     'confirm':{'img': 'imgs/confirm.png', 'pos': (612,458,1596,724)},#html;管他是啥呢，确认就完了！
     'san':{'img': 'imgs/menu_san_checker.png', 'pos': (695,294,922,569)},#html;活力值
-    'gift': {'img': 'imgs/gift.png', 'pos': (1050, 20, 1420, 300)} # 礼物界面，目前是1.4版本的 箱中珍藏·下 （NOTE：每次更新后需要同步最新的特征图和坐标）
+    'gift': {'img': 'imgs/gift.png', 'pos': (1050, 20, 1420, 300)}, # 礼物界面，目前是1.5版本 （NOTE：每次更新后需要同步最新的特征图和坐标）
+    'gift2': {'img': 'imgs/gift2.png', 'pos': (1050, 20, 1420, 300)}, # 第二个礼物界面，目前是1.5版本
 }
 
 def where_am_i():
@@ -163,7 +164,7 @@ def to_menu(autologin=True,back_to_title=False):
             #活力界面随便点一下
             adb.touch([84,855])
             time.sleep(1)
-        elif status == 'gift':
+        elif status == 'gift' or status == 'gift2':
             #礼物界面直接点左上角关闭
             adb.touch([60,58])
             time.sleep(1)
