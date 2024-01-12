@@ -268,12 +268,12 @@ def work_fight(fight: dict, energy: int):
                 None, as_much
             )
         case '活', *_: # 当期活动
-            logger.info('打活动（当前 V1.5 复兴！乌卢鲁运动会）')
+            logger.info('打活动（当前 V1.6 朔日手记）')
             active.to_festival()
             time.sleep(2) # wait for animation
             hard_handle = lambda: active.choose_festival_hardness(fight['hard'])
             active.Auto_Active(
-                active.IMAGE_ULU_MAINLINE,
+                active.IMAGE_SHUO_MAINLINE,
                 fight['level'],
                 fight['times'],
                 False, 6,
