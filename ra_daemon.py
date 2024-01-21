@@ -220,7 +220,7 @@ def work_fight(fight: dict, energy: int):
                 times,
                 False, 1,
                 hard_handle,
-                as_much
+                as_much, energy
             )
         case '意', *_: # 意志解析
             active.to_resource()
@@ -239,7 +239,7 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 fight['times'],
                 True, 1,
-                None, as_much
+                None, as_much, energy
             )
         case '铸', *_: # 铸币美学
             active.Auto_Active(
@@ -255,7 +255,7 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 fight['times'],
                 True, 1,
-                None, as_much
+                None, as_much, energy
             )
         case '群'|'星'|'深'|'荒', *_: # 洞悉
             entry = active.IMAGE_INSIGHT_MAP[fight['name']]
@@ -265,7 +265,7 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 fight['times'],
                 False, 1,
-                None, as_much
+                None, as_much, energy
             )
         case '活', *_: # 当期活动
             logger.info('打活动（当前 V1.6 朔日手记）')
@@ -278,7 +278,7 @@ def work_fight(fight: dict, energy: int):
                 fight['times'],
                 False, 6,
                 hard_handle,
-                as_much
+                as_much, energy
             )
         case name:
             logger.error(f"未知任务名 {name}")

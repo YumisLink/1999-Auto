@@ -57,7 +57,7 @@ def Auto_Active(
     go_resource=True,
     level_swipetimes=10,
     choose_hardness: Optional[Callable[[], Optional[str]]]=None,
-    as_much=False
+    as_much=False, energy: int = 100
 ):
     """
     进入特定关卡进行复现.
@@ -98,8 +98,7 @@ def Auto_Active(
         raise Exception('选择难度失败')
     if as_much:
         level_san=san.get_levelsan()
-        player_san=san.detect_san_in_level()
-        total_times=player_san//level_san
+        total_times = energy // level_san
         fourtimes=total_times//4
         times=total_times%4
         logger.info(f"打: {fourtimes}次4倍，1次{times}倍复现")
