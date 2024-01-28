@@ -202,6 +202,8 @@ def work_fight(fight: dict, energy: int):
         as_much=True
     if fight['times'] == 0:
         return '设置为 0 次，跳过'
+    if fight['hard'] > 3:
+        raise "难度设置超出范围"
     match list(fight['name']):
         case '主', '线', x:
             x = int(x)
@@ -247,7 +249,7 @@ def work_fight(fight: dict, energy: int):
                 fight['level'],
                 fight['times'],
                 True, 1,
-                None, as_much
+                None, as_much, energy
             )
         case '丰', *_: # 丰收时令
             active.Auto_Active(

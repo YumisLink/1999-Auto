@@ -1,0 +1,5 @@
+opencv-python
+loguru
+requests
+psutil
+pyautogui
