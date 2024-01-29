@@ -203,7 +203,7 @@ def work_fight(fight: dict, energy: int):
     if fight['times'] == 0:
         return '设置为 0 次，跳过'
     if fight['hard'] > 3:
-        raise "难度设置超出范围"
+        raise Exception("难度设置超出范围")
     match list(fight['name']):
         case '主', '线', x:
             x = int(x)
