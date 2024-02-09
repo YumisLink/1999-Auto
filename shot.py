@@ -4,9 +4,12 @@ import cv2
 from lib import adb_command as adb
 from lib import api
 
+# gift2: python .\shot.py 20 300 1050 1420
+
 def shot(cut: list[int] = None):
     assert adb.is_device_connected()
     fname = api.get_screen_shot()
+    # fname = "cache/screenshot.png"
     img = cv2.imread(fname)
     if cut:
         img = img[cut[0]:cut[1], cut[2]:cut[3]]
