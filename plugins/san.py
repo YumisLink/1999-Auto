@@ -55,7 +55,7 @@ def detect_san_in_level():
     
 def get_levelsan():
     #只在进入关卡前界面可用
-    out=pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(),1094,651,1371,888)
+    out=pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(),1094,720,1371,888)
     if out['code'] != 100:
         logger.debug(out)
         return None

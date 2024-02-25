@@ -99,6 +99,7 @@ def Auto_Active(
     if as_much:
         level_san=san.get_levelsan()
         total_times = energy // level_san
+        logger.debug(f"{energy=} {level_san=}")
         fourtimes=total_times//4
         times=total_times%4
         logger.info(f"打: {fourtimes}次4倍，1次{times}倍复现")
