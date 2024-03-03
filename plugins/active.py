@@ -140,17 +140,18 @@ def to_level(level:int,swipetimes=2):
     return False
 
 def sub_replay(times:int):
-    is_replay =f.cut_match_html(IMGAE_IN_REPLAY,600,753,1555,897)
-    is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY,600,706,1556,882)
+    replay_btn_range = 600,706,1556,882
+    is_replay =f.cut_match_html(IMGAE_IN_REPLAY, *replay_btn_range)
+    is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY, *replay_btn_range)
     if is_replay is None or is_replay[2] < 0.8 or (is_replay2 is not None and is_replay2[2] > 0.7):
         logger.debug('不在复现模式')
-        replay = f.cut_find_html(IMAGE_REPLAY,600,736,1126,895)
+        replay = f.cut_find_html(IMAGE_REPLAY, *replay_btn_range)
         if replay[0] is not None:
             adb.touch(replay)
             logger.debug(f"选择复现模式")
             time.sleep(1.7)   
 
-    adb.touch(f.cut_find_html(IMAGE_REPLAY_SELECT,971,782,1100,860))
+    assert adb.touch(f.cut_find_html(IMAGE_REPLAY_SELECT,900,782,1150,860)) == 0, "选择复现次数失败"
     logger.debug(f"选择复现次数")
     time.sleep(1.7)
     if times>4:

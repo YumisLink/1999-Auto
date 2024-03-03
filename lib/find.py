@@ -148,6 +148,9 @@ def cut_find(template, x, y, w, h, take=True):
         return x, y
     else:
         logger.debug('匹配度过低' + str(result.max()))
+        # fail_img_pattern = 'cache/fail_img_%s.png'
+        # cv.imwrite(fail_img_pattern % 'target', template_img)
+        # cv.imwrite(fail_img_pattern % 'source', screen_cut)
         return None,None
 
 

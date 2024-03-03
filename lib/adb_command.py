@@ -9,8 +9,12 @@ import lib.api as api
 
 
 def touch(point):
+    'return zero if success else non-zero'
+    if point[0] is None or point[1] is None:
+        logger.warning(f"Invalid touching target")
+        return -1
     logger.debug(f'click {point[0]} {point[1]}')
-    os.system(f'{config.ADB_HEAD} shell input tap {point[0]} {point[1]}')
+    return os.system(f'{config.ADB_HEAD} shell input tap {point[0]} {point[1]}')
 
 
 def swipe(p1, p2, duration: int = None):
