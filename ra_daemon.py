@@ -195,6 +195,14 @@ def work_pass():
 def work_mission():
     return mission.mission_start()
 
+def work_favor():
+    logger.info("开始信任互动")
+    for _ in range(3):
+        adb.touch((800, 450))
+        time.sleep(0.3)
+    time.sleep(3)
+    return True
+
 def work_fight(fight: dict, energy: int):
     assert path.to_menu()
     as_much=False
@@ -288,6 +296,15 @@ def work_fight(fight: dict, energy: int):
 
 def work(task: dict, summary: list[str]):
     all_success = True
+    # Favorability
+    try:
+        res = work_favor()
+        summary.append("信任：互动完成")
+        logger.success("信任：互动完成")
+    except Exception as e:
+        all_success = False
+        summary.append(f"信任：互动失败: {e}")
+        logger.error(traceback.format_exc())
     # Mail
     try:
         if task['detail'].get('mail', False):
