@@ -141,6 +141,7 @@ def to_level(level:int,swipetimes=2):
 
 def sub_replay(times:int):
     replay_btn_range = 600,706,1556,882
+    time.sleep(2)
     is_replay =f.cut_match_html(IMGAE_IN_REPLAY, *replay_btn_range)
     is_replay2=f.cut_match_html(IMAGE_NOT_IN_REPLAY, *replay_btn_range)
     if is_replay is None or is_replay[2] < 0.8 or (is_replay2 is not None and is_replay2[2] > 0.7):

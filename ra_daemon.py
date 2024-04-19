@@ -315,6 +315,21 @@ def work(task: dict, summary: list[str]):
         all_success = False
         summary.append(f"邮件: 领取失败: {e}")
         logger.error(traceback.format_exc())
+    # Fights
+    for fight in task['detail'].get('fights', []):
+        try:
+            fight_name = f"{fight['name']}-{fight['level']}-难度{fight['hard']}"
+            assert path.to_menu()
+            energy = get_san()
+            if not isinstance(energy, int):
+                raise Exception('无法获取体力')
+            msg = work_fight(fight, energy)
+            summary.append(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
+            logger.success(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
+        except Exception as e:
+            all_success = False
+            summary.append(f"战斗: {fight['name']} 执行失败: {e}")
+            logger.error(traceback.format_exc())
     # Wild
     try:
         if task['detail'].get('wild', False):
@@ -331,21 +346,6 @@ def work(task: dict, summary: list[str]):
         all_success = False
         summary.append(f"荒原: 领取失败: {e}")
         logger.error(traceback.format_exc())
-    # Fights
-    for fight in task['detail'].get('fights', []):
-        try:
-            fight_name = f"{fight['name']}-{fight['level']}-难度{fight['hard']}"
-            assert path.to_menu()
-            energy = get_san()
-            if not isinstance(energy, int):
-                raise Exception('无法获取体力')
-            msg = work_fight(fight, energy)
-            summary.append(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
-            logger.success(f"战斗: {fight_name} 执行完成{ f': {msg}' if msg else '' }")
-        except Exception as e:
-            all_success = False
-            summary.append(f"战斗: {fight['name']} 执行失败: {e}")
-            logger.error(traceback.format_exc())
     # Pass
     try:
         if task['detail'].get('pas', False):
