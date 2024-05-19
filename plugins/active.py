@@ -267,16 +267,6 @@ def choose_story_hardness(hard: int): # 0 means 童话, 1 means 故事, 2 means 
     now_hard = detect_hard(roi, hardness_texts) - 1
     assert now_hard == hard
     return IMAGE_START_HARD if hard == 2 else IMAGE_START
-    
-    res = pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(), 1112,291,1525,365, '厄险')
-    if res[0] is not None:
-        adb.touch(res[0])
-        logger.debug('点击厄险')
-        time.sleep(1)
-        return IMAGE_START_HARD
-    else:
-        logger.error('未找到厄险，退出')
-        return None
 
 def detect_hard(roi: tuple[int, int, int, int], texts: list[str] = ['故事', '意外', '艰难']):
     ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), *roi)
