@@ -6,6 +6,7 @@ from loguru import logger
 from config.mappoint import clickcard
 import config.config as config
 import lib.api as api
+from random import randint
 
 
 def touch(point):
@@ -13,8 +14,9 @@ def touch(point):
     if point[0] is None or point[1] is None:
         logger.warning(f"Invalid touching target")
         return -1
-    logger.debug(f'click {point[0]} {point[1]}')
-    return os.system(f'{config.ADB_HEAD} shell input tap {point[0]} {point[1]}')
+    point_new = (point[0] + randint(-2, 2), point[1] + randint(-2, 2))
+    logger.debug(f'click {point[0]} {point[1]}, randomized to {point_new[0]} {point_new[1]}')
+    return os.system(f'{config.ADB_HEAD} shell input tap {point_new[0]} {point_new[1]}')
 
 
 def swipe(p1, p2, duration: int = None):
