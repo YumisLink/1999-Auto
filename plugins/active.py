@@ -249,7 +249,25 @@ def to_story(chapter:int):
 
 
 
-def choose_story_disaster():
+def choose_story_hardness(hard: int): # 0 means 童话, 1 means 故事, 2 means 厄险
+    roi = 1112, 291, 1525, 365
+    hardness_texts = ['童话', '故事', '厄险']
+    now_hard = detect_hard(roi, hardness_texts) - 1 # 为了和没有童话的版本兼容
+    if now_hard == hard:
+        return IMAGE_START_HARD if hard == 2 else IMAGE_START
+    
+    # need to change
+    pos_ratio = [0.2, 0.5, 0.8][hard]
+    pos_y = (roi[1] + roi[3]) // 2
+    pos_x = int(roi[0] + pos_ratio * (roi[2] - roi[0]))
+    logger.info(f'当前难度：{now_hard}, 目标难度：{hard}')
+    logger.info(f'点击坐标切换：{pos_x, pos_y}')
+    adb.touch((pos_x, pos_y))
+    time.sleep(1)
+    now_hard = detect_hard(roi, hardness_texts) - 1
+    assert now_hard == hard
+    return IMAGE_START_HARD if hard == 2 else IMAGE_START
+    
     res = pp.cut_html_ocr_bytes_xy(api.get_scrren_shot_bytes(), 1112,291,1525,365, '厄险')
     if res[0] is not None:
         adb.touch(res[0])
@@ -260,15 +278,16 @@ def choose_story_disaster():
         logger.error('未找到厄险，退出')
         return None
 
-def detect_hard_festival():
-    ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), 1270, 290, 1380, 340)
+def detect_hard(roi: tuple[int, int, int, int], texts: list[str] = ['故事', '意外', '艰难']):
+    ocr_res = pp.cut_html_ocr_bytes(api.get_scrren_shot_bytes(), *roi)
     assert ocr_res['code'] == 100
     res: list[dict] = ocr_res['data']
     res = sorted(res, key=lambda x: -x['score'])[0]
-    return ['故事', '意外', '艰难'].index(res['text']) + 1
+    return texts.index(res['text']) + 1
 
 def choose_festival_hardness(hard: int):
-    now_hard = detect_hard_festival()
+    roi = 1270, 290, 1380, 340
+    now_hard = detect_hard(roi)
     logger.info(f'当前难度：{now_hard}, 目标难度：{hard}')
     assert abs(now_hard - hard) <= 5
     while now_hard < hard:
@@ -279,7 +298,7 @@ def choose_festival_hardness(hard: int):
         adb.touch((1130, 315))
         time.sleep(1)
         now_hard -= 1
-    now_hard = detect_hard_festival()
+    now_hard = detect_hard(roi)
     assert now_hard == hard
     return IMAGE_START_MOR
 
