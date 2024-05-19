@@ -23,11 +23,12 @@ def mission_start():
 
     day = f.find_image(IMAGE_DAY_FIND)
     if '每日' not in pp.ocr_bytes_xy(day,'每日'):
-        adb.touch(f.find(IMAGE_DAY))
         logger.info("点击每日任务")
+        adb.touch(f.find(IMAGE_DAY))
         time.sleep(1)
     
     claim = f.find(IMAGE_CLAIM_ALL)
+    logger.debug(f'claim_all匹配: {claim}')
     if (claim[2] > 0.7):
         adb.touch(claim)
         logger.info("完成所有任务")
@@ -36,6 +37,7 @@ def mission_start():
         time.sleep(1)
     else:
         claim = f.find(IMAGE_CLAIM,False)
+        logger.debug(f'claim_single匹配: {claim}')
         if (claim[2] > 0.7):
             adb.touch(claim)
             logger.info("完成单个任务")
@@ -44,10 +46,10 @@ def mission_start():
             time.sleep(1)
 
     
-    adb.touch(f.find(IMAGE_WEEK))
     logger.info("点击每周任务")
+    adb.touch(f.find(IMAGE_WEEK))
     claim = f.find(IMAGE_CLAIM_ALL)
-    logger.info(claim)
+    logger.debug(f'claim_all匹配: {claim}')
     if (claim[2] > 0.7):
         adb.touch(claim)
         logger.info("完成所有任务")
@@ -56,6 +58,7 @@ def mission_start():
         time.sleep(1)
     else:
         claim = f.find(IMAGE_CLAIM,False)
+        logger.debug(f'claim_single匹配: {claim}')
         if (claim[2] > 0.7):
             adb.touch(claim)
             logger.info("完成单个任务")
