@@ -220,10 +220,8 @@ def work_fight(fight: dict, energy: int):
             if times is None:
                 as_much = True
             active.enter_the_show()
-            if fight['hard'] > 1:
-                hard_handle = active.choose_story_disaster
-            else:
-                hard_handle = lambda: active.IMAGE_START
+            assert fight['hard'] > 0, f'主线难度不应设置为童话'
+            hard_handle = lambda: active.choose_story_hardness(fight['hard'])
             active.Auto_Active(
                 entry,
                 fight['level'],
