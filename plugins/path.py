@@ -4,6 +4,7 @@ from loguru import logger
 import lib.find as f
 import lib.adb_command as adb
 import lib.api as api
+import glob
 
 template_imgs = {
     'menu': {'img': 'imgs/main_menu_checker.png', 'pos': (1150,560,1501,720)},#html;主界面
@@ -22,6 +23,18 @@ template_imgs = {
     'gift': {'img': 'imgs/gift.png', 'pos': (880, 560, 1390, 720)}, # 礼物界面（兔子），目前使用兔子图像匹配，实现版本无关
     'gift2': {'img': 'imgs/gift2.png', 'pos': (1050, 20, 1420, 300)}, # 第二个礼物界面，目前是1.8版本
 }
+
+def is_gift2():
+    logger.debug('进行gift2检测')
+    screen = cv.imread(api.get_screen_shot())
+    screen_gray = cv.cvtColor(screen, cv.COLOR_BGR2GRAY)
+    for fname in glob.glob('imgs/gift/*.png'):
+        gift = cv.imread(fname, cv.IMREAD_GRAYSCALE)
+        score = cv.matchTemplate(screen_gray, gift, cv.TM_CCOEFF_NORMED)
+        if cv.minMaxLoc(score)[1] > 0.9:
+            logger.debug(f'gift2: 匹配到了{fname}')
+            return True
+    return False
 
 def where_am_i():
     adb.is_game_on()
@@ -74,6 +87,11 @@ def to_menu(autologin=True,back_to_title=False):
         status = where_am_i()
         if status is None:
             if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
+                if is_gift2():
+                    logger.info('检测到第二层礼物界面')
+                    adb.touch([60,58])
+                    time.sleep(1)
+                    return True
                 logger.error('启动超时')
                 time.sleep(1)
                 return False
