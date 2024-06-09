@@ -123,7 +123,7 @@ def to_menu(autologin=True,back_to_title=False):
                 time.sleep(1)
         elif status == 'got':
             #获得界面瞎点一下(不点到物品就行)
-            adb.touch([799,247])
+            adb.touch([60,58])
             time.sleep(1)
         elif status == 'checkin':
             #签到界面瞎点一下
