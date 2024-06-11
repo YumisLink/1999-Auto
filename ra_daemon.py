@@ -203,6 +203,9 @@ def work_favor():
     time.sleep(3)
     return True
 
+def work_fusing():
+    return mission.get_fusing_box()
+
 def work_fight(fight: dict, energy: int):
     assert path.to_menu()
     as_much=False
@@ -364,7 +367,16 @@ def work(task: dict, summary: list[str]):
         all_success = False
         summary.append(f"任务: 领取失败: {e}")
         logger.error(traceback.format_exc())
-    return all_success
+    # Fusing Box
+    try:
+        if task['detail'].get('fusing', True):
+            assert work_fusing()
+            summary.append(f"定影匣子: 领取完成")
+            logger.success('定影匣子: 领取完成')
+    except Exception as e:
+        all_success = False
+        summary.append(f"定影匣子: 领取失败: {e}")
+        logger.error(traceback.format_exc())
 
 def loop(accounts):
     logger.success('进入任务循环')

@@ -5,6 +5,8 @@ import lib.adb_command as adb
 import plugins.mission_ready as ready
 import plugins.path as path
 import lib.ppocr as pp
+from lib import api
+from plugins import active
 
 from loguru import logger
 
@@ -70,3 +72,25 @@ def mission_start():
     # adb.touch(f.find(IMAGE_DAY,False))
     
     
+def get_fusing_box():
+    """获取定影匣子"""
+    active.to_festival()
+    time.sleep(1)
+    screen = api.get_screen_shot()
+    ocr_res = pp.ocr_xy(screen, '轶事', cn=True)
+    if ocr_res[0] is None:
+        logger.error("未找到轶事入口")
+        return False
+    pos, conf, text = ocr_res
+    assert adb.touch((int(pos[0]), int(pos[1]))) == 0
+    time.sleep(2)
+    
+    screen = api.get_screen_shot()
+    ocr_res = pp.ocr_xy(screen, '步入故事', cn=True)
+    if ocr_res[0] is None:
+        logger.error("未找到轶事入口")
+        return False
+    pos, conf, text = ocr_res
+    assert adb.touch((int(pos[0]), int(pos[1]))) == 0
+    time.sleep(2)
+    return True
