@@ -85,19 +85,15 @@ def to_menu(autologin=True,back_to_title=False):
     start_time = time.time()
     while True:
         status = where_am_i()
-        if status is None:
-            if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
-                if is_gift2():
-                    logger.info('检测到第二层礼物界面')
-                    adb.touch([60,58])
-                    time.sleep(1)
-                    return True
-                logger.error('启动超时')
+        if time.time() - start_time > 180: #这样写不好，万一出下载时间过久就会直接退出应该检验一下是不是在loading或者应用在更新
+            if is_gift2():
+                logger.info('检测到第二层礼物界面')
+                adb.touch([60,58])
                 time.sleep(1)
-                return False
-            else:
-                #logger.debug('似乎正在启动')
-                time.sleep(1)
+                return True
+            logger.error('启动超时')
+            time.sleep(1)
+            return False
         elif status == 'login':
             if autologin:
                 logger.debug('尝试自动登录')
@@ -185,6 +181,8 @@ def to_menu(autologin=True,back_to_title=False):
         elif status == 'gift' or status == 'gift2':
             #礼物界面直接点左上角关闭
             adb.touch([60,58])
+            time.sleep(1)
+        else:
             time.sleep(1)
             
 
