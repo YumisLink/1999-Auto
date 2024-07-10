@@ -284,7 +284,7 @@ def work_fight(fight: dict, energy: int):
             time.sleep(2) # wait for animation
             hard_handle = lambda: active.choose_festival_hardness(fight['hard'])
             active.Auto_Active(
-                active.IMAGE_RYASHKI_MAINLINE,
+                active.IMAGE_GOLDEN_MAINLINE,
                 fight['level'],
                 fight['times'],
                 False, 6,

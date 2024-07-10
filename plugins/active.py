@@ -21,6 +21,7 @@ IMAGE_MOR_MAINLINE = "imgs/active/mor_pankh_mainline"
 IMAGE_ULU_MAINLINE = "imgs/active/uluru_games_mainline"
 IMAGE_SHUO_MAINLINE = "imgs/active/note_of_shuori_mainline"
 IMAGE_RYASHKI_MAINLINE = "imgs/active/ryashki_mainline"
+IMAGE_GOLDEN_MAINLINE = "imgs/active/golden_city_mainline"
 
 IMAGE_CHAPTER1 = 'imgs/active/chapter1'
 IMAGE_CHAPTER2 = 'imgs/active/chapter2'
