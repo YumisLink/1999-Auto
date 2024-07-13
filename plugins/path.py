@@ -31,8 +31,10 @@ def is_gift2():
     for fname in glob.glob('imgs/gift/*.png'):
         gift = cv.imread(fname, cv.IMREAD_GRAYSCALE)
         score = cv.matchTemplate(screen_gray, gift, cv.TM_CCOEFF_NORMED)
-        if cv.minMaxLoc(score)[1] > 0.9:
-            logger.debug(f'gift2: 匹配到了{fname}')
+        score = cv.minMaxLoc(score)[1]
+        logger.debug(f"gift2: {fname} => {score}")
+        if score > 0.7:
+            logger.info(f'gift2: 匹配到了{fname}')
             return True
     return False
 
