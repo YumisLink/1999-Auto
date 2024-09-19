@@ -72,21 +72,20 @@ def Auto_Active(
     """    
     if go_resource:
         to_resource()
-    adb.swipe((156,488), (1344,485))
+
+    adb.swipe((1500, 744), (300, 750))
     time.sleep(1)
-    exist=f.find(type)
-    logger.debug('目标关卡识别率：{}',exist[2])
-    if exist[2]>0.7:
-        adb.touch(exist)
+    for i in range(4):
+        exist = f.find(type, take=True)
+        logger.debug(f'第{i}次识别，目标关卡识别率：{exist[2]}')
+        if exist[2] > 0.7:
+            adb.touch(exist)
+            time.sleep(1)
+            break
+        adb.swipe((600, 744), (1040, 750), 300)
         time.sleep(1)
     else:
-        time.sleep(1)
-        adb.swipe((1344,485),(156,488))
-        time.sleep(1)
-        adb.touch(f.find((type)))
-        time.sleep(1)
-    logger.info(f"进入{type}")
-    time.sleep(0.8)
+        raise Exception(f'未找到目标关卡 {type}')
 
     assert to_level(level, level_swipetimes)
     time.sleep(2.5) 
