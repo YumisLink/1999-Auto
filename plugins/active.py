@@ -78,12 +78,12 @@ def Auto_Active(
     for i in range(4):
         exist = f.find(type, take=True)
         logger.debug(f'第{i}次识别，目标关卡识别率：{exist[2]}')
-        if exist[2] > 0.7:
+        if exist[2] > 0.6:
             adb.touch(exist)
             time.sleep(1)
             break
         adb.swipe((600, 744), (1040, 750), 300)
-        time.sleep(1)
+        time.sleep(1.5)
     else:
         raise Exception(f'未找到目标关卡 {type}')
 
