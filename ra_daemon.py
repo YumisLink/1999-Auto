@@ -225,7 +225,7 @@ def work_fight(fight: dict, energy: int):
             active.enter_the_show()
             assert fight['hard'] > 0, f'主线难度不应设置为童话'
             hard_handle = lambda: active.choose_story_hardness(fight['hard'])
-            active.Auto_Active(
+            return active.Auto_Active(
                 entry,
                 fight['level'],
                 times,
@@ -237,15 +237,14 @@ def work_fight(fight: dict, energy: int):
             active.to_resource()
             if f.find(active.IMAGE_ANALYSIS)[2] > 0.6: # 仅免费解析
                 logger.info('进行免费解析')
-                active.Auto_Active(
+                return active.Auto_Active(
                     active.IMAGE_ANALYSIS,
                     fight['level'], 2,
                     False, 1
-                )
-                return '免费解析2次'
+                ) or '免费解析2次'
             return '无免费次数，跳过'
         case '尘', *_: # 尘埃运动
-            active.Auto_Active(
+            return active.Auto_Active(
                 active.IMAGE_THE_POUSSIERE,
                 fight['level'],
                 fight['times'],
@@ -253,7 +252,7 @@ def work_fight(fight: dict, energy: int):
                 None, as_much, energy
             )
         case '铸', *_: # 铸币美学
-            active.Auto_Active(
+            return active.Auto_Active(
                 active.IMAGE_MINTAGE_AESTHETICS,
                 fight['level'],
                 fight['times'],
@@ -261,7 +260,7 @@ def work_fight(fight: dict, energy: int):
                 None, as_much, energy
             )
         case '丰', *_: # 丰收时令
-            active.Auto_Active(
+            return active.Auto_Active(
                 active.IMAGE_HARVEST,
                 fight['level'],
                 fight['times'],
@@ -271,7 +270,7 @@ def work_fight(fight: dict, energy: int):
         case '群'|'星'|'深'|'荒', *_: # 洞悉
             entry = active.IMAGE_INSIGHT_MAP[fight['name']]
             active.to_insight()
-            active.Auto_Active(
+            return active.Auto_Active(
                 entry,
                 fight['level'],
                 fight['times'],
@@ -283,7 +282,7 @@ def work_fight(fight: dict, energy: int):
             active.to_festival()
             time.sleep(2) # wait for animation
             hard_handle = lambda: active.choose_festival_hardness(fight['hard'])
-            active.Auto_Active(
+            return active.Auto_Active(
                 active.IMAGE_GOLDEN_MAINLINE,
                 fight['level'],
                 fight['times'],

@@ -78,7 +78,7 @@ def Auto_Active(
     for i in range(4):
         exist = f.find(type, take=True)
         logger.debug(f'第{i}次识别，目标关卡识别率：{exist[2]}')
-        if exist[2] > 0.6:
+        if exist[2] > 0.65:
             adb.touch(exist)
             time.sleep(1)
             break
@@ -97,8 +97,20 @@ def Auto_Active(
     
     if start_btn is None:
         raise Exception('选择难度失败')
+
+    if type == IMAGE_ANALYSIS:
+        level_san = 1 # 意志解析不需要体力
+    else:
+        level_san = san.get_levelsan()
+        logger.debug(f"关卡体力：{level_san}")
+        if level_san is None:
+            logger.warning('获取关卡体力失败，默认为50')
+            level_san = 50
+    if level_san > energy: # 意志解析
+        logger.warning(f"体力不足，跳过")
+        return "因体力不足跳过"
+
     if as_much:
-        level_san=san.get_levelsan()
         total_times = energy // level_san
         logger.debug(f"{energy=} {level_san=}")
         fourtimes=total_times//4
@@ -112,12 +124,18 @@ def Auto_Active(
                 sub_replay(4)
         if times>0:
             sub_replay(times)
+        return f"尽可能多，复现{total_times}次"
     else:
+        actual_times = min(times, energy // level_san)
+        logger.debug(f"{times=} {actual_times=}")
         adb.touch(f.find(start_btn))
         logger.info(f"进入行动界面")
         time.sleep(4)
 
-        sub_replay(times)
+        sub_replay(actual_times)
+        if actual_times != times:
+            return f"设定{times}次，因体力不足实际{actual_times}次"
+        return f"复现{actual_times}次"
         
 def to_level(level:int,swipetimes=2):
     logger.info(f'开始寻找第{level}关')
