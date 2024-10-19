@@ -452,6 +452,7 @@ def loop(accounts):
                             client.notify(token, task_id, f'任务{task_name} 执行完成', summary)
                         except Exception as e:
                             logger.error(f'=============== Uncaught Error in summary: {e} ===============')
+                            logger.error(traceback.format_exc())
                 
         except Exception as e:
             logger.error(f'=============== Uncaught Error: {e} ===============')
