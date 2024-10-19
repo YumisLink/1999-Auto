@@ -10,7 +10,7 @@ import lib.api as api
 
 def get_san() -> int|None:
     status=path.where_am_i()
-    logger.debug('当前界面:',status)
+    logger.debug(f'当前界面: {status}')
     if status == 'menu':
         # adb.touch([1460,204])
         adb.touch((1525, 200)) # 箱中巡游版本
