@@ -11,6 +11,7 @@ import itertools
 from config import config
 
 from lib import client
+from lib import vortana
 from lib import adb_command as adb
 from lib import find as f
 
@@ -398,11 +399,13 @@ def loop(accounts):
                         skip = True
                         continue
                     client.log(token, task_id, client.LogLevel.HERTBEAT, '')
+                    vortana.log_to_vortana(vortana.LogLevel.debug, f"Heartbeat: {task_name}")
                     energy = calc_energy(task['time_stamp'], task['energy'])
                     if energy < 100: # TODO: get energy thresh from server
                         logger.success(f"任务 {task_name} 体力为{energy}, 未到执行阈值，跳过")
                         skip = True
                         continue
+                    vortana.log_to_vortana(vortana.LogLevel.info, f"任务 {task_name} 体力为{energy}, 开始执行")
                     override_config(task['detail'].get('config_override', {}))
                     
                     if not startup_program():
@@ -438,6 +441,7 @@ def loop(accounts):
                             history_log = f.readlines()[-20:]
                             history_log = ''.join(history_log)
                         summary.append(f'发生未知错误: {repr(e)}, 执行中断')
+                        vortana.log_to_vortana(vortana.LogLevel.error, f'未知错误: {trace_info}')
                         client.log(token, task_id, client.LogLevel.ERROR, f'未知错误: {trace_info}')
                         client.notify(token, task_id, '发生未知错误', history_log)
                     except Exception as e:
@@ -448,6 +452,7 @@ def loop(accounts):
                         logger.success("执行完成, 总结:\n" + summary)
                         try:
                             adb.kill_app()
+                            vortana.log_to_vortana(vortana.LogLevel.info, summary)
                             client.log(token, task_id, client.LogLevel.NOTICE, summary)
                             client.notify(token, task_id, f'任务{task_name} 执行完成', summary)
                         except Exception as e:
