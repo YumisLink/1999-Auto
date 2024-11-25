@@ -43,6 +43,7 @@ def where_am_i():
     max_val = 0
     max_template_name = ''
     screen = cv.imread(api.get_screen_shot())
+    logger.debug(f"screen shape: {screen.shape}")
     screen_gray = cv.cvtColor(screen, cv.COLOR_BGR2GRAY)
     t=0
     for template_name, template_info in template_imgs.items():
