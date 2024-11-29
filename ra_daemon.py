@@ -157,7 +157,8 @@ def terminate_program():
         return
     logger.info('正在关闭模拟器')
     os.system('taskkill /im MuMuPlayer.exe')
-    time.sleep(5)
+    time.sleep(10)
+    os.system('taskkill /im MuMuPlayer.exe /f')
     return
     if emulator_pid == -1:
         logger.warning("pid=-1, 模拟器未启动")
