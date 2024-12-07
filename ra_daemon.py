@@ -409,10 +409,15 @@ def loop(accounts):
                     vortana.log_to_vortana(vortana.LogLevel.info, f"任务 {task_name} 体力为{energy}, 开始执行")
                     override_config(task['detail'].get('config_override', {}))
                     
-                    if not startup_program():
-                        raise Exception('模拟器启动失败')
-                    if not adb.is_device_connected():
-                        raise Exception('连接设备失败')
+                    if adb.fast_check_connected(): # already connected, means physical device or debugging
+                        logger.success('FAST CHECK: 已连接设备')
+                        adb.check_device_connection() # update device_id
+                    else:
+                        logger.info('FAST CHECK: 未连接设备')
+                        if not startup_program():
+                            raise Exception('模拟器启动失败')
+                        if not adb.is_device_connected():
+                            raise Exception('连接设备失败')
                     if not adb.is_game_on():
                         raise Exception('游戏无法启动')
                     

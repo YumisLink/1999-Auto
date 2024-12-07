@@ -97,6 +97,7 @@ def check_device_connection():
             if blurestack:
                 return blurestack
         else:
+            device = output[1].split('\t')[0]
             logger.debug(f'已连接设备：{device}')
             config.user_config['device_id'] = device
             api.write_config()
@@ -142,15 +143,11 @@ def is_device_connected():
         os.system(f'{adb_path} disconnect')
         os.system(f'{adb_path} kill-server')#TODO:没必要都kill-server
         device = check_device_connection()
-        with open('config.json', 'r') as f:
-            config.user_config = json.load(f)
-        if 'device_id' in config.user_config and config.user_config['device_id'].strip():
-            config.ADB_HEAD = f'{adb_path} -s {config.user_config["device_id"]}'
-        else:
-            config.ADB_HEAD = f'{adb_path}'
-    logger.debug('已重组config.ADB_HEAD:',config.ADB_HEAD)  
-    config.user_config['adb_head'] = config.ADB_HEAD#TODO:adb head的使用逻辑有问题，更新之后没法第一时间利用，就非得重启几次程序才能用
-    api.write_config()
     return device
     
-            
+def fast_check_connected():
+    # simply check if device is already connected, without any adb state guessing
+    output = os.popen(f'{config.user_config["adb_path"]} devices').read().strip().split('\n')
+    if len(output) <= 1 or output[0] != 'List of devices attached':
+        return False
+    return True
