@@ -412,8 +412,8 @@ def detect_numbers(img: cv.Mat,is_event=False) -> list[tuple[int, tuple[int, int
         if len(clustered_points) > 5:  # 一个数字最多出现5次
             for x, y in clustered_points:
                 cv.rectangle(img, (x, y), (x + digit.shape[1], y + digit.shape[0]), (0, 255, 0), 2)
-            cv.imshow("error", img)
-            cv.waitKey(1)
+            # cv.imshow("error", img)
+            # cv.waitKey(1)
             raise Exception("数字识别错误")
         locations_num.extend([((x, y), i) for x, y in clustered_points])
     locations_num.sort()
