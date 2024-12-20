@@ -1,3 +1,7 @@
+# Large OCR Library
+lib/OCR_Linux
+lib/OCR_Windows
+
 screenshot.png
 cache/
 config.json

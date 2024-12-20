@@ -2,13 +2,31 @@ import os
 import numpy as np
 import cv2 as cv
 from loguru import logger
-from lib.OCR.api import GetOcrApi
+
+try:
+    if os.name == 'nt':
+        from lib.OCR_Windows.api import GetOcrApi
+    else:
+        from lib.OCR_Linux.api import GetOcrApi
+except Exception:
+    logger.critical(
+        "请从 https://github.com/hiroi-sora/PaddleOCR-json/releases/tag/v1.4.1"
+        "下载当前系统对应版本发布包并解压至 lib/OCR_Windows 或 lib/OCR_Linux"
+    )
+    raise ImportError("OCR模块导入失败")
+
 #config_path是相对于PaddleOCR-json.exe的路径
 argument_cn = {'config_path': "models/config_chinese.txt"}
 argument_en = {'config_path': "models/config_en.txt"}
 current_path = os.path.abspath(os.path.dirname(__file__))
 project_path = os.path.dirname(current_path)
-exe_path=current_path+"\\OCR\\PaddleOCR-json.exe"
+# exe_path=current_path+"\\OCR\\PaddleOCR-json.exe"
+
+if os.name == 'nt':
+    exe_path = os.path.join(current_path, r'OCR_Windows/PaddleOCR-json.exe')
+else:
+    exe_path = os.path.join(current_path, r'OCR_Linux/run.sh')
+
 #输出结果文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main#readme
 #API文档：https://github.com/hiroi-sora/PaddleOCR-json/tree/main/api/python
 
@@ -17,18 +35,18 @@ exe_path=current_path+"\\OCR\\PaddleOCR-json.exe"
 #ocr2 = GetOcrApi(exe_path, argument_en)
 ocr_cn_engine = None
 def ocr_cn(target):
-    target_path =os.path.join(project_path, target.replace('/', '\\'))
+    target_path =os.path.join(project_path, target)
     global ocr_cn_engine
     if ocr_cn_engine is None:
-        ocr_cn_engine = GetOcrApi(exe_path, argument_cn)
+        ocr_cn_engine = GetOcrApi(exe_path, argument=argument_cn)
     res = ocr_cn_engine.run(target_path)
     return res
 ocr_en_engine = None
 def ocr_en(target):
-    target_path =os.path.join(project_path, target.replace('/', '\\'))
+    target_path =os.path.join(project_path, target)
     global ocr_en_engine
     if ocr_en_engine is None:
-        ocr_en_engine = GetOcrApi(exe_path, argument_en)
+        ocr_en_engine = GetOcrApi(exe_path, argument=argument_en)
     res = ocr_en_engine.run(target_path)
 
     return res
