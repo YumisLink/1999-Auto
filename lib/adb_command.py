@@ -131,6 +131,7 @@ def is_device_connected():
     if 'adb_path' in config.user_config and os.path.exists(config.user_config['adb_path'].strip()):
         adb_path = config.user_config['adb_path']
     else:
+        assert os.name == 'nt', 'Error: 非Windows系统无法使用内置adb'
         project_path = os.path.abspath(os.path.dirname(__file__))
         adb_path = os.path.join(project_path, 'adb\\adb.exe')
         config.user_config['adb_path']=adb_path

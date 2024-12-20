@@ -135,6 +135,10 @@ def start_emulator():
     return emulator_pid
 
 def startup_program():
+    # If not on Windows, only physical device is supported
+    if not os.name == 'nt':
+        logger.error('Error: 非 Windows 系统不支持模拟器设备')
+        raise Exception('非 Windows 系统不支持模拟器设备')
     #if not config.user_config.get('Multi-emutalors', False):
     if program_is_running():
         logger.info('模拟器已经在运行')
@@ -152,6 +156,9 @@ def startup_program():
     return res
 
 def terminate_program():
+    if os.name != 'nt':
+        logger.info('非 Windows 系统不需要关闭模拟器')
+        return
     if config.user_config.get('emulator_KeepAlive', True):
         logger.info('保持模拟器运行不关闭')
         return
