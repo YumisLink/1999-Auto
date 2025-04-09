@@ -47,7 +47,15 @@ def is_game_on(re_try=True):
         process = os.popen(command)
         output = process.read()
         process.close()
-        if config.APPID not in output:
+        
+        output_lines = output.split('\n')
+        # we should check for `mCurrentFocus` in case the game is in the background
+        is_on = any(
+            config.APPID in line and 'mCurrentFocus' in line
+            for line in output_lines
+        )
+        
+        if not is_on:
             if not re_try:
                 logger.info('游戏不在前台')
                 return False
