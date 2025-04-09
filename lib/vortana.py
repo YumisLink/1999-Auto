@@ -1,6 +1,8 @@
 import requests
 from enum import Enum
 
+from loguru import logger
+
 END_POINT = "http://10.1.0.1:4000"
 hostname = "1999-AUTO"
 
@@ -20,7 +22,12 @@ def log_to_vortana(level: LogLevel, message: str, data: dict = None):
     if data is not None:
         item["data"] = data
     
-    res = requests.post(END_POINT, json=item)
+    try:
+        res = requests.post(END_POINT, json=item, timeout=1)
+    except requests.exceptions.Timeout:
+        logger.warning("Timeout when sending log to Vortana.")
+        return
+
     res.raise_for_status()
 
 if __name__ == "__main__":
